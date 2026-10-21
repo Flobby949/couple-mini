@@ -1,3 +1,4 @@
+import { useArtwork } from '../../../ui/use-artwork'
 import { useQuery } from '@tanstack/react-query'
 import { Button, Image, Text, View } from '@tarojs/components'
 import { Page } from '../../../app/page'
@@ -7,9 +8,9 @@ import { keys } from '../../../core/query'
 import { switchTab } from '../../../platform'
 import { ErrorState, Loading } from '../../../ui'
 import { ConnectedPair, Icon, InlineInfo } from '../../../ui/visual'
-import { checkinPanel as panel } from '../../../ui/artwork'
 
 export default function MilestonesPage(){
+ const { checkinPanel: panel } = useArtwork()
  const gate=useGate(),query=useQuery({queryKey:keys.home,queryFn:getHome,enabled:gate.allowed,refetchInterval:gate.allowed?15000:false})
  const data=gate.allowed?query.data:undefined,days=data?.context.couple?.doubleDays??0
  return <Page title='累计双人签到'><ErrorState error={gate.error||query.error} retry={()=>{void gate.refetch();void query.refetch()}}/>{!data&&!query.error&&!gate.error&&<Loading/>}{data&&<>

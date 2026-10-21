@@ -1,3 +1,4 @@
+import { useArtwork } from '../../ui/use-artwork'
 /* Approved v2 board 01: task type tabs, shared budget, responsibility filters, compact task rows. */
 import { useState } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
@@ -6,8 +7,6 @@ import { useGate } from '../../app/hooks'
 import { Page } from '../../app/page'
 import { Empty, ErrorState, Loading } from '../../ui'
 import { Icon } from '../../ui/visual'
-import { emptyTasks as empty } from '../../ui/artwork'
-import { pointsJar as jar } from '../../ui/artwork'
 import { getTasks } from '../../features/tasks/api'
 import { taskStatus } from '../../features/tasks/presentation'
 import { getHome } from '../../features/home/api'
@@ -16,6 +15,7 @@ import { navigate } from '../../platform'
 import type { TaskKind } from '../../contracts/tasks'
 import { beijingTime } from '../../core/values'
 export default function Tasks(){
+ const { emptyTasks: empty, pointsJar: jar } = useArtwork()
  const gate=useGate(),[kind,setKind]=useState<TaskKind>('joint'),[filter,setFilter]=useState('todo')
  const budget=useQuery({queryKey:keys.home,queryFn:getHome,enabled:gate.allowed,refetchInterval:gate.allowed?30000:false})
  const query=useInfiniteQuery({queryKey:keys.tasks(kind,filter),queryFn:({pageParam})=>getTasks(kind,filter,pageParam),initialPageParam:'',getNextPageParam:last=>last.nextCursor||undefined,enabled:gate.allowed,staleTime:0,refetchInterval:gate.allowed?30000:false})

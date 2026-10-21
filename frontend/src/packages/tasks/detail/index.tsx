@@ -1,3 +1,4 @@
+import { useArtwork } from '../../../ui/use-artwork'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Button, Image, Text, View } from '@tarojs/components'
@@ -16,8 +17,8 @@ import { navigate, switchTab } from '../../../platform'
 import { BeijingDateTime } from '../../../ui/date-time'
 import { ErrorState, Loading, Notice } from '../../../ui'
 import { Avatar, Icon, InlineInfo, PersonRow } from '../../../ui/visual'
-import { milestoneRosette as badge } from '../../../ui/artwork'
 export default function TaskDetailPage(){
+ const { milestoneRosette: badge } = useArtwork()
  const gate=useGate(),id=useRouter().params.id||'',action=useAction()
  const [confirm,setConfirm]=useState<Exclude<TaskAction,'edit'>>(),[date,setDate]=useState(''),[time,setTime]=useState(''),[receipt,setReceipt]=useState<TaskReceipt>(),[requestId,setRequestId]=useState<string>(),[historyOpen,setHistoryOpen]=useState(false)
  const query=useQuery({queryKey:keys.task(id),queryFn:()=>getTask(id),enabled:gate.allowed&&!!id,staleTime:0,refetchInterval:gate.allowed?30000:false})

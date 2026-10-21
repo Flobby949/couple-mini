@@ -7,6 +7,7 @@
   --primary: #6752a3; --tint: #eeeaf6; --on-primary: #ffffff;
   min-height: 100vh; background: var(--page); color: var(--ink); color-scheme: light;
 }
+.theme-root { display: flex; flex-direction: column; }
 .theme-dark {
   --page: #17151e; --surface: #24212d; --ink: #f2edf8; --muted: #bbb2ca;
   --line: #45404f; --input: #1c1924; --disabled-bg: #3b3548; --disabled-ink: #bbb2ca;

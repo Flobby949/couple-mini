@@ -1,3 +1,4 @@
+import { useArtwork } from '../../ui/use-artwork'
 import { useState } from 'react'
 import { useDidHide } from '@tarojs/taro'
 import { useQuery } from '@tanstack/react-query'
@@ -11,9 +12,9 @@ import { navigate } from '../../platform'
 import { Empty, ErrorState, Loading } from '../../ui'
 import { Avatar, Icon } from '../../ui/visual'
 import { useAction } from '../../core/use-action'
-import { emptyStore as empty } from '../../ui/artwork'
 import { CartSheet } from './cart'
 export default function Shop(){
+ const { emptyStore: empty } = useArtwork()
  const gate=useGate(),action=useAction(),[cart,setCart]=useState(false)
  useDidHide(()=>setCart(false))
  const query=useQuery({queryKey:keys.catalog('partner'),queryFn:()=>getCatalog('partner'),enabled:gate.allowed,refetchInterval:gate.allowed?30000:false,staleTime:0})

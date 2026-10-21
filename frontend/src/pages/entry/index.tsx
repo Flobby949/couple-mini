@@ -1,3 +1,4 @@
+import { useArtwork } from '../../ui/use-artwork'
 import { useState } from 'react'
 import { Button, Image, Input, Text, View } from '@tarojs/components'
 import { useDidShow } from '@tarojs/taro'
@@ -11,9 +12,9 @@ import { platformLogin, storage } from '../../platform'
 import { Page } from '../../app/page'
 import { useAction } from '../../core/use-action'
 import { ErrorState } from '../../ui'
-import { milestoneRosette as rosette } from '../../ui/artwork'
 
 export default function Entry() {
+ const { milestoneRosette: rosette } = useArtwork()
   const action = useAction()
   const [identity, setIdentity] = useState('')
   async function enter() { await routeContext(await getContext()) }

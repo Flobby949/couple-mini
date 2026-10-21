@@ -1,3 +1,4 @@
+import { useArtwork } from '../../../ui/use-artwork'
 import { useQuery } from '@tanstack/react-query'
 import { Button, Text, View } from '@tarojs/components'
 import { Page } from '../../../app/page'
@@ -8,8 +9,8 @@ import { keys } from '../../../core/query'
 import { navigate } from '../../../platform'
 import { Empty, ErrorState, Loading } from '../../../ui'
 import { PersonRow } from '../../../ui/visual'
-import { emptyStore as empty } from '../../../ui/artwork'
 export default function StorePage(){
+ const { emptyStore: empty } = useArtwork()
  const gate=useGate(),query=useQuery({queryKey:keys.catalog('mine'),queryFn:()=>getCatalog('mine'),enabled:gate.allowed,refetchInterval:gate.allowed?30000:false,staleTime:0})
  return <Page title='我的小店'><ErrorState error={gate.error||query.error} retry={()=>{void gate.refetch();void query.refetch()}}/>{(!gate.allowed||!query.data)&&!query.error?<Loading/>:gate.allowed&&query.data&&<>
   <Text className='page-title store-title'>{gate.data!.me.nickname}的小店</Text><Text className='muted store-subtitle'>用喜欢的方式，把日常过得更温柔。</Text>

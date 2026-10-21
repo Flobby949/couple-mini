@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { accentColors, accents, nativeColors, parseAppearance, resolveScheme } from '../src/core/appearance'
+import { artworkFiles, getArtwork } from '../src/ui/artwork'
+import sharp from 'sharp'
 
 function luminance(hex: string) {
   const values = hex.slice(1).match(/../g)!.map(v => parseInt(v, 16) / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
@@ -39,5 +41,21 @@ it('the native cold-start theme matches shared page and tab colors', () => {
     expect(config[scheme].surface).toBe(nativeColors[scheme].surface)
     expect(config[scheme].primary).toBe(accentColors.iris[scheme].primary)
     for (const name of ['home', 'tasks', 'shop', 'me']) for (const suffix of ['Icon', 'Active']) expect(existsSync(resolve('src', config[scheme][name + suffix]))).toBe(true)
+  }
+})
+
+it('packages transparent palette sprites at the original dimensions with an open avatar frame', async () => {
+  expect(new Set(artworkFiles).size).toBe(20)
+  for (const accent of ['teal', 'apricot'] as const) {
+    const original = getArtwork('iris'), palette = getArtwork(accent)
+    for (const name of ['avatarFrame', 'pointsJar', 'checkinPanel', 'milestoneRosette', 'emptyTasks', 'emptyStore'] as const) {
+      const file = resolve('src' + palette[name])
+      const image = await sharp(file).metadata(), reference = await sharp(resolve('src' + original[name])).metadata()
+      expect([image.width, image.height]).toEqual([reference.width, reference.height])
+      expect(image.hasAlpha).toBe(true)
+      const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+      expect(data[3]).toBe(0)
+      if (name === 'avatarFrame') expect(data[(Math.floor(info.height / 2) * info.width + Math.floor(info.width / 2)) * 4 + 3]).toBe(0)
+    }
   }
 })

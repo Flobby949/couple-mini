@@ -1,3 +1,4 @@
+import { useArtwork } from '../../ui/use-artwork'
 /* THESIS: 两个人的签到是首页的中心，积分与待办随后。
  * OWN-WORLD: 冷白、鸢尾紫、深紫文字；仅签到区域保留织物感。
  * STORY: 先看双方状态，只为自己签到，再看共同预算与个人额度。
@@ -17,10 +18,10 @@ import { useTheme } from '../../app/theme'
 import { Page } from '../../app/page'
 import { useAction } from '../../core/use-action'
 import { ErrorState, Loading } from '../../ui'
-import { checkinPanel as panel } from '../../ui/artwork'
 import { statuses } from '../../features/orders/presentation'
 import { Avatar, BalanceTiles, Icon, PoolCard, Section } from '../../ui/visual'
 export default function HomePage() {
+ const { checkinPanel: panel } = useArtwork()
   const gate = useGate(), action = useAction(), {scheme,appearance} = useTheme()
   const [receipt, setReceipt] = useState<CheckinResult>()
   const query = useQuery({ queryKey: keys.home, queryFn: getHome, enabled: gate.allowed, refetchInterval: gate.allowed ? 15000 : false })

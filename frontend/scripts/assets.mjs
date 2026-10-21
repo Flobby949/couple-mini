@@ -44,3 +44,5 @@ for (const [accent,palette] of Object.entries(colors)) for (const [index,scheme]
   const svg=connection.replaceAll('#6752a3',color).replaceAll('#b7a6db',tint(color,.5)).replaceAll('#e4dcf3',tint(color,.78))
   await sharp(Buffer.from(svg)).resize(468,240).png().toFile(`${output}/ui-icons/checkin-connection-${accent}-${scheme}.png`)
 }
+
+await import('./theme-assets.mjs')

@@ -1,3 +1,4 @@
+import { useArtwork } from '../../../ui/use-artwork'
 import { useQuery } from '@tanstack/react-query'
 import { Button, Image, Text, View } from '@tarojs/components'
 import { useRouter } from '@tarojs/taro'
@@ -8,9 +9,9 @@ import { keys } from '../../../core/query'
 import { beijingTimeSeconds } from '../../../core/values'
 import { navigate, switchTab } from '../../../platform'
 import { ErrorState, Loading, Notice } from '../../../ui'
-import { milestoneRosette as rosette } from '../../../ui/artwork'
 
 export default function GiftDetail() {
+ const { milestoneRosette: rosette } = useArtwork()
   const gate = useGate(), id = useRouter().params.id || ''
   const query = useQuery({ queryKey: keys.gift(id), queryFn: () => getGift(id), enabled: gate.allowed && !!id, staleTime: 0 })
   const gift = gate.allowed ? query.data : undefined
