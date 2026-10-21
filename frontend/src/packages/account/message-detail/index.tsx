@@ -13,6 +13,7 @@ import { beijingTimeSeconds } from '../../../core/values'
 import { navigate } from '../../../platform'
 import { openTarget } from '../../../app/navigation'
 import { ErrorState, Loading, Notice } from '../../../ui'
+import { Icon } from '../../../ui/visual'
 
 export default function MessageDetailPage() {
   const gate = useGate(), id = useRouter().params.id || '', action = useAction(), marked = useRef('')
@@ -22,7 +23,7 @@ export default function MessageDetailPage() {
   return <Page title={message?.title || '这一次的回应'} subtitle='正文保留事情发生时的结果，业务详情展示当前状态。'>
     <ErrorState error={gate.error || query.error || action.error} retry={() => { void gate.refetch(); void query.refetch(); if (message && !message.readAt && !pending()) void action.run(() => readMessages([id])) }} />
     {!id ? <Notice>消息入口缺少标识，请返回消息中心。</Notice> : !message && !query.error && <Loading />}
-    {message && <><View className='surface'><Text className='message-body'>{message.body}</Text><Text className='muted'>发生于 {beijingTimeSeconds(message.occurredAt)} 北京时间</Text><Text className='muted'>收到于 {beijingTimeSeconds(message.receivedAt)} 北京时间</Text></View>
+    {message && <><View className='surface message-detail'><View className='detail-message-title'><Icon name='bell' tone='primary'/><Text className='section-title'>{message.title}</Text></View><Text className='message-body'>{message.body}</Text><Text className='muted'>发生于 {beijingTimeSeconds(message.occurredAt)} 北京时间</Text><Text className='muted'>收到于 {beijingTimeSeconds(message.receivedAt)} 北京时间</Text></View>
       {message.deliveryStatus && <Notice><Text>微信：{deliveryNames[message.deliveryStatus] || '状态待核查'}</Text>{message.deliveryReason && <Text>{deliveryReasons[message.deliveryReason] || '请在提醒偏好中查看投递记录'}</Text>}</Notice>}
       {targetRoute(message.target) ? <Button className='button' onClick={() => void openTarget(message.target)}>查看当前事项</Button> : <Notice>这个消息入口暂不可用，可以返回消息中心。</Notice>}
     </>}

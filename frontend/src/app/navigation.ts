@@ -11,7 +11,7 @@ export function rememberTarget(path: string, id?: string, code?: string) {
   if (tabs.includes(path) || path === 'packages/account/history/index' || path === 'packages/account/rules/index') {
     target = { path, ...(path === 'packages/account/rules/index' && id && /^[a-f0-9]{32}$/.test(id) ? { id } : {}) }
   }
-  if (['packages/commerce/store/index','packages/commerce/product-edit/index','packages/commerce/product/index','packages/commerce/checkout/index','packages/commerce/orders/index','packages/commerce/order-detail/index','packages/account/points/index','packages/account/partner/index','packages/account/gift/index','packages/account/gift-detail/index','packages/tasks/edit/index','packages/tasks/detail/index','packages/account/messages/index','packages/account/message-detail/index','packages/account/notification-settings/index','packages/account/notification-template/index'].includes(path)) {
+  if (['packages/commerce/store/index','packages/commerce/product-edit/index','packages/commerce/product/index','packages/commerce/checkout/index','packages/commerce/orders/index','packages/commerce/order-detail/index','packages/account/milestones/index','packages/account/points/index','packages/account/partner/index','packages/account/gift/index','packages/account/gift-detail/index','packages/tasks/edit/index','packages/tasks/detail/index','packages/account/messages/index','packages/account/message-detail/index','packages/account/notification-settings/index','packages/account/notification-template/index'].includes(path)) {
     target = { path, ...(path === 'packages/account/notification-template/index' && code && /^[OTPR]\d{2}$/.test(code) ? {code} : {}), ...(id && /^[a-f0-9]{32}$/.test(id) ? { id } : {}) }
   }
 }

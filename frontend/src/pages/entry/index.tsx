@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Input, Text, View } from '@tarojs/components'
+import { Button, Image, Input, Text, View } from '@tarojs/components'
 import { useDidShow } from '@tarojs/taro'
 import { session } from '../../core/api'
 import { getContext, login as loginIdentity } from '../../features/identity/api'
@@ -11,6 +11,7 @@ import { platformLogin, storage } from '../../platform'
 import { Page } from '../../app/page'
 import { useAction } from '../../core/use-action'
 import { ErrorState } from '../../ui'
+import rosette from '../../assets/milestone-rosette.png'
 
 export default function Entry() {
   const action = useAction()
@@ -24,7 +25,7 @@ export default function Entry() {
     await enter()
   }
   return <Page title='把日常，留给彼此' subtitle='两个人的小店，从一起开始。'>
-    <View className='welcome-mark'><Text>你</Text><Text className='pair-link'>与你</Text><Text>我</Text></View>
+    <View className='welcome-hero'><Image src={rosette} mode='aspectFit'/><Text className='page-title'>把日常，留给彼此</Text><Text className='muted'>两个人的小店，从一起开始。</Text></View>
     <View className='surface intro'><Text className='section-title'>欢迎来到情侣小店</Text><Text className='muted'>邀请伴侣、共同约定规则，再用签到与任务积攒两个人的小确幸。这里的积分永远不涉及真实金钱。</Text>
       <Button className='button' loading={action.busy} disabled={action.busy} onClick={() => void action.run(() => session() ? enter() : login())}>{session() ? '继续进入' : '微信登录'}</Button>
     </View>
