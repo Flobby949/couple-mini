@@ -1,0 +1,2 @@
+ALTER TABLE users MODIFY openid VARCHAR(128) COLLATE utf8mb4_bin NOT NULL;
+ALTER TABLE operations MODIFY operation_key VARCHAR(80) COLLATE utf8mb4_bin NOT NULL;

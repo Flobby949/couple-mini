@@ -1,0 +1,16 @@
+{
+  "light": {
+    "page": "#F6F7FC", "navText": "black", "surface": "#FFFFFF", "muted": "#71677E", "primary": "#6752A3", "border": "white",
+    "homeIcon": "assets/tab-icons/home-iris-light.png", "homeActive": "assets/tab-icons/home-iris-light-active.png",
+    "tasksIcon": "assets/tab-icons/tasks-iris-light.png", "tasksActive": "assets/tab-icons/tasks-iris-light-active.png",
+    "shopIcon": "assets/tab-icons/shop-iris-light.png", "shopActive": "assets/tab-icons/shop-iris-light-active.png",
+    "meIcon": "assets/tab-icons/me-iris-light.png", "meActive": "assets/tab-icons/me-iris-light-active.png"
+  },
+  "dark": {
+    "page": "#17151E", "navText": "white", "surface": "#24212D", "muted": "#BBB2CA", "primary": "#C7B5F4", "border": "black",
+    "homeIcon": "assets/tab-icons/home-iris-dark.png", "homeActive": "assets/tab-icons/home-iris-dark-active.png",
+    "tasksIcon": "assets/tab-icons/tasks-iris-dark.png", "tasksActive": "assets/tab-icons/tasks-iris-dark-active.png",
+    "shopIcon": "assets/tab-icons/shop-iris-dark.png", "shopActive": "assets/tab-icons/shop-iris-dark-active.png",
+    "meIcon": "assets/tab-icons/me-iris-dark.png", "meActive": "assets/tab-icons/me-iris-dark-active.png"
+  }
+}

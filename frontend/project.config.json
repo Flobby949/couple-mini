@@ -1,0 +1,7 @@
+{
+  "miniprogramRoot": "dist/weapp/",
+  "projectname": "couple-mini",
+  "appid": "touristappid",
+  "setting": { "es6": true, "minified": true, "urlCheck": true },
+  "compileType": "miniprogram"
+}
