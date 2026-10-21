@@ -506,3 +506,4 @@
 .ui-v2 .textarea .taro-textarea {max-width:100%;box-sizing:border-box;}
 
 .ui-v2 .partner-menu .menu-copy {flex-direction:column;align-items:flex-start;gap:5px;}
+.ui-v2 .cart-choice .weui-check:checked + .weui-icon-checked::before {color:var(--primary);}

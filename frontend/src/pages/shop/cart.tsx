@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { hideTabBar, showTabBar } from '@tarojs/taro'
 import { useQuery } from '@tanstack/react-query'
 import { Button, Radio, Text, View } from '@tarojs/components'
 import { getCart, removeCart } from '../../features/catalog/api'
@@ -16,6 +17,10 @@ import { Empty, ErrorState, Loading } from '../../ui'
 export function CartSheet({ close }: { close: () => void }) {
   const action = useAction(), [selected, select] = useState('')
   const { scheme, appearance } = useTheme()
+  useEffect(() => {
+    void hideTabBar({ animation: false })
+    return () => { void showTabBar({ animation: false }) }
+  }, [])
   const query = useQuery({ queryKey: keys.cart, queryFn: getCart, staleTime: 0, refetchInterval: 30000 })
   const product = query.data?.items.find(p => p.id === selected)
   const blocked = product && query.data ? purchaseBlock(query.data.balance, product.stock, product.price) : ''
