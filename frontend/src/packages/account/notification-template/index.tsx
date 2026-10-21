@@ -12,7 +12,7 @@ import { newKey, pending } from '../../../core/operations'
 import { useAction } from '../../../core/use-action'
 import { session } from '../../../core/api'
 import { beijingTime } from '../../../core/values'
-import { navigate, storage } from '../../../platform'
+import { returnTo, storage } from '../../../platform'
 import { requestSubscription, subscriptionSupported } from '../../../platform/subscription'
 import { Empty, ErrorState, Loading, Notice } from '../../../ui'
 import { Icon, InlineInfo } from '../../../ui/visual'
@@ -59,6 +59,6 @@ export default function NotificationTemplatePage() {
         <Button className='button secondary' disabled={!gate.allowed || busy || !!report || !template.wechatAvailable || !subscriptionSupported} onClick={() => void authorize()}>请求本模板微信订阅</Button>{status && <Text className='muted'>{status}</Text>}{report && <Notice><Text>本次结果待同步：{authorizationNames[report.result] || '授权未完成'}。同步失败不撤销已保存的接收偏好。</Text><Button className='button' disabled={!gate.allowed || busy} onClick={syncReport}>同步授权结果</Button><Button className='text-button' disabled={busy} onClick={() => {storage.remove(reportKey);setReport(undefined);setStatus('已清除本机待同步记录，不会撤销你在微信中的选择。')}}>放弃本次上报</Button></Notice>}</View>
       <Text className='section-title section-heading'>最近微信投递</Text><Text className='muted'>仅微信通知也会记录投递结果；不会自动补发不可投递或结果未知的记录。</Text>{deliveries.data?.items.length === 0 && <Empty title='还没有微信投递记录' description='只有业务发生时开启微信渠道的消息才会进入这里。' />}{deliveries.data?.items.map(d => <View className='ledger-row' key={d.id}><View><Text className='section-title'>{d.title}</Text><Text>{deliveryNames[d.status] || '状态待核查'}</Text>{d.reason && <Text className='muted'>{deliveryReasons[d.reason] || '请联系维护者核查'}</Text>}<Text className='muted'>{beijingTime(d.updatedAt)} 北京时间 · 已尝试 {d.attempts} 次</Text></View></View>)}
     </>}</>}
-    <Button className='text-button' onClick={() => void navigate('/packages/account/notification-settings/index')}>查看全部 30 种模板</Button>
+    <Button className='text-button' onClick={() => void returnTo('/packages/account/notification-settings/index')}>查看全部 30 种模板</Button>
   </Page>
 }

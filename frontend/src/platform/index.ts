@@ -11,6 +11,13 @@ export async function online() {
 export const platformLogin = () => Taro.login()
 export const navigate = (url: string) => Taro.navigateTo({ url })
 export const replace = (url: string) => Taro.redirectTo({ url })
+export function returnTo(url: string) {
+  const pages = Taro.getCurrentPages()
+  const index = pages.map(page => page.route?.replace(/^\//, '')).lastIndexOf(url.replace(/^\//, ''))
+  if (index < 0) return replace(url)
+  const delta = pages.length - index - 1
+  return delta > 0 ? Taro.navigateBack({ delta }) : Promise.resolve()
+}
 export const home = () => Taro.switchTab({ url: '/pages/home/index' })
 export const switchTab = (url: string) => Taro.switchTab({ url })
 export const redirect = (url: string) => Taro.reLaunch({ url })

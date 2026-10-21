@@ -17,8 +17,8 @@ export default function GiftPage() {
   const query = useQuery({ queryKey: keys.giftPreview, queryFn: getGiftPreview, enabled: gate.allowed, staleTime: 0, refetchInterval: gate.allowed ? 15000 : false })
   const history = useQuery({ queryKey: keys.gifts, queryFn: getGifts, enabled: gate.allowed, staleTime: 0, refetchInterval: gate.allowed ? 30000 : false })
   const value = parsePoints(amount), preview = query.data
-  const actual = preview && value !== null ? Math.min(value,preview.receiverRemaining) : undefined
   const valid = value !== null && !!preview && value <= preview.singleMax && preview.sendsRemaining > 0
+  const actual = valid ? Math.min(value,preview.receiverRemaining) : undefined
   function submit() { if (gate.allowed && valid) void action.run(() => sendGift(amount), async result => { setAmount(''); await navigate(`/packages/account/gift-detail/index?id=${result.id}`) }) }
   return <Page title='送一份小小的鼓励' subtitle='这不是转账，积分由系统新增。'>
     <ErrorState error={gate.error || query.error || history.error || action.error} retry={() => { void gate.refetch(); void query.refetch(); void history.refetch() }} />

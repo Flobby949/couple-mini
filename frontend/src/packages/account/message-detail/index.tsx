@@ -10,7 +10,7 @@ import { keys } from '../../../core/query'
 import { pending } from '../../../core/operations'
 import { useAction } from '../../../core/use-action'
 import { beijingTimeSeconds } from '../../../core/values'
-import { navigate } from '../../../platform'
+import { returnTo } from '../../../platform'
 import { openTarget } from '../../../app/navigation'
 import { ErrorState, Loading, Notice } from '../../../ui'
 import { Icon } from '../../../ui/visual'
@@ -27,6 +27,6 @@ export default function MessageDetailPage() {
       {message.deliveryStatus && <Notice><Text>微信：{deliveryNames[message.deliveryStatus] || '状态待核查'}</Text>{message.deliveryReason && <Text>{deliveryReasons[message.deliveryReason] || '请在提醒偏好中查看投递记录'}</Text>}</Notice>}
       {targetRoute(message.target) ? <Button className='button' onClick={() => void openTarget(message.target)}>查看当前事项</Button> : <Notice>这个消息入口暂不可用，可以返回消息中心。</Notice>}
     </>}
-    <Button className='text-button' onClick={() => void navigate('/packages/account/messages/index')}>返回消息中心</Button>
+    <Button className='text-button' onClick={() => void returnTo('/packages/account/messages/index')}>返回消息中心</Button>
   </Page>
 }

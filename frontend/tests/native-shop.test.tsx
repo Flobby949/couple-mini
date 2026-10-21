@@ -1,0 +1,37 @@
+import { afterEach, expect, it, vi } from 'vitest'
+import { act, create, type ReactTestRenderer } from 'react-test-renderer'
+const fixture = vi.hoisted(() => ({ navigate: vi.fn(), add: vi.fn(), product: { id: 'product', name: '零积分心意', price: 0, stock: 1, coverId: 'cover' } }))
+vi.mock('@tarojs/components', () => ({ View: 'view', Text: 'text', Button: 'button' }))
+vi.mock('@tarojs/taro', () => ({ useDidHide: () => {} }))
+vi.mock('@tanstack/react-query', () => ({ useQuery: ({ queryKey }: { queryKey: string[] }) => ({ data: queryKey[0] === 'catalog' ? { products: [fixture.product], balance: 0 } : { items: [] } }) }))
+vi.mock('../src/app/hooks', () => ({ useGate: () => ({ allowed: true, data: { me: { id: 'buyer' }, partner: { id: 'seller', nickname: '伴侣' } } }) }))
+vi.mock('../src/app/page', () => ({ Page: ({ children }: { children: React.ReactNode }) => children }))
+vi.mock('../src/core/query', () => ({ keys: { catalog: () => ['catalog'], cart: ['cart'] } }))
+vi.mock('../src/core/use-action', () => ({ useAction: () => ({ busy: false, run: (fn: () => unknown) => fn() }) }))
+vi.mock('../src/platform', () => ({ navigate: fixture.navigate }))
+vi.mock('../src/features/catalog/api', () => ({ addCart: fixture.add, getCart: vi.fn(), getCatalog: vi.fn() }))
+vi.mock('../src/features/catalog/components', () => ({ Cover: () => null }))
+vi.mock('../src/ui/visual', () => ({ Avatar: () => null, Icon: () => null }))
+vi.mock('../src/ui/use-artwork', () => ({ useArtwork: () => ({ emptyStore: '/empty.png' }) }))
+vi.mock('../src/pages/shop/cart', () => ({ CartSheet: () => null }))
+import Shop from '../src/pages/shop'
+let tree: ReactTestRenderer | undefined
+afterEach(() => { act(() => tree?.unmount()); tree = undefined; vi.clearAllMocks() })
+it('exposes product details as a native button while retaining the visible product name', () => {
+  act(() => { tree = create(<Shop/>) })
+  const link = tree!.root.findByProps({ ariaLabel: '查看零积分心意详情' })
+  expect(link.type).toBe('button')
+  expect(link.children).toContain('零积分心意')
+  const stop = vi.fn()
+  act(() => link.props.onClick({ stopPropagation: stop }))
+  expect(stop).toHaveBeenCalledOnce()
+  expect(fixture.navigate).toHaveBeenCalledExactlyOnceWith('/packages/commerce/product/index?id=product')
+})
+it('the cart action does not trigger product navigation', () => {
+  act(() => { tree = create(<Shop/>) })
+  const stop = vi.fn()
+  act(() => tree!.root.findByProps({ ariaLabel: '将零积分心意加入购物车' }).props.onClick({ stopPropagation: stop }))
+  expect(stop).toHaveBeenCalledOnce()
+  expect(fixture.add).toHaveBeenCalledExactlyOnceWith('product')
+  expect(fixture.navigate).not.toHaveBeenCalled()
+})

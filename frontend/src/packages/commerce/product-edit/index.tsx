@@ -11,7 +11,7 @@ import { uploadMedia } from '../../../core/media'
 import { parsePoints, parseStock } from '../../../core/values'
 import { keys } from '../../../core/query'
 import { useAction } from '../../../core/use-action'
-import { navigate } from '../../../platform'
+import { back } from '../../../platform'
 import { Icon } from '../../../ui/visual'
 import { ErrorState, Loading, Notice } from '../../../ui'
 import type { Product } from '../../../contracts/commerce'
@@ -45,7 +45,7 @@ function ProductForm({ product, canSubmit }: { product?: Product; canSubmit: boo
     try { const path = await chooseCover(); setLocalCover(path); set(current => ({ ...current, coverId: '' })); await upload(path) }
     catch (e) { if (e instanceof Error && !e.message.includes('cancel')) setUploadError(e) }
   }
-  function save() { if (canSubmit) void action.run(() => saveProduct(id, { ...form, stock: parseStock(form.stock)! }), async () => { await navigate('/packages/commerce/store/index') }) }
+  function save() { if (canSubmit) void action.run(() => saveProduct(id, { ...form, stock: parseStock(form.stock)! }), async () => { await back('/packages/commerce/store/index') }) }
   return <View className='surface form'>
       <ErrorState error={action.error} />
       <Text className='section-title'>商品封面（必选）</Text>
