@@ -38,9 +38,6 @@
 .portrait-frame { position:absolute; inset:0; width:100%; height:100%; }
 .portrait-state { position:absolute; right:0; bottom:4px; width:26px; height:26px; border:3px solid var(--surface); border-radius:50%; background:var(--tint); }
 .portrait-state.is-checked { display:flex; align-items:center; justify-content:center; background:var(--surface); box-shadow:0 2px 5px #35255925; }
-.pair-thread { position:absolute; width:32%; left:34%; top:52px; text-align:center; color:var(--primary); }
-.pair-thread > text { position:relative; display:inline-block; margin-top:-20px; font-size:35px; background:var(--surface); line-height:1; }
-.pair-thread > view { width:100%; height:24px; border-bottom:2px dashed var(--primary); border-radius:0 0 50% 50%; }
 .checkin-panel { position:relative; padding:9px 24px 11px; margin:0 -6px 10px; min-height:235px; isolation:isolate; }
 .fabric { position:absolute; inset:0; width:100%; height:100%; z-index:-1; }
 .checkin-panel .pair { display:flex; justify-content:space-between; position:relative; padding:8px 3px 6px; gap:12px; }
@@ -50,8 +47,6 @@
 .person-name { max-width:70px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .checkin-state { color:var(--warning); font-size:12px; }
 .checkin-state.checked { color:var(--primary); }
-.checkin-panel .pair-thread { top:48px; }
-.checkin-panel .pair-thread > text { background:transparent; }
 .checkin-button { width:100%; margin-top:4px; min-height:44px; }
 .checkin-help { display:block; text-align:center; font-size:11px; color:var(--muted); padding-top:4px; }
 .theme-dark .fabric { opacity:.12; }
@@ -145,3 +140,10 @@
 .ui-v2.route-home .checkin-panel {padding-top:0;}
 .ui-v2.route-home .balance-tile {padding-top:8px;padding-bottom:8px;}
 .ui-v2 .pool-card,.ui-v2 .balance-tile,.ui-v2 .profile-row,.ui-v2 .todo-row,.ui-v2 .shortcut-grid > * {color:var(--ink);}
+
+.ui-v2 .checkin-panel {padding-left:20px;padding-right:20px;}
+.ui-v2 .checkin-panel .pair {padding-top:20px;gap:0;}
+.ui-v2 .person {flex:0 0 112px;width:112px;z-index:1;}
+.ui-v2 .pair-connection {position:absolute;top:34px;left:50%;width:156px;height:80px;transform:translateX(-50%);pointer-events:none;z-index:0;}
+.ui-v2 .person-caption {width:142px;max-width:142px;justify-content:center;white-space:nowrap;}
+.ui-v2 .checkin-state {flex-shrink:0;}

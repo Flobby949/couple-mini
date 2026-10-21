@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="156" height="80" viewBox="0 0 156 80" fill="none">
+  <defs>
+    <linearGradient id="rope" x1="67" y1="10" x2="91" y2="45" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#b7a6db"/><stop offset="1" stop-color="#6752a3"/>
+    </linearGradient>
+  </defs>
+  <!-- Each tail rises toward the knot; the portraits cover its outer end. -->
+  <g stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 6">
+    <path d="M2 58C27 58 53 52 77 39M82 41C105 53 129 59 154 58" stroke="#e4dcf3" stroke-width="5"/>
+    <path d="M2 58C27 58 53 52 77 39M82 41C105 53 129 59 154 58" stroke="url(#rope)" stroke-width="3.2"/>
+  </g>
+  <!-- An asymmetric, interlaced heart, drawn as stitched cord instead of a font glyph. -->
+  <g transform="translate(78 42) scale(.8) translate(-78 -42)">
+  <path d="M78 42C70 36 60 24 65 15C69 7 77 12 79 22C83 13 94 9 98 17C103 27 90 39 81 44" stroke="#e4dcf3" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M78 42C70 36 60 24 65 15C69 7 77 12 79 22C83 13 94 9 98 17C103 27 90 39 81 44" stroke="url(#rope)" stroke-width="4.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M77 39C69 32 64 24 67 17C69 13 73 15 76 21M84 22C88 16 93 14 95 18" stroke="#e4dcf3" stroke-width="1" stroke-linecap="round" opacity=".8"/>
+  <path d="m75 39 6 5" stroke="#b7a6db" stroke-width="4.3" stroke-linecap="round"/>
+  </g>
+</svg>

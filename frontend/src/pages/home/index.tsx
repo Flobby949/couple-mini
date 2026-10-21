@@ -13,6 +13,7 @@ import { useGate } from '../../app/hooks'
 import { keys } from '../../core/query'
 import type { CheckinResult } from '../../contracts/api'
 import { navigate } from '../../platform'
+import { useTheme } from '../../app/theme'
 import { Page } from '../../app/page'
 import { useAction } from '../../core/use-action'
 import { ErrorState, Loading } from '../../ui'
@@ -20,7 +21,7 @@ import panel from '../../assets/checkin-fabric-panel.png'
 import { statuses } from '../../features/orders/presentation'
 import { Avatar, BalanceTiles, Icon, PoolCard, Section } from '../../ui/visual'
 export default function HomePage() {
-  const gate = useGate(), action = useAction()
+  const gate = useGate(), action = useAction(), {scheme,appearance} = useTheme()
   const [receipt, setReceipt] = useState<CheckinResult>()
   const query = useQuery({ queryKey: keys.home, queryFn: getHome, enabled: gate.allowed, refetchInterval: gate.allowed ? 15000 : false })
   const data = gate.allowed ? query.data : undefined
@@ -31,7 +32,7 @@ export default function HomePage() {
     {data && <>
       <View className='checkin-panel'><Image className='fabric' src={panel} mode='scaleToFill' ariaHidden /><View className='pair'>
         {[{user:data.context.me,checked:data.checkin.me,me:true},{user:data.context.partner!,checked:data.checkin.partner,me:false}].map(item => <View className='person' key={item.user.id}><Avatar user={item.user} partnerId={item.me ? data.context.partner!.id : data.context.me.id} size={112} stitched checked={item.checked} /><View className='person-caption'><Text className='person-name'>{item.me ? '我' : item.user.nickname}</Text><Text className={`checkin-state ${item.checked ? 'checked' : ''}`}>· {item.checked ? '已签到' : '待签到'}</Text></View></View>)}
-        <View className='pair-thread'><Text>♡</Text><View /></View>
+        <Image className='pair-connection' src={`/assets/ui-icons/checkin-connection-${appearance.accent}-${scheme}.png`} mode='aspectFit' ariaHidden />
       </View><Button className='button checkin-button' loading={action.busy} disabled={action.busy || data.checkin.me} onClick={() => void action.run(() => checkIn(),setReceipt)}>{data.checkin.me ? '今日已签到' : '签到入池 +10'}</Button><Text className='checkin-help'>{data.checkin.me && data.checkin.partner ? '今日两人已签到，基础共 30 积分入池' : '两人都签到，再入池 10 积分'}</Text></View>
       {receipt && <View className='receipt' role='status'><Text className='section-title'>本次共 {receipt.total} 积分入池</Text><Text>签到 {receipt.base}{receipt.doubleBonus > 0 ? ` + 双人奖励 ${receipt.doubleBonus}` : ''}{receipt.milestoneBonus > 0 ? ` + 里程碑奖励 ${receipt.milestoneBonus}` : ''}</Text></View>}
       <PoolCard total={data.points.total} available={data.points.available} reserved={data.points.reserved} />

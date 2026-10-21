@@ -35,3 +35,12 @@ for (const [name, body] of Object.entries(iconPaths)) for (const scheme of ['lig
     await sharp(Buffer.from(svg)).png({palette:true}).toFile(`${output}/ui-icons/${name}-${tone}-${scheme}.png`)
   }
 }
+
+// The same SVG geometry is exported at 3x for native mini-program Image compatibility.
+const connection = await readFile(new URL('../src/ui/checkin-connection.svg', import.meta.url), 'utf8')
+const tint = (hex, amount) => '#' + hex.slice(1).match(/../g).map(part => Math.round(parseInt(part,16)*(1-amount)+255*amount).toString(16).padStart(2,'0')).join('')
+for (const [accent,palette] of Object.entries(colors)) for (const [index,scheme] of ['light','dark'].entries()) {
+  const color=palette[index]
+  const svg=connection.replaceAll('#6752a3',color).replaceAll('#b7a6db',tint(color,.5)).replaceAll('#e4dcf3',tint(color,.78))
+  await sharp(Buffer.from(svg)).resize(468,240).png().toFile(`${output}/ui-icons/checkin-connection-${accent}-${scheme}.png`)
+}
