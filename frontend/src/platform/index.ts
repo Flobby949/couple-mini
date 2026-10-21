@@ -18,3 +18,7 @@ export const copy = (data: string) => Taro.setClipboardData({ data })
 
 export const setPageTitle = (title: string) => Taro.setNavigationBarTitle({title}).catch(() => {})
 export function topInset() { try { return Taro.getWindowInfo().statusBarHeight || 0 } catch { return 0 } }
+export async function back(fallback = '/pages/me/index') {
+  if (Taro.getCurrentPages().length > 1) { await Taro.navigateBack(); return }
+  return fallback.startsWith('/pages/') ? switchTab(fallback) : replace(fallback)
+}

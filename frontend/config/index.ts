@@ -21,6 +21,7 @@ export default defineConfig<'vite'>({
   copy: { patterns: [{ from: path.resolve(__dirname, '../src/assets/tab-icons'), to: 'assets/tab-icons' }, { from: path.resolve(__dirname, '../src/assets/ui-icons'), to: 'assets/ui-icons' }], options: {} },
   h5: {
     publicPath: '/',
+    postcss: { pxtransform: { config: { maxRootSize: 20.8 } } },
     router: { mode: 'hash' },
     devServer: { host: '127.0.0.1', port: 10086 },
   },

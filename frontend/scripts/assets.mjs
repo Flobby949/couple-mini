@@ -7,7 +7,7 @@ await mkdir(output, { recursive: true })
 for (const [file, width] of [
   ['decor/checkin-fabric-panel.png', 700], ['decor/avatar-stitch-frame.png', 224],
   ['decor/home-shelf.png', 240], ['illustrations/points-jar.png', 128],
-  ['avatars/avatar-woman.png', 336], ['avatars/avatar-man.png', 336], ['illustrations/empty-tasks.png', 400], ['illustrations/empty-store.png', 440],
+  ['illustrations/milestone-rosette.png', 384], ['avatars/avatar-woman.png', 336], ['avatars/avatar-man.png', 336], ['illustrations/empty-tasks.png', 400], ['illustrations/empty-store.png', 440],
 ]) {
   await sharp(`${root}assets/ui/v1/${file}`).resize({ width }).png({ palette: true, quality: 85 }).toFile(`${output}/${file.split('/').at(-1)}`)
 }

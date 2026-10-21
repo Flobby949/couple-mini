@@ -1,37 +1,33 @@
-/* THESIS: 先看谁需要处理，再把约定和积分说清楚。
- * OWN-WORLD: 沿用已确认的冷白/深色表面和三种语义主题色。
- * STORY: 选择任务类型，查看主阶段与独立取消申请，完成双方确认。
- * FIRST VIEWPORT: 任务类型、预算、新建入口和待办筛选在列表前。
- * FORM: 沿用 v2 任务流程；任务与订单分别解释取消、时间和结算。
- */
+/* Approved v2 board 01: task type tabs, shared budget, responsibility filters, compact task rows. */
 import { useState } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
-import { Button, Text, View } from '@tarojs/components'
+import { Button, Image, Text, View } from '@tarojs/components'
 import { useGate } from '../../app/hooks'
 import { Page } from '../../app/page'
 import { Empty, ErrorState, Loading } from '../../ui'
+import { Icon } from '../../ui/visual'
 import empty from '../../assets/empty-tasks.png'
+import jar from '../../assets/points-jar.png'
 import { getTasks } from '../../features/tasks/api'
-import { TaskSummary } from '../../features/tasks/components'
+import { taskStatus } from '../../features/tasks/presentation'
 import { getHome } from '../../features/home/api'
 import { keys } from '../../core/query'
 import { navigate } from '../../platform'
 import type { TaskKind } from '../../contracts/tasks'
-
-export default function Tasks() {
-  const gate = useGate()
-  const [kind, setKind] = useState<TaskKind>('joint'), [filter, setFilter] = useState('active')
-  const budget = useQuery({ queryKey: keys.home, queryFn: getHome, enabled: gate.allowed, refetchInterval: gate.allowed ? 30000 : false })
-  const query = useInfiniteQuery({ queryKey: keys.tasks(kind, filter), queryFn: ({ pageParam }) => getTasks(kind, filter, pageParam), initialPageParam: '', getNextPageParam: last => last.nextCursor || undefined, enabled: gate.allowed, staleTime: 0, refetchInterval: gate.allowed ? 30000 : false })
-  const items = query.data?.pages.flatMap(page => page.items)
-  return <Page messageEntry title='一起，把约定做好' subtitle='双方愿意，才是约定的开始。'>
-    <View className='segmented'>{(['joint','partner'] as const).map(value => <Button key={value} className={kind === value ? 'selected' : ''} onClick={() => setKind(value)}>{value === 'joint' ? '共同任务' : '伴侣任务'}</Button>)}</View>
-    {gate.allowed && budget.data && <View className='surface task-budget'><View><Text className='section-title'>共同任务预算</Text><Text className='muted'>可用 {budget.data.points.available} · 已预留 {budget.data.points.reserved} 积分</Text></View><Button className='button small' onClick={() => void navigate(`/packages/tasks/edit/index?kind=${kind}`)}>新建任务</Button></View>}
-    <View className='filter-options'>{[{value:'todo',label:'待我处理'},{value:'active',label:'进行中'},{value:'history',label:'历史'}].map(item => <Button key={item.value} className={`text-button ${filter === item.value ? 'selected' : ''}`} onClick={() => setFilter(item.value)}>{item.label}</Button>)}</View>
-    <ErrorState error={gate.error || budget.error || query.error} retry={() => { void gate.refetch(); void budget.refetch(); void query.refetch() }} />
-    {(!gate.allowed || !items) && !query.error && <Loading />}
-    {gate.allowed && items?.length === 0 && <Empty image={empty} title={filter === 'todo' ? '暂时没有需要你处理的约定' : '这里还没有任务'} description='可以发起一个共同任务，或邀请伴侣完成一件小事。' />}
-    {gate.allowed && items?.map(task => <View className='surface task-list-item' key={task.id}><TaskSummary task={task} />{task.cancelRequest && <Text className='warning-text'>取消申请待处理，主流程仍可继续</Text>}<Button className='button secondary' onClick={() => void navigate(`/packages/tasks/detail/index?id=${task.id}`)}>查看任务</Button></View>)}
-    {gate.allowed && query.hasNextPage && <Button className='button secondary' disabled={query.isFetchingNextPage} loading={query.isFetchingNextPage} onClick={() => void query.fetchNextPage()}>加载更多任务</Button>}
-  </Page>
+import { beijingTime } from '../../core/values'
+export default function Tasks(){
+ const gate=useGate(),[kind,setKind]=useState<TaskKind>('joint'),[filter,setFilter]=useState('todo')
+ const budget=useQuery({queryKey:keys.home,queryFn:getHome,enabled:gate.allowed,refetchInterval:gate.allowed?30000:false})
+ const query=useInfiniteQuery({queryKey:keys.tasks(kind,filter),queryFn:({pageParam})=>getTasks(kind,filter,pageParam),initialPageParam:'',getNextPageParam:last=>last.nextCursor||undefined,enabled:gate.allowed,staleTime:0,refetchInterval:gate.allowed?30000:false})
+ const items=query.data?.pages.flatMap(p=>p.items)
+ return <Page messageEntry title='任务'>
+  <View className='task-tabs'>{(['joint','partner'] as const).map(value=><Button key={value} className={kind===value?'selected':''} onClick={()=>setKind(value)}>{value==='joint'?'共同任务':'伴侣任务'}</Button>)}<Button className='button small' onClick={()=>void navigate(`/packages/tasks/edit/index?kind=${kind}`)}>＋ 新建</Button></View>
+  {gate.allowed&&budget.data&&<View className='task-budget-row' onClick={()=>void navigate('/packages/account/history/index')}><Image className='budget-jar' src={jar} mode='aspectFit'/><View className='row'><Text className='section-title'>共同积分池</Text><Text className='muted'>可用 <Text className='primary-text'>{budget.data.points.available}</Text> · 已预留 {budget.data.points.reserved}</Text></View><Icon name='chevron' tone='muted' size={16}/></View>}
+  <View className='filter-options'>{[{value:'todo',label:'待我处理'},{value:'active',label:'进行中'},{value:'history',label:'历史'}].map(f=><Button key={f.value} className={filter===f.value?'selected':''} onClick={()=>setFilter(f.value)}>{f.label}</Button>)}</View>
+  <ErrorState error={gate.error||budget.error||query.error} retry={()=>{void gate.refetch();void budget.refetch();void query.refetch()}}/>
+  {(!gate.allowed||!items)&&!query.error&&<Loading/>}
+  {gate.allowed&&items?.length===0&&<Empty image={empty} title={filter==='todo'?'暂时没有待处理的任务':'这里还没有任务'} description='发起一份小约定，一起把日常过得更温柔。'/>}
+  {gate.allowed&&items?.map(t=><View className='surface task-card' key={t.id}><View className='task-thumb'><Icon name='task' tone='primary' size={38}/></View><View className='task-card-copy'><View className='row'><Text className='section-title'>{t.name}</Text><Text className={`tag ${['pending','awaiting'].includes(t.status)?'warning':''}`}>{taskStatus(t)}</Text></View><Text className='muted'>{t.kind==='joint'?'每人':'奖励'} <Text className='primary-text'>{t.reward}</Text> 积分 · {t.effectiveDeadline?`${beijingTime(t.effectiveDeadline)} 截止`:'不限时'}</Text><Text className='muted'>{t.cancelRequest?'取消申请待处理，主流程仍可继续':t.status==='awaiting'?'另一方已提交完成':t.status==='pending'?'等待接受这份约定':t.status==='active'?'按约定一起完成':'查看这份约定的结果'}</Text><View className='task-card-footer'><Button className='button small' onClick={()=>void navigate(`/packages/tasks/detail/index?id=${t.id}`)}>{t.allowedActions.includes('confirm')?'查看并确认':t.allowedActions.includes('accept')?'查看邀请':'查看任务'}</Button></View></View></View>)}
+  {gate.allowed&&query.hasNextPage&&<Button className='button secondary' disabled={query.isFetchingNextPage} loading={query.isFetchingNextPage} onClick={()=>void query.fetchNextPage()}>加载更多任务</Button>}
+ </Page>
 }

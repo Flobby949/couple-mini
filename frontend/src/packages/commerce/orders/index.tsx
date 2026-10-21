@@ -23,7 +23,7 @@ export default function OrdersPage() {
     <ErrorState error={gate.error || query.error} retry={() => { void gate.refetch(); void query.refetch() }} />
     {(!gate.allowed || !items) && !query.error && <Loading />}
     {gate.allowed && items?.length === 0 && <Empty title='这里还没有订单' description={role === 'buyer' ? '可以去伴侣的小店看看，挑一份喜欢的心意。' : '收到伴侣的下单后，会出现在这里。'} />}
-    {gate.allowed && items?.map(o => <View className='surface order-summary' key={o.id}><View className='row'><Text className='tag'>{o.cancelPending ? '取消申请待处理' : statuses[o.status] || '状态待更新'}</Text><Text className='muted'>固定 1 份</Text></View><ProductSummary product={o.snapshot} /><Text className='muted'>{beijingTime(o.createdAt)} 北京时间</Text><Button className='button secondary' onClick={() => void navigate(`/packages/commerce/order-detail/index?id=${o.id}`)}>查看订单</Button></View>)}
+    {gate.allowed&&items?.map(o=><View className='surface order-summary' key={o.id}><Text className={`tag ${o.status==='pending'||o.status==='awaiting_receipt'?'warning':''}`}>{o.cancelPending?'取消申请待处理':statuses[o.status]}</Text><ProductSummary product={o.snapshot}/><Text className='muted order-card-time'>下单时间 {beijingTime(o.createdAt)}</Text><View className='order-card-action'><Button className='button small' onClick={()=>void navigate(`/packages/commerce/order-detail/index?id=${o.id}`)}>查看{o.allowedActions.includes('confirm')?'并确认':'订单'}</Button></View></View>)}
     {gate.allowed && query.hasNextPage && <Button className='button secondary' loading={query.isFetchingNextPage} disabled={query.isFetchingNextPage} onClick={() => void query.fetchNextPage()}>加载更多订单</Button>}
   </Page>
 }

@@ -12,7 +12,8 @@ import { checkoutPrice, clearCheckoutPrice } from '../../../features/orders/chec
 import { keys } from '../../../core/query'
 import { useAction } from '../../../core/use-action'
 import { pending } from '../../../core/operations'
-import { navigate } from '../../../platform'
+import { back, navigate } from '../../../platform'
+import { Avatar, Icon, InlineInfo } from '../../../ui/visual'
 import { ErrorState, Loading, Notice } from '../../../ui'
 
 export default function Checkout() {
@@ -27,13 +28,13 @@ export default function Checkout() {
   function submit() { if (data) void action.run(() => placeOrder(id, data.product.price), async result => { await navigate(`/packages/commerce/order-detail/index?id=${result.orderId}`) }) }
   return <Page title='确认这一份心意' subtitle='一次一个商品，固定兑换一份。'>
     <ErrorState error={gate.error || query.error || action.error} retry={() => { void gate.refetch(); void query.refetch() }} />
-    {!data && !query.error ? <Loading /> : data && <>
-      <View className='surface'><ProductSummary product={data.product} stock={data.product.stock} /><Text className='description'>{data.product.description}</Text></View>
-      {changed && <Notice><Text className='section-title'>价格已更新，请重新确认</Text><Text>{originalPrice} 积分 → {data.product.price} 积分</Text></Notice>}
-      <View className='surface checkout-lines'><View><Text>兑换数量</Text><Text>1 份</Text></View><View><Text>本次扣除</Text><Text className='price'>{data.product.price} 积分</Text></View><View><Text>当前余额</Text><Text>{data.balance} 积分</Text></View><View><Text>下单后余额</Text><Text>{blocked ? '当前不可下单' : `${data.balance - data.product.price} 积分`}</Text></View></View>
-      <Text className='muted'>下单即扣积分与一份库存，等待店主接单。消费积分退出系统，不转入对方余额或积分池。</Text>
+    {!id ? <Notice>下单入口缺少标识，请返回后重新打开。</Notice> : !data && !query.error && !gate.error ? <Loading /> : data && <>
+      <View className='surface checkout-product'><ProductSummary product={data.product} stock={data.product.stock}/><View className='checkout-owner'><Avatar user={gate.data!.partner!} partnerId={gate.data!.me.id} size={42}/><Text className='muted'>{gate.data!.partner!.nickname}</Text></View></View>
+      {changed&&<Notice><Text className='section-title'>价格已更新</Text><Text className='price-change'><Text className='old-price'>{originalPrice} 积分</Text><Text> → </Text><Text className='danger-text'>{data.product.price} 积分</Text></Text><Text>请确认新价格后再下单</Text></Notice>}
+      <View className='surface checkout-lines'><View><Icon name='gift' tone='primary'/><Text>兑换数量</Text><Text>1 份</Text></View><View><Icon name='coins' tone='primary'/><Text>本次扣除</Text><Text className='danger-text'>{data.product.price} 积分</Text></View><View><Icon name='star' tone='primary'/><Text>当前余额</Text><Text>{data.balance} 积分</Text></View><View><Icon name='wallet' tone='primary'/><Text>下单后余额</Text><Text>{blocked?'当前不可下单':`${data.balance-data.product.price} 积分`}</Text></View></View>
+      <InlineInfo>下单即扣积分与一份库存，等待店主接单。消费积分退出系统。</InlineInfo>
       {blocked && <Notice>{blocked}</Notice>}
-      <Button className='button checkout-button' loading={action.busy} disabled={!!blocked || action.busy || !!pending()} onClick={submit}>{changed ? '确认以新价' : '确认以'} {data.product.price} 积分下单</Button>
+      <View className='actions checkout-actions'><Button className='button secondary' disabled={action.busy} onClick={()=>void back('/pages/shop/index')}>暂不下单</Button><Button className='button' loading={action.busy} disabled={!!blocked || action.busy || !!pending()} onClick={submit}>{changed ? '确认以新价' : '确认以'} {data.product.price} 积分下单</Button></View>
     </>}
   </Page>
 }

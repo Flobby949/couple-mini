@@ -1,7 +1,7 @@
 import { type PropsWithChildren } from 'react'
 import { Button, Image, Text, View } from '@tarojs/components'
 
-export function Notice({ children }: PropsWithChildren) { return <View className='notice' role='alert'>{children}</View> }
+export function Notice({ children }: PropsWithChildren) { return <View className='notice' role='alert'><View className='notice-symbol'>!</View><View className='notice-content'>{children}</View></View> }
 export function ErrorState({ error, retry }: { error: Error | null; retry?: () => void }) {
   if (!error) return null
   return <Notice><Text>{error.message}</Text>{retry && <Button className='button secondary' onClick={retry}>重新读取</Button>}</Notice>
