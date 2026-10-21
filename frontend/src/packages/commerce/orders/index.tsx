@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Button, ScrollView, Text, View } from '@tarojs/components'
+import { useRouter } from '@tarojs/taro'
 import { Page } from '../../../app/page'
 import { useGate } from '../../../app/hooks'
 import { getOrders } from '../../../features/orders/api'
@@ -13,7 +14,7 @@ import { Empty, ErrorState, Loading } from '../../../ui'
 
 const filters = [{ value: '', label: '全部' }, { value: 'pending', label: '待接单' }, { value: 'fulfilling', label: '待兑现' }, { value: 'awaiting_receipt', label: '待确认' }]
 export default function OrdersPage() {
-  const gate = useGate(), [role, setRole] = useState<'buyer' | 'seller'>('buyer'), [status, setStatus] = useState('')
+  const gate = useGate(), params=useRouter().params, [role, setRole] = useState<'buyer' | 'seller'>(params.role==='seller'?'seller':'buyer'), [status, setStatus] = useState(filters.some(f=>f.value===params.status)?params.status||'':'')
   const query = useInfiniteQuery({ queryKey: keys.orders(role, status), queryFn: ({ pageParam }) => getOrders(role, status, pageParam), initialPageParam: '', getNextPageParam: last => last.nextCursor || undefined, enabled: gate.allowed, refetchInterval: gate.allowed ? 30000 : false, staleTime: 0 })
   const items = query.data?.pages.flatMap(page => page.items)
   return <Page title='每一步，都有回应' subtitle='历史订单保留当时的商品与兑现约定。'>

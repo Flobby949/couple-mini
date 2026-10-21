@@ -15,3 +15,6 @@ export const home = () => Taro.switchTab({ url: '/pages/home/index' })
 export const switchTab = (url: string) => Taro.switchTab({ url })
 export const redirect = (url: string) => Taro.reLaunch({ url })
 export const copy = (data: string) => Taro.setClipboardData({ data })
+
+export const setPageTitle = (title: string) => Taro.setNavigationBarTitle({title}).catch(() => {})
+export function topInset() { try { return Taro.getWindowInfo().statusBarHeight || 0 } catch { return 0 } }

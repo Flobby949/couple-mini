@@ -18,7 +18,7 @@ export default defineConfig<'vite'>({
     DEV_LOGIN: JSON.stringify(process.env.NODE_ENV !== 'production' && process.env.TARO_APP_DEV_LOGIN === 'true'),
   },
   mini: {},
-  copy: { patterns: [{ from: path.resolve(__dirname, '../src/assets/tab-icons'), to: 'assets/tab-icons' }], options: {} },
+  copy: { patterns: [{ from: path.resolve(__dirname, '../src/assets/tab-icons'), to: 'assets/tab-icons' }, { from: path.resolve(__dirname, '../src/assets/ui-icons'), to: 'assets/ui-icons' }], options: {} },
   h5: {
     publicPath: '/',
     router: { mode: 'hash' },

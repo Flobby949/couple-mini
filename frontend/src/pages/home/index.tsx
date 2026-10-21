@@ -15,39 +15,35 @@ import type { CheckinResult } from '../../contracts/api'
 import { navigate } from '../../platform'
 import { Page } from '../../app/page'
 import { useAction } from '../../core/use-action'
-import { Empty, ErrorState, Loading } from '../../ui'
-import jar from '../../assets/points-jar.png'
+import { ErrorState, Loading } from '../../ui'
 import panel from '../../assets/checkin-fabric-panel.png'
-import frame from '../../assets/avatar-stitch-frame.png'
-import shelf from '../../assets/home-shelf.png'
-import { ProductSummary } from '../../features/catalog/components'
 import { statuses } from '../../features/orders/presentation'
-import { TaskSummary } from '../../features/tasks/components'
-
+import { Avatar, BalanceTiles, Icon, PoolCard, Section } from '../../ui/visual'
 export default function HomePage() {
   const gate = useGate(), action = useAction()
   const [receipt, setReceipt] = useState<CheckinResult>()
   const query = useQuery({ queryKey: keys.home, queryFn: getHome, enabled: gate.allowed, refetchInterval: gate.allowed ? 15000 : false })
   const data = gate.allowed ? query.data : undefined
   const next = data?.milestones.find(m => m.days > data.context.couple!.doubleDays)
-  return <Page messageEntry title='今天，也一起' subtitle='生活很普通，但因为有你，才特别。'>
-    <Image className='home-shelf' src={shelf} mode='aspectFit' />
+  return <Page messageEntry title='今天，也一起' subtitle='平凡的日子，因为有你而特别。'>
     <ErrorState error={gate.error || query.error || action.error} retry={() => { void gate.refetch(); void query.refetch() }} />
     {!data && !query.error && <Loading />}
     {data && <>
-      <View className='checkin-panel'><Image className='fabric' src={panel} mode='scaleToFill' /><View className='row'><Text className='section-title'>双人签到台</Text><Text className='tag'>{data.context.businessDate}</Text></View><View className='pair'>
-        {[{ user: data.context.me, checked: data.checkin.me, me: true }, { user: data.context.partner!, checked: data.checkin.partner, me: false }].map(item => <View className={`person ${item.me ? 'self' : 'partner'}`} key={item.user.id}><View className='avatar'><Text>{item.user.nickname.slice(0, 1)}</Text><Image className='avatar-frame' src={frame} mode='aspectFit' /></View><Text className='person-name'>{item.me ? '我' : item.user.nickname}</Text><Text className={`checkin-state ${item.checked ? 'checked' : ''}`}>{item.checked ? '✓ 已签到' : '待签到'}</Text></View>)}
-        <Text className='pair-connector'>一起</Text>
-      </View><Button className='button checkin-button' loading={action.busy} disabled={action.busy || data.checkin.me} onClick={() => void action.run(() => checkIn(), setReceipt)}>{data.checkin.me ? '今日已签到' : '签到入池 +10'}</Button><Text className='checkin-help'>{data.checkin.me && data.checkin.partner ? '今天两个人都到了，基础共 30 积分入池' : '两人都签到，再入池 10 积分'}</Text></View>
+      <View className='checkin-panel'><Image className='fabric' src={panel} mode='scaleToFill' ariaHidden /><View className='pair'>
+        {[{user:data.context.me,checked:data.checkin.me,me:true},{user:data.context.partner!,checked:data.checkin.partner,me:false}].map(item => <View className='person' key={item.user.id}><Avatar user={item.user} partnerId={item.me ? data.context.partner!.id : data.context.me.id} size={112} stitched checked={item.checked} /><View className='person-caption'><Text className='person-name'>{item.me ? '我' : item.user.nickname}</Text><Text className={`checkin-state ${item.checked ? 'checked' : ''}`}>· {item.checked ? '已签到' : '待签到'}</Text></View></View>)}
+        <View className='pair-thread'><Text>♡</Text><View /></View>
+      </View><Button className='button checkin-button' loading={action.busy} disabled={action.busy || data.checkin.me} onClick={() => void action.run(() => checkIn(),setReceipt)}>{data.checkin.me ? '今日已签到' : '签到入池 +10'}</Button><Text className='checkin-help'>{data.checkin.me && data.checkin.partner ? '今日两人已签到，基础共 30 积分入池' : '两人都签到，再入池 10 积分'}</Text></View>
       {receipt && <View className='receipt' role='status'><Text className='section-title'>本次共 {receipt.total} 积分入池</Text><Text>签到 {receipt.base}{receipt.doubleBonus > 0 ? ` + 双人奖励 ${receipt.doubleBonus}` : ''}{receipt.milestoneBonus > 0 ? ` + 里程碑奖励 ${receipt.milestoneBonus}` : ''}</Text></View>}
-      <View className='surface pool' onClick={() => void navigate('/packages/account/history/index')}><Image src={jar} className='jar' mode='aspectFit' /><View className='pool-total'><Text className='section-title'>共同积分池</Text><Text><Text className='number'>{data.points.total}</Text> 积分</Text></View><View className='pool-details'><Text>可用 {data.points.available}</Text><Text className='muted'>已预留 {data.points.reserved}</Text></View></View>
-      <View className='metrics'><View><Text className='muted'>我的积分</Text><Text><Text className='metric'>{data.points.balance}</Text> 积分</Text></View><View><Text className='muted'>今日已获得 / 上限</Text><Text><Text className='metric'>{data.points.earned}</Text> / {data.points.dailyLimit}</Text><Text className='muted'>剩余额度 {data.points.remaining} 积分</Text></View></View>
-      <Text className='section-title section-heading'>今日待办</Text>
-      {data.todos.length === 0 && data.orderTodos.length === 0 && (data.taskTodos || []).length === 0 && <Empty title='今天的待办都处理好了' description='慢慢来，留一点时间给彼此。' />}
-      {data.todos.map(p => <View className='surface row todo' key={p.id}><View><Text className='section-title'>共同规则待确认</Text><Text className='muted'>每日上限 {p.dailyLimit} 积分</Text></View><Button className='button small' onClick={() => void navigate(`/packages/account/rules/index?id=${p.id}`)}>去确认</Button></View>)}
-      {data.orderTodos.map(o => <View className='surface order-summary' key={o.id}><Text className='tag'>{o.cancelPending ? '取消申请待处理' : statuses[o.status]}</Text><ProductSummary product={o.snapshot} /><Button className='button secondary' onClick={() => void navigate(`/packages/commerce/order-detail/index?id=${o.id}`)}>去处理订单</Button></View>)}
-      {(data.taskTodos || []).map(task => <View className='surface task-list-item' key={task.id}><TaskSummary task={task} /><Button className='button secondary' onClick={() => void navigate(`/packages/tasks/detail/index?id=${task.id}`)}>去处理任务</Button></View>)}
-      <View className='surface milestone'><Text className='section-title'>累计双人签到 {data.context.couple!.doubleDays} 天</Text><Text className='muted'>{next ? `下个里程碑 ${next.days} 天 · +${next.reward} 积分入池` : '所有签到里程碑都已达成'}</Text><View className='progress'><View style={{ width: `${next ? Math.min(100, data.context.couple!.doubleDays / next.days * 100) : 100}%` }} /></View><Text className='muted'>漏签不清零，每一份陪伴都算数。</Text></View>
+      <PoolCard total={data.points.total} available={data.points.available} reserved={data.points.reserved} />
+      <BalanceTiles balance={data.points.balance} earned={data.points.earned} limit={data.points.dailyLimit} remaining={data.points.remaining} />
+      <Section title='今日待办'>
+        {data.todos.length+data.orderTodos.length+data.taskTodos.length===0 ? <View className='home-empty'><Icon name='check' tone='primary' size={30}/><View><Text className='section-title'>今天的待办都处理好了</Text><Text className='muted'>慢慢来，每一份陪伴都算数。</Text></View></View> : <View className='todo-list'>
+          {data.todos.map(p => <Button className='todo-row' key={p.id} onClick={() => void navigate(`/packages/account/rules/index?id=${p.id}`)}><View className='todo-thumb'><Icon name='order' tone='primary'/></View><View className='todo-copy'><Text className='section-title'>共同规则待确认</Text><Text className='muted'>每日上限 {p.dailyLimit} 积分</Text></View><Text className='tag warning'>待我确认</Text><Icon name='chevron' size={15} tone='muted'/></Button>)}
+          {data.orderTodos.map(o => <Button className='todo-row' key={o.id} onClick={() => void navigate(`/packages/commerce/order-detail/index?id=${o.id}`)}><View className='todo-thumb'><Icon name='gift' tone='primary'/></View><View className='todo-copy'><Text className='section-title'>{o.snapshot.name}</Text><Text className='todo-type'>订单</Text></View><Text className='tag warning'>{o.cancelPending ? '取消申请待处理' : statuses[o.status]}</Text><Icon name='chevron' size={15} tone='muted'/></Button>)}
+          {data.taskTodos.map(t => <Button className='todo-row' key={t.id} onClick={() => void navigate(`/packages/tasks/detail/index?id=${t.id}`)}><View className='todo-thumb'><Icon name='task' tone='primary'/></View><View className='todo-copy'><Text className='section-title'>{t.name}</Text><Text className='todo-type'>任务</Text></View><Text className='tag warning'>{t.status==='pending'?'待我接受':t.status==='awaiting'?'待我确认':'待我处理'}</Text><Icon name='chevron' size={15} tone='muted'/></Button>)}
+        </View>}
+      </Section>
+      <View className='home-milestone'><Icon name='gift' tone='primary' size={27}/><View><Text>{next ? `下一站 ${next.days} 天 · +${next.reward} 入池` : '所有签到里程碑已达成'}</Text><View className='progress'><View style={{width:`${next?Math.min(100,data.context.couple!.doubleDays/next.days*100):100}%`}}/></View></View><Text className='primary-text'>{data.context.couple!.doubleDays} / {next?.days || 365}</Text></View>
     </>}
   </Page>
 }
