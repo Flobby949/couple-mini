@@ -25,7 +25,7 @@ export default function MessagesPage() {
   const items = Array.from(new Map(query.data?.pages.flatMap(p => p.items).map(m => [m.id,m])).values())
   return <Page title='每个回应，都在这里' subtitle='按事情发生的时间排列，晚到的消息仍会保留未读。'>
     <View className='messages-toolbar'><Text className='muted'>{unread.data?.count ?? '…'} 条未读消息</Text><Button className='text-button' disabled={!gate.allowed || action.busy || !!pending() || !unread.data?.count} onClick={() => void action.run(readAllMessages,r => setResult(`已将本次收到的 ${r.read} 条消息标为已读。`))}>全部已读</Button></View>
-    <View className='segmented messages-tabs'>{[['all','全部'],['unread','未读']].map(([value,label]) => <Button key={value} className={filter === value ? 'selected' : ''} onClick={() => setFilter(value)}>{label}</Button>)}</View>
+    <View className='segmented messages-tabs'>{[['all','全部'],['unread','未读']].map(([value,label]) => <Button key={value} className={`segment-option ${filter === value ? 'selected' : ''}`} onClick={() => setFilter(value)}>{label}</Button>)}</View>
     {result && <Text className='muted'>{result}</Text>}
     <ErrorState error={gate.error || query.error || unread.error || action.error} retry={() => { void gate.refetch(); void query.refetch(); void unread.refetch() }} />
     {!query.data && !query.error && <Loading />}

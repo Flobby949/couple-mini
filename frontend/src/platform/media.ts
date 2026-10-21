@@ -1,7 +1,10 @@
 import Taro from '@tarojs/taro'
 
 export async function chooseCover() {
-  const result = await Taro.chooseMedia({ count: 1, mediaType: ['image'], sourceType: ['album', 'camera'], sizeType: ['compressed'] })
+  const result = await Taro.chooseMedia({ count: 1, mediaType: ['image'], sourceType: ['album', 'camera'], sizeType: ['compressed'] }).catch((error: unknown) => {
+    const message = error && typeof error === 'object' && 'errMsg' in error ? String(error.errMsg) : error instanceof Error ? error.message : ''
+    throw new Error(message.includes('cancel') ? 'chooseMedia:cancel' : '无法选择照片，请检查相册或相机权限后重试。')
+  })
   const file = result.tempFiles[0]
   if (!file) throw new Error('未选择图片')
   if (file.size > 5 * 1024 * 1024) throw new Error('图片不能超过 5 MiB')

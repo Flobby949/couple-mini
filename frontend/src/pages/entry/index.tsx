@@ -11,7 +11,7 @@ import { platformLogin, storage } from '../../platform'
 import { Page } from '../../app/page'
 import { useAction } from '../../core/use-action'
 import { ErrorState } from '../../ui'
-import rosette from '../../assets/milestone-rosette.png'
+import { milestoneRosette as rosette } from '../../ui/artwork'
 
 export default function Entry() {
   const action = useAction()

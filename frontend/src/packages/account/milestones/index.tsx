@@ -7,7 +7,7 @@ import { keys } from '../../../core/query'
 import { switchTab } from '../../../platform'
 import { ErrorState, Loading } from '../../../ui'
 import { ConnectedPair, Icon, InlineInfo } from '../../../ui/visual'
-import panel from '../../../assets/checkin-fabric-panel.png'
+import { checkinPanel as panel } from '../../../ui/artwork'
 
 export default function MilestonesPage(){
  const gate=useGate(),query=useQuery({queryKey:keys.home,queryFn:getHome,enabled:gate.allowed,refetchInterval:gate.allowed?15000:false})

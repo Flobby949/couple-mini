@@ -44,7 +44,7 @@ function TaskForm({ task, initialKind, available, serverTime, canSubmit, partner
   return <View className='form task-edit-form'>
     <ErrorState error={action.error} />
     {locked && <Notice>任务已被接受或结束，不能再修改原约定。草稿保留供查看。</Notice>}
-    <View className='segmented'>{(['joint','partner'] as const).map(value => <Button key={value} disabled={!!task || locked || action.busy} className={kind === value ? 'selected' : ''} onClick={() => setKind(value)}>{value === 'joint' ? '共同任务' : '伴侣任务'}</Button>)}</View>
+    <View className='segmented'>{(['joint','partner'] as const).map(value => <Button key={value} disabled={!!task || locked || action.busy} className={`segment-option ${kind === value ? 'selected' : ''}`} onClick={() => setKind(value)}>{value === 'joint' ? '共同任务' : '伴侣任务'}</Button>)}</View>
     <View className='surface'><PersonRow user={partner} partnerId={me.id} title={kind==='joint'?`和${partner.nickname}一起完成`:`邀请${partner.nickname}完成`} description={kind==='joint'?'双方一起完成，每人奖励相同，不限时。':'和伴侣一起，把生活过得更温柔。'}/></View>
     <Text className='field-label'>任务名称</Text><Input className='input' ariaLabel='任务名称' maxlength={80} disabled={locked || action.busy} value={name} placeholder='例如，一起整理书架' onInput={e => setName(e.detail.value)} />
     <Text className='field-label'>完成说明</Text><Textarea className='textarea' ariaLabel='任务完成说明' maxlength={2000} disabled={locked || action.busy} value={description} placeholder='把期待和完成方式说清楚。' onInput={e => setDescription(e.detail.value)} />

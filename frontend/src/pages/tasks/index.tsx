@@ -6,8 +6,8 @@ import { useGate } from '../../app/hooks'
 import { Page } from '../../app/page'
 import { Empty, ErrorState, Loading } from '../../ui'
 import { Icon } from '../../ui/visual'
-import empty from '../../assets/empty-tasks.png'
-import jar from '../../assets/points-jar.png'
+import { emptyTasks as empty } from '../../ui/artwork'
+import { pointsJar as jar } from '../../ui/artwork'
 import { getTasks } from '../../features/tasks/api'
 import { taskStatus } from '../../features/tasks/presentation'
 import { getHome } from '../../features/home/api'
@@ -21,9 +21,9 @@ export default function Tasks(){
  const query=useInfiniteQuery({queryKey:keys.tasks(kind,filter),queryFn:({pageParam})=>getTasks(kind,filter,pageParam),initialPageParam:'',getNextPageParam:last=>last.nextCursor||undefined,enabled:gate.allowed,staleTime:0,refetchInterval:gate.allowed?30000:false})
  const items=query.data?.pages.flatMap(p=>p.items)
  return <Page messageEntry title='任务'>
-  <View className='task-tabs'>{(['joint','partner'] as const).map(value=><Button key={value} className={kind===value?'selected':''} onClick={()=>setKind(value)}>{value==='joint'?'共同任务':'伴侣任务'}</Button>)}<Button className='button small' onClick={()=>void navigate(`/packages/tasks/edit/index?kind=${kind}`)}>＋ 新建</Button></View>
+  <View className='task-tabs'>{(['joint','partner'] as const).map(value=><Button key={value} className={`task-tab ${kind===value?'selected':''}`} onClick={()=>setKind(value)}>{value==='joint'?'共同任务':'伴侣任务'}</Button>)}<Button className='button small task-tab' onClick={()=>void navigate(`/packages/tasks/edit/index?kind=${kind}`)}>＋ 新建</Button></View>
   {gate.allowed&&budget.data&&<View className='task-budget-row' onClick={()=>void navigate('/packages/account/history/index')}><Image className='budget-jar' src={jar} mode='aspectFit'/><View className='row'><Text className='section-title'>共同积分池</Text><Text className='muted'>可用 <Text className='primary-text'>{budget.data.points.available}</Text> · 已预留 {budget.data.points.reserved}</Text></View><Icon name='chevron' tone='muted' size={16}/></View>}
-  <View className='filter-options'>{[{value:'todo',label:'待我处理'},{value:'active',label:'进行中'},{value:'history',label:'历史'}].map(f=><Button key={f.value} className={filter===f.value?'selected':''} onClick={()=>setFilter(f.value)}>{f.label}</Button>)}</View>
+  <View className='filter-options'>{[{value:'todo',label:'待我处理'},{value:'active',label:'进行中'},{value:'history',label:'历史'}].map(f=><Button key={f.value} className={`filter-option ${filter===f.value?'selected':''}`} onClick={()=>setFilter(f.value)}>{f.label}</Button>)}</View>
   <ErrorState error={gate.error||budget.error||query.error} retry={()=>{void gate.refetch();void budget.refetch();void query.refetch()}}/>
   {(!gate.allowed||!items)&&!query.error&&<Loading/>}
   {gate.allowed&&items?.length===0&&<Empty image={empty} title={filter==='todo'?'暂时没有待处理的任务':'这里还没有任务'} description='发起一份小约定，一起把日常过得更温柔。'/>}

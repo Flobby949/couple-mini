@@ -1,5 +1,8 @@
 import { QueryClient } from '@tanstack/react-query'
 import { ApiError } from './api'
+import { installNativeAbortController } from '../platform/query-runtime'
+
+if (process.env.TARO_ENV === 'weapp') installNativeAbortController()
 export const queries = new QueryClient({ defaultOptions: {
   queries: { staleTime: 10000, retry: (count, e) => count < 1 && e instanceof ApiError && (e.status === 0 || e.status >= 500) },
   mutations: { retry: false, networkMode: 'always' },

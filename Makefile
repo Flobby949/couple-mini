@@ -8,7 +8,7 @@ frontend:
 
 check:
 	cd backend && go test ./... && go vet ./...
-	cd frontend && pnpm typecheck && pnpm test && pnpm build:weapp && pnpm build:h5
+	cd frontend && pnpm typecheck && pnpm test && pnpm check:weapp && pnpm build:h5
 
 integration:
 	cd backend && INTEGRATION=1 go test -race ./...

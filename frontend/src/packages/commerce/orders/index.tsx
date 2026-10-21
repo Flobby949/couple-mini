@@ -18,8 +18,8 @@ export default function OrdersPage() {
   const query = useInfiniteQuery({ queryKey: keys.orders(role, status), queryFn: ({ pageParam }) => getOrders(role, status, pageParam), initialPageParam: '', getNextPageParam: last => last.nextCursor || undefined, enabled: gate.allowed, refetchInterval: gate.allowed ? 30000 : false, staleTime: 0 })
   const items = query.data?.pages.flatMap(page => page.items)
   return <Page title='每一步，都有回应' subtitle='历史订单保留当时的商品与兑现约定。'>
-    <View className='segmented'>{(['buyer', 'seller'] as const).map(value => <Button key={value} className={role === value ? 'selected' : ''} onClick={() => setRole(value)}>{value === 'buyer' ? '我下的单' : '我收到的'}</Button>)}</View>
-    <ScrollView scrollX className='filter-scroll'><View className='filter-options'>{filters.map(filter => <Button className={`text-button ${status === filter.value ? 'selected' : ''}`} key={filter.value} onClick={() => setStatus(filter.value)}>{filter.label}</Button>)}</View></ScrollView>
+    <View className='segmented'>{(['buyer', 'seller'] as const).map(value => <Button key={value} className={`segment-option ${role === value ? 'selected' : ''}`} onClick={() => setRole(value)}>{value === 'buyer' ? '我下的单' : '我收到的'}</Button>)}</View>
+    <ScrollView scrollX className='filter-scroll'><View className='filter-options'>{filters.map(filter => <Button className={`text-button filter-option ${status === filter.value ? 'selected' : ''}`} key={filter.value} onClick={() => setStatus(filter.value)}>{filter.label}</Button>)}</View></ScrollView>
     <ErrorState error={gate.error || query.error} retry={() => { void gate.refetch(); void query.refetch() }} />
     {(!gate.allowed || !items) && !query.error && <Loading />}
     {gate.allowed && items?.length === 0 && <Empty title='这里还没有订单' description={role === 'buyer' ? '可以去伴侣的小店看看，挑一份喜欢的心意。' : '收到伴侣的下单后，会出现在这里。'} />}

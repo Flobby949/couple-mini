@@ -18,8 +18,9 @@ export function CartSheet({ close }: { close: () => void }) {
   const action = useAction(), [selected, select] = useState('')
   const { scheme, appearance } = useTheme()
   useEffect(() => {
-    void hideTabBar({ animation: false })
-    return () => { void showTabBar({ animation: false }) }
+    void hideTabBar({ animation: false }).catch(() => {})
+    // Navigation may already have reached a detail page when this effect cleans up.
+    return () => { void showTabBar({ animation: false }).catch(() => {}) }
   }, [])
   const query = useQuery({ queryKey: keys.cart, queryFn: getCart, staleTime: 0, refetchInterval: 30000 })
   const product = query.data?.items.find(p => p.id === selected)

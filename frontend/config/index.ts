@@ -1,6 +1,7 @@
 import { defineConfig } from '@tarojs/cli'
 import dotenv from 'dotenv'
 import path from 'node:path'
+import { avatarWoman, avatarMan, avatarFrame, pointsJar, checkinPanel, milestoneRosette, emptyTasks, emptyStore } from '../src/ui/artwork'
 
 dotenv.config()
 export default defineConfig<'vite'>({
@@ -18,7 +19,7 @@ export default defineConfig<'vite'>({
     DEV_LOGIN: JSON.stringify(process.env.NODE_ENV !== 'production' && process.env.TARO_APP_DEV_LOGIN === 'true'),
   },
   mini: {},
-  copy: { patterns: [{ from: path.resolve(__dirname, '../src/assets/tab-icons'), to: 'assets/tab-icons' }, { from: path.resolve(__dirname, '../src/assets/ui-icons'), to: 'assets/ui-icons' }], options: {} },
+  copy: { patterns: [...[avatarWoman, avatarMan, avatarFrame, pointsJar, checkinPanel, milestoneRosette, emptyTasks, emptyStore].map(asset => ({ from: path.resolve(__dirname, '../src' + asset), to: asset.slice(1) })), { from: path.resolve(__dirname, '../src/assets/tab-icons'), to: 'assets/tab-icons' }, { from: path.resolve(__dirname, '../src/assets/ui-icons'), to: 'assets/ui-icons' }], options: {} },
   h5: {
     publicPath: '/',
     postcss: { pxtransform: { config: { maxRootSize: 20.8 } } },

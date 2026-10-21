@@ -16,7 +16,7 @@ import { navigate, switchTab } from '../../../platform'
 import { BeijingDateTime } from '../../../ui/date-time'
 import { ErrorState, Loading, Notice } from '../../../ui'
 import { Avatar, Icon, InlineInfo, PersonRow } from '../../../ui/visual'
-import badge from '../../../assets/milestone-rosette.png'
+import { milestoneRosette as badge } from '../../../ui/artwork'
 export default function TaskDetailPage(){
  const gate=useGate(),id=useRouter().params.id||'',action=useAction()
  const [confirm,setConfirm]=useState<Exclude<TaskAction,'edit'>>(),[date,setDate]=useState(''),[time,setTime]=useState(''),[receipt,setReceipt]=useState<TaskReceipt>(),[requestId,setRequestId]=useState<string>(),[historyOpen,setHistoryOpen]=useState(false)

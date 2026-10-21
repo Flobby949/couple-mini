@@ -1,0 +1,38 @@
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import { act, create, type ReactTestRenderer } from 'react-test-renderer'
+const state=vi.hoisted(()=>({hide:new Set<()=>void>(),hideBar:vi.fn(),showBar:vi.fn()}))
+vi.mock('@tarojs/taro',async()=>{
+ const {useEffect}=await import('react')
+ return {useDidHide:(callback:()=>void)=>useEffect(()=>{state.hide.add(callback);return()=>{state.hide.delete(callback)}},[callback]),hideTabBar:state.hideBar,showTabBar:state.showBar,default:{pxTransform:(n:number)=>`${n}rpx`}}
+})
+vi.mock('@tarojs/components',()=>({View:'view',Text:'text',Button:'button',Image:'image',Radio:'radio'}))
+vi.mock('@tanstack/react-query',async()=>({...await vi.importActual('@tanstack/react-query'),useQuery:({queryKey}:{queryKey:string[]})=>({data:queryKey[0]==='cart'?{items:[{id:'product',name:'拥抱',price:0,stock:1}],balance:0}:{products:[],balance:0},refetch:vi.fn()})}))
+vi.mock('../src/app/page',()=>({Page:({children}:{children:React.ReactNode})=><>{children}</>}))
+vi.mock('../src/app/hooks',()=>({useGate:()=>({allowed:true,data:{me:{id:'alice',nickname:'我'},partner:{id:'bob',nickname:'伴侣'}}})}))
+vi.mock('../src/app/theme',()=>({useTheme:()=>({scheme:'light',appearance:{accent:'iris'}})}))
+vi.mock('../src/core/use-action',()=>({useAction:()=>({busy:false,error:null})}))
+vi.mock('../src/features/catalog/components',()=>({ProductSummary:()=>null,Cover:()=>null}))
+vi.mock('../src/features/catalog/api',()=>({getCart:vi.fn(),getCatalog:vi.fn(),removeCart:vi.fn(),addCart:vi.fn()}))
+vi.mock('../src/platform',()=>({navigate:vi.fn(),storage:{read:vi.fn()}}))
+import Shop from '../src/pages/shop'
+let tree:ReactTestRenderer|undefined
+beforeEach(()=>{vi.clearAllMocks();state.hide.clear();state.hideBar.mockResolvedValue({});state.showBar.mockResolvedValue({})})
+afterEach(()=>{act(()=>tree?.unmount());tree=undefined})
+it('hiding the shop closes its cart instead of reopening it on return',()=>{
+ act(()=>{tree=create(<Shop/>)})
+ const open=()=>tree!.root.findAllByType('button').find(b=>b.children.includes('查看购物车'))!.props.onClick()
+ act(open);expect(state.hideBar).toHaveBeenCalledOnce()
+ expect(tree!.root.findAllByProps({role:'dialog'})).toHaveLength(1)
+ act(()=>{for(const callback of [...state.hide])callback()})
+ expect(tree!.root.findAllByProps({role:'dialog'})).toHaveLength(0)
+ expect(state.showBar).toHaveBeenCalledOnce()
+ act(open);expect(tree!.root.findAllByProps({role:'dialog'})).toHaveLength(1)
+})
+it('tab bar restoration remains safe if navigation already reached a non-tab page',async()=>{
+ state.showBar.mockRejectedValue({errMsg:'showTabBar:fail not TabBar page'})
+ act(()=>{tree=create(<Shop/>)})
+ act(()=>tree!.root.findAllByType('button').find(b=>b.children.includes('查看购物车'))!.props.onClick())
+ await act(async()=>{for(const callback of [...state.hide])callback();await Promise.resolve()})
+ expect(state.showBar).toHaveBeenCalledOnce()
+ expect(tree!.root.findAllByProps({role:'dialog'})).toHaveLength(0)
+})

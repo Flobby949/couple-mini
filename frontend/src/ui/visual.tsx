@@ -1,20 +1,21 @@
 import { type PropsWithChildren } from 'react'
 import { Button, Image, Text, View } from '@tarojs/components'
+import Taro from '@tarojs/taro'
 import { useTheme } from '../app/theme'
 import { navigate } from '../platform'
 import type { IconName } from './icons'
-import woman from '../assets/avatar-woman.png'
-import man from '../assets/avatar-man.png'
-import frame from '../assets/avatar-stitch-frame.png'
-import jar from '../assets/points-jar.png'
+import { avatarWoman as woman } from './artwork'
+import { avatarMan as man } from './artwork'
+import { avatarFrame as frame } from './artwork'
+import { pointsJar as jar } from './artwork'
 
 export function Icon({ name, tone = 'ink', size = 24 }: {name: IconName; tone?: 'ink'|'muted'|'primary'; size?: number}) {
   const { scheme, appearance } = useTheme()
-  return <Image className='ui-icon' src={`/assets/ui-icons/${name}-${tone === 'primary' ? appearance.accent : tone}-${scheme}.png`} style={{width:`${size}px`,height:`${size}px`}} mode='aspectFit' ariaHidden />
+  return <Image className='ui-icon' src={`/assets/ui-icons/${name}-${tone === 'primary' ? appearance.accent : tone}-${scheme}.png`} style={{width:Taro.pxTransform(size),height:Taro.pxTransform(size)}} mode='aspectFit' ariaHidden />
 }
 export function Avatar({ user, partnerId, size = 52, stitched = false, checked }: {user: {id: string; nickname: string}; partnerId: string; size?: number; stitched?: boolean; checked?: boolean}) {
   const first = user.id < partnerId
-  return <View className={`portrait ${stitched ? 'portrait-stitched' : ''} ${!first ? 'portrait-blue' : ''}`} style={{width:`${size}px`,height:`${size}px`}}>
+  return <View className={`portrait ${stitched ? 'portrait-stitched' : ''} ${!first ? 'portrait-blue' : ''}`} style={{width:Taro.pxTransform(size),height:Taro.pxTransform(size)}}>
     <View className='portrait-crop'><Image className='portrait-art' src={first ? woman : man} mode='aspectFill' ariaLabel={`${user.nickname}的默认插画头像`} /></View>
     {stitched && <Image className='portrait-frame' src={frame} mode='aspectFit' ariaHidden />}
     {checked !== undefined && <View className={`portrait-state ${checked ? 'is-checked' : ''}`}>{checked && <Text>✓</Text>}</View>}

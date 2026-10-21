@@ -8,7 +8,7 @@ import { keys } from '../../../core/query'
 import { beijingTimeSeconds } from '../../../core/values'
 import { navigate, switchTab } from '../../../platform'
 import { ErrorState, Loading, Notice } from '../../../ui'
-import rosette from '../../../assets/milestone-rosette.png'
+import { milestoneRosette as rosette } from '../../../ui/artwork'
 
 export default function GiftDetail() {
   const gate = useGate(), id = useRouter().params.id || ''

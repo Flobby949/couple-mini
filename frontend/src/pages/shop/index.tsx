@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useDidHide } from '@tarojs/taro'
 import { useQuery } from '@tanstack/react-query'
 import { Button, Text, View } from '@tarojs/components'
 import { useGate } from '../../app/hooks'
@@ -10,10 +11,11 @@ import { navigate } from '../../platform'
 import { Empty, ErrorState, Loading } from '../../ui'
 import { Avatar, Icon } from '../../ui/visual'
 import { useAction } from '../../core/use-action'
-import empty from '../../assets/empty-store.png'
+import { emptyStore as empty } from '../../ui/artwork'
 import { CartSheet } from './cart'
 export default function Shop(){
  const gate=useGate(),action=useAction(),[cart,setCart]=useState(false)
+ useDidHide(()=>setCart(false))
  const query=useQuery({queryKey:keys.catalog('partner'),queryFn:()=>getCatalog('partner'),enabled:gate.allowed,refetchInterval:gate.allowed?30000:false,staleTime:0})
  const candidates=useQuery({queryKey:keys.cart,queryFn:getCart,enabled:gate.allowed,refetchInterval:gate.allowed?30000:false})
  return <Page messageEntry title={`${gate.data?.partner?.nickname||'伴侣'}的小店`} subtitle='用喜欢的方式，把日常过得更温柔。'>

@@ -17,7 +17,7 @@ import { useTheme } from '../../app/theme'
 import { Page } from '../../app/page'
 import { useAction } from '../../core/use-action'
 import { ErrorState, Loading } from '../../ui'
-import panel from '../../assets/checkin-fabric-panel.png'
+import { checkinPanel as panel } from '../../ui/artwork'
 import { statuses } from '../../features/orders/presentation'
 import { Avatar, BalanceTiles, Icon, PoolCard, Section } from '../../ui/visual'
 export default function HomePage() {
