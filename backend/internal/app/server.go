@@ -18,6 +18,7 @@ import (
 	"couple-mini/backend/internal/checkin"
 	"couple-mini/backend/internal/eventbus"
 	"couple-mini/backend/internal/identity"
+	"couple-mini/backend/internal/orders"
 	"couple-mini/backend/internal/platform"
 	"couple-mini/backend/internal/points"
 	"couple-mini/backend/internal/rules"
@@ -26,8 +27,8 @@ import (
 )
 
 type Config struct {
-	Env, Address, DSN, RedisAddress, RedisPassword, WechatID, WechatSecret, Origin string
-	DevLogin                                                                       bool
+	Env, Address, DSN, RedisAddress, RedisPassword, WechatID, WechatSecret, Origin, MediaRoot string
+	DevLogin                                                                                  bool
 }
 type Server struct {
 	DB     *sql.DB
@@ -57,7 +58,11 @@ func (s *Server) Router() *gin.Engine {
 			c.AbortWithStatus(204)
 			return
 		}
-		c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 16<<10)
+		limit := int64(16 << 10)
+		if c.Request.URL.Path == "/api/v1/media" {
+			limit = 6 << 20
+		}
+		c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, limit)
 		c.Next()
 	})
 	r.GET("/health/live", func(c *gin.Context) { c.JSON(200, gin.H{"status": "ok"}) })
@@ -87,6 +92,7 @@ func (s *Server) Router() *gin.Engine {
 	a.POST("/rules", s.propose)
 	a.POST("/rules/:id/confirm", s.confirm)
 	a.POST("/checkins", s.checkin)
+	s.commerceRoutes(a)
 	return r
 }
 
@@ -221,16 +227,12 @@ func (s *Server) write(c *gin.Context, extraUsers []string, fn mutation) {
 	normalized, _ := json.Marshal(canonical)
 	hash := platform.Hash(c.Request.Method + " " + c.Request.URL.Path + " " + string(normalized))
 	ctx := c.Request.Context()
-	tx, err := s.DB.BeginTx(ctx, nil)
+	tx, now, err := s.beginRelation(ctx, user, append(extraUsers, user))
 	if err != nil {
 		s.fail(c, err)
 		return
 	}
 	defer tx.Rollback()
-	if err = identity.LockUsers(ctx, tx, append(extraUsers, user)...); err != nil {
-		s.fail(c, err)
-		return
-	}
 	var existingHash, status string
 	var httpStatus int
 	var response []byte
@@ -251,7 +253,6 @@ func (s *Server) write(c *gin.Context, extraUsers []string, fn mutation) {
 		s.fail(c, err)
 		return
 	}
-	now := s.Now().UTC()
 	result, businessErr := fn(ctx, tx, user, now)
 	httpStatus = 200
 	status = "succeeded"
@@ -405,7 +406,6 @@ func (s *Server) propose(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
-		now = s.Now().UTC()
 		result, err := rules.Propose(ctx, tx, user, couple, limit, now)
 		if err != nil {
 			return nil, err
@@ -419,7 +419,6 @@ func (s *Server) confirm(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
-		now = s.Now().UTC()
 		result, err := rules.Confirm(ctx, tx, user, couple.ID, c.Param("id"), now)
 		if err != nil {
 			return nil, err
@@ -433,7 +432,6 @@ func (s *Server) checkin(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
-		now = s.Now().UTC()
 		result, err := checkin.Record(ctx, tx, user, couple, now)
 		if err != nil {
 			return nil, err
@@ -444,13 +442,13 @@ func (s *Server) checkin(c *gin.Context) {
 
 func (s *Server) read(c *gin.Context, required string, fn func(context.Context, *sql.Tx, identity.Context) (any, error)) {
 	ctx := c.Request.Context()
-	tx, err := s.DB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true, Isolation: sql.LevelRepeatableRead})
+	tx, now, err := s.beginRelation(ctx, c.GetString("user"), nil)
 	if err != nil {
 		s.fail(c, err)
 		return
 	}
 	defer tx.Rollback()
-	state, err := identity.ReadContext(ctx, tx, c.GetString("user"), s.Now().UTC())
+	state, err := identity.ReadContext(ctx, tx, c.GetString("user"), now)
 	if err != nil {
 		s.fail(c, err)
 		return
@@ -503,7 +501,11 @@ func (s *Server) home(c *gin.Context) {
 				todo = append(todo, p)
 			}
 		}
-		return gin.H{"context": state, "points": summary, "checkin": checked, "todos": todo, "milestones": checkin.Milestones}, nil
+		orderTodos, err := orders.Todos(ctx, tx, state.Couple.ID, state.Me.ID)
+		if err != nil {
+			return nil, err
+		}
+		return gin.H{"context": state, "points": summary, "checkin": checked, "todos": todo, "orderTodos": orderTodos, "milestones": checkin.Milestones}, nil
 	})
 }
 func (s *Server) history(c *gin.Context) {

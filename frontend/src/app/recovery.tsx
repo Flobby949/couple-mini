@@ -4,6 +4,7 @@ import { useDidShow } from '@tarojs/taro'
 import { pending, recover } from '../core/operations'
 import { useAction } from '../core/use-action'
 import { ErrorState } from '../ui'
+import { navigate } from '../platform'
 
 export function Recovery() {
   const [record, setRecord] = useState(pending)
@@ -13,13 +14,16 @@ export function Recovery() {
   // A page mutation re-renders its Page wrapper, so the storage fact remains authoritative.
   const current = pending() || record
   async function check(close: boolean) {
-    await action.run(() => recover(close), result => {
+    const original = pending()
+    await action.run(() => recover(close), async result => {
       if (!result) { setRecord(undefined); return }
       if (result.status === 'absent') { setMessage('暂未查到结果。请再次核查，或关闭这笔尚未执行的操作。'); return }
       setRecord(undefined)
       if (result.status === 'succeeded') setMessage('原操作已成功，请以刷新后的当前状态为准。')
       else if (result.status === 'closed') setMessage('原操作已关闭，确认未执行。可以重新操作。')
       else setMessage('原操作未生效，请检查输入后重新操作。')
+      const receipt = result.response as { orderId?: string } | undefined
+      if (result.status === 'succeeded' && original?.path === '/orders' && receipt?.orderId && /^[a-f0-9]{32}$/.test(receipt.orderId)) await navigate(`/packages/commerce/order-detail/index?id=${receipt.orderId}`)
     })
   }
   if (!current && !message && !action.error) return null

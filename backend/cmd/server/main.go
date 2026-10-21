@@ -13,6 +13,7 @@ import (
 	schema "couple-mini/backend"
 	"couple-mini/backend/internal/app"
 	"couple-mini/backend/internal/platform"
+	"couple-mini/backend/internal/scheduler"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
@@ -35,6 +36,10 @@ func run() error {
 		return err
 	}
 	config := app.Config{Env: env("APP_ENV", "production"), Address: env("HTTP_ADDR", "127.0.0.1:8080"), DSN: os.Getenv("MYSQL_DSN"), RedisAddress: env("REDIS_ADDR", "127.0.0.1:6379"), RedisPassword: os.Getenv("REDIS_PASSWORD"), WechatID: os.Getenv("WECHAT_APP_ID"), WechatSecret: os.Getenv("WECHAT_APP_SECRET"), Origin: os.Getenv("CORS_ORIGIN"), DevLogin: os.Getenv("DEV_LOGIN") == "true"}
+	config.MediaRoot = env("MEDIA_ROOT", "uploads")
+	if err := os.MkdirAll(config.MediaRoot, 0700); err != nil {
+		return err
+	}
 	if err := app.ValidateConfig(config); err != nil {
 		return err
 	}
@@ -62,6 +67,8 @@ func run() error {
 	server := &http.Server{Addr: config.Address, Handler: service.Router(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 20 * time.Second, IdleTimeout: 60 * time.Second}
 	stopped, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+	jobsDone := make(chan struct{})
+	go func() { defer close(jobsDone); scheduler.Run(stopped, 30*time.Second, service.SettleOrders) }()
 	failure := make(chan error, 1)
 	go func() { failure <- server.ListenAndServe() }()
 	slog.Info("server ready", "address", config.Address, "environment", config.Env)
@@ -74,6 +81,8 @@ func run() error {
 	case <-stopped.Done():
 		shutdown, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		return server.Shutdown(shutdown)
+		err := server.Shutdown(shutdown)
+		<-jobsDone
+		return err
 	}
 }

@@ -8,6 +8,7 @@ export interface Home {
   points: { balance: number; earned: number; dailyLimit: number; remaining: number; available: number; reserved: number; total: number }
   checkin: { me: boolean; partner: boolean }
   todos: Proposal[]
+  orderTodos: import('./commerce').Order[]
   milestones: { days: number; reward: number }[]
 }
 export interface CheckinResult { date: string; base: number; doubleBonus: number; milestoneBonus: number; total: number; doubleDays: number }

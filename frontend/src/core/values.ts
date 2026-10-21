@@ -10,3 +10,4 @@ export function beijingTime(raw: string) {
   const date = new Date(new Date(raw).getTime() + 8 * 60 * 60 * 1000)
   return date.toISOString().slice(0, 16).replace('T', ' ')
 }
+export function parseStock(raw: string) { return /^(0|[1-9][0-9]*)$/.test(raw) && Number.isSafeInteger(Number(raw)) && Number(raw) <= 1_000_000 ? Number(raw) : null }

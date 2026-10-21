@@ -5,6 +5,8 @@ import { onUnauthorized } from './core/api'
 import { queries } from './core/query'
 import { redirect, storage } from './platform'
 import { ThemeProvider } from './app/theme'
+import { clearMedia } from './core/media'
+import { clearCheckoutPrice } from './features/orders/checkout-intent'
 import './styles/app.scss'
 
 onlineManager.setEventListener(setOnline => {
@@ -15,6 +17,8 @@ onlineManager.setEventListener(setOnline => {
 onUnauthorized(() => {
   storage.remove('session')
   queries.clear()
+  clearMedia()
+  clearCheckoutPrice()
   void redirect('/pages/entry/index')
 })
 export default function App({ children }: PropsWithChildren) {

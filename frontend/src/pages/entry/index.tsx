@@ -4,6 +4,8 @@ import { useDidShow } from '@tarojs/taro'
 import { session } from '../../core/api'
 import { getContext, login as loginIdentity } from '../../features/identity/api'
 import { queries } from '../../core/query'
+import { clearMedia } from '../../core/media'
+import { clearCheckoutPrice } from '../../features/orders/checkout-intent'
 import { routeContext } from '../../app/hooks'
 import { platformLogin, storage } from '../../platform'
 import { Page } from '../../app/page'
@@ -18,7 +20,7 @@ export default function Entry() {
   async function login(dev = false) {
     const body = dev ? { devIdentity: identity } : { code: (await platformLogin()).code }
     const result = await loginIdentity(body)
-    queries.clear(); storage.write('session', result)
+    queries.clear(); clearMedia(); clearCheckoutPrice(); storage.write('session', result)
     await enter()
   }
   return <Page title='把日常，留给彼此' subtitle='两个人的小店，从一起开始。'>

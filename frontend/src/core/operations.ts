@@ -10,7 +10,9 @@ function terminal(result: Operation) { return ['succeeded', 'rejected', 'closed'
 export async function mutate<T>(path: string, body: unknown = {}): Promise<T> {
   if (!await online()) throw new ApiError('OFFLINE', '当前无网络，请联网后重新操作', 0)
   if (pending()) throw new ApiError('PENDING', '有一笔操作结果待核查，请先处理', 0)
-  const record: Pending = { key: newKey(), path, body, actor: session()!.user.id, createdAt: new Date().toISOString() }
+  const identity = session()
+  if (!identity) throw new ApiError('UNAUTHENTICATED', '请重新登录后操作', 401)
+  const record: Pending = { key: newKey(), path, body, actor: identity.user.id, createdAt: new Date().toISOString() }
   const storageKey = pendingKey()
   storage.write(storageKey, record)
   try {

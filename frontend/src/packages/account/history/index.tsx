@@ -6,7 +6,7 @@ import { keys } from '../../../core/query'
 import { beijingTime } from '../../../core/values'
 import { Page } from '../../../app/page'
 import { ErrorState, Loading } from '../../../ui'
-const labels: Record<string, string> = { initial: '启动积分', checkin: '签到入池', double_checkin: '双人签到奖励', milestone: '累计签到里程碑' }
+const labels: Record<string, string> = { initial: '启动积分', checkin: '签到入池', double_checkin: '双人签到奖励', milestone: '累计签到里程碑', order_cancel_penalty: '店主取消罚分入池' }
 export default function HistoryPage() {
   const gate = useGate()
   const query = useQuery({ queryKey: keys.history, queryFn: getPoolHistory, enabled: gate.allowed, refetchInterval: gate.allowed ? 15000 : false })

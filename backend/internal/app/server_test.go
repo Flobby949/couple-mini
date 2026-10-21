@@ -301,6 +301,8 @@ func TestIntegration(t *testing.T) {
 	if ledger != total {
 		t.Fatalf("ledger %d != pool %d", ledger, total)
 	}
+	t.Run("commerce", func(t *testing.T) { f.t = t; testCommerce(f, alice, partner, outsider, couple) })
+	f.t = t
 	f.server.Config.DevLogin = false
 	f.error(f.call("", "POST", "/login", "", map[string]string{"devIdentity": "disabled"}), 403, "DEV_LOGIN_DISABLED")
 	f.error(f.call("bad", "GET", "/context", "", nil), 401, "UNAUTHENTICATED")

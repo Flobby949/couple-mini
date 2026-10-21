@@ -8,6 +8,7 @@ export type Session = { token: string; user: { id: string; nickname: string }; e
 export function session() { return storage.read<Session>('session') }
 let unauthorized: (() => void) | undefined
 export function onUnauthorized(handler: () => void) { unauthorized = handler }
+export function rejectUnauthorized(token: string) { if (session()?.token === token) unauthorized?.() }
 export async function request<T>(path: string, method: 'GET' | 'POST' = 'GET', body?: unknown, key?: string): Promise<T> {
   const token = session()?.token
   let result: Taro.request.SuccessCallbackResult

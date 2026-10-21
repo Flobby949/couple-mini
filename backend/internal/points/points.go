@@ -73,3 +73,21 @@ func Read(ctx context.Context, tx *sql.Tx, user, couple, date string, limit int6
 	s.Remaining = max(0, limit-s.Earned)
 	return s, err
 }
+
+// Order consumption leaves the system; refunds do not consume the daily earning cap.
+func ChangeAccount(ctx context.Context, tx *sql.Tx, user, order, reason string, amount int64, now time.Time) (int64, error) {
+	if _, err := tx.ExecContext(ctx, "UPDATE accounts SET balance=balance+? WHERE user_id=?", amount, user); err != nil {
+		return 0, err
+	}
+	var balance int64
+	if err := tx.QueryRowContext(ctx, "SELECT balance FROM accounts WHERE user_id=?", user).Scan(&balance); err != nil {
+		return 0, err
+	}
+	_, err := tx.ExecContext(ctx, "INSERT INTO account_ledger VALUES (?,?,?,?,?,?,?)", platform.ID(), user, order, reason, amount, balance, now)
+	return balance, err
+}
+func Balance(ctx context.Context, tx *sql.Tx, user string) (int64, error) {
+	var n int64
+	err := tx.QueryRowContext(ctx, "SELECT balance FROM accounts WHERE user_id=?", user).Scan(&n)
+	return n, err
+}
