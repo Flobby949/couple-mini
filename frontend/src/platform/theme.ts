@@ -26,6 +26,8 @@ export function applyNativeTheme(scheme: Scheme, accent: Accent) {
     void Taro.setTabBarItem({ index, iconPath: `/assets/tab-icons/${name}-${accent}-${scheme}.png`, selectedIconPath: `/assets/tab-icons/${name}-${accent}-${scheme}-active.png` }).catch(() => {})
   }
   if (process.env.TARO_ENV === 'h5') {
+    document.documentElement.classList.remove('theme-light', 'theme-dark', 'accent-iris', 'accent-teal', 'accent-apricot')
+    document.documentElement.classList.add(`theme-${scheme}`, `accent-${accent}`)
     document.documentElement.style.colorScheme = scheme
     document.documentElement.style.backgroundColor = base.page
     document.body.style.backgroundColor = base.page

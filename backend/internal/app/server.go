@@ -22,6 +22,7 @@ import (
 	"couple-mini/backend/internal/platform"
 	"couple-mini/backend/internal/points"
 	"couple-mini/backend/internal/rules"
+	"couple-mini/backend/internal/tasks"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 )
@@ -93,6 +94,7 @@ func (s *Server) Router() *gin.Engine {
 	a.POST("/rules/:id/confirm", s.confirm)
 	a.POST("/checkins", s.checkin)
 	s.commerceRoutes(a)
+	s.taskRoutes(a)
 	return r
 }
 
@@ -205,6 +207,7 @@ func (s *Server) login(c *gin.Context) {
 
 // Every actor's writes and close requests share this user-row arbitration lock.
 // Binding additionally locks both users in sorted order before touching the invitation.
+// Bound requests acquire the relationship first, avoiding partner foreign-key lock cycles.
 func (s *Server) write(c *gin.Context, extraUsers []string, fn mutation) {
 	key := c.GetHeader("Idempotency-Key")
 	if !operationKey.MatchString(key) {
@@ -312,17 +315,13 @@ func (s *Server) closeOperation(c *gin.Context) {
 		return
 	}
 	ctx := c.Request.Context()
-	tx, err := s.DB.BeginTx(ctx, nil)
+	user := c.GetString("user")
+	tx, _, _, err := s.lockRelation(ctx, user, []string{user})
 	if err != nil {
 		s.fail(c, err)
 		return
 	}
 	defer tx.Rollback()
-	user := c.GetString("user")
-	if err = identity.LockUsers(ctx, tx, user); err != nil {
-		s.fail(c, err)
-		return
-	}
 	var status string
 	var httpStatus int
 	var response json.RawMessage
@@ -505,12 +504,16 @@ func (s *Server) home(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
-		return gin.H{"context": state, "points": summary, "checkin": checked, "todos": todo, "orderTodos": orderTodos, "milestones": checkin.Milestones}, nil
+		taskTodos, err := tasks.Todos(ctx, tx, state.Couple.ID, state.Me.ID)
+		if err != nil {
+			return nil, err
+		}
+		return gin.H{"context": state, "points": summary, "checkin": checked, "todos": todo, "orderTodos": orderTodos, "taskTodos": taskTodos, "milestones": checkin.Milestones}, nil
 	})
 }
 func (s *Server) history(c *gin.Context) {
 	s.read(c, "ready", func(ctx context.Context, tx *sql.Tx, state identity.Context) (any, error) {
-		rows, err := tx.QueryContext(ctx, "SELECT id,actor_id,reason,amount,created_at FROM pool_ledger WHERE couple_id=? ORDER BY created_at DESC,id DESC LIMIT 100", state.Couple.ID)
+		rows, err := tx.QueryContext(ctx, "SELECT id,actor_id,reason,amount,created_at,task_id FROM pool_ledger WHERE couple_id=? ORDER BY created_at DESC,id DESC LIMIT 100", state.Couple.ID)
 		if err != nil {
 			return nil, err
 		}
@@ -520,10 +523,11 @@ func (s *Server) history(c *gin.Context) {
 			var id, actor, reason string
 			var amount int64
 			var at time.Time
-			if err = rows.Scan(&id, &actor, &reason, &amount, &at); err != nil {
+			var taskID *string
+			if err = rows.Scan(&id, &actor, &reason, &amount, &at, &taskID); err != nil {
 				return nil, err
 			}
-			out = append(out, gin.H{"id": id, "actorId": actor, "reason": reason, "amount": amount, "createdAt": at})
+			out = append(out, gin.H{"id": id, "actorId": actor, "reason": reason, "amount": amount, "createdAt": at, "taskId": taskID})
 		}
 		return gin.H{"entries": out}, rows.Err()
 	})

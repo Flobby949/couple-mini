@@ -46,7 +46,7 @@ func Initialize(ctx context.Context, tx *sql.Tx, couple, actor string, users []s
 	return Ledger(ctx, tx, couple, actor, "initial", 100, now)
 }
 func Ledger(ctx context.Context, tx *sql.Tx, couple, actor, reason string, amount int64, now time.Time) error {
-	_, err := tx.ExecContext(ctx, "INSERT INTO pool_ledger VALUES (?,?,?,?,?,?)", platform.ID(), couple, actor, reason, amount, now)
+	_, err := tx.ExecContext(ctx, "INSERT INTO pool_ledger(id,couple_id,actor_id,reason,amount,created_at) VALUES (?,?,?,?,?,?)", platform.ID(), couple, actor, reason, amount, now)
 	return err
 }
 func CreditPool(ctx context.Context, tx *sql.Tx, couple, actor, reason string, amount int64, now time.Time) error {
@@ -76,6 +76,12 @@ func Read(ctx context.Context, tx *sql.Tx, user, couple, date string, limit int6
 
 // Order consumption leaves the system; refunds do not consume the daily earning cap.
 func ChangeAccount(ctx context.Context, tx *sql.Tx, user, order, reason string, amount int64, now time.Time) (int64, error) {
+	return changeAccount(ctx, tx, user, reason, amount, &order, nil, nil, now)
+}
+func TaskAccount(ctx context.Context, tx *sql.Tx, user, task, reason string, amount int64, now time.Time) (int64, error) {
+	return changeAccount(ctx, tx, user, reason, amount, nil, &task, nil, now)
+}
+func changeAccount(ctx context.Context, tx *sql.Tx, user, reason string, amount int64, order, task, gift *string, now time.Time) (int64, error) {
 	if _, err := tx.ExecContext(ctx, "UPDATE accounts SET balance=balance+? WHERE user_id=?", amount, user); err != nil {
 		return 0, err
 	}
@@ -83,7 +89,7 @@ func ChangeAccount(ctx context.Context, tx *sql.Tx, user, order, reason string, 
 	if err := tx.QueryRowContext(ctx, "SELECT balance FROM accounts WHERE user_id=?", user).Scan(&balance); err != nil {
 		return 0, err
 	}
-	_, err := tx.ExecContext(ctx, "INSERT INTO account_ledger VALUES (?,?,?,?,?,?,?)", platform.ID(), user, order, reason, amount, balance, now)
+	_, err := tx.ExecContext(ctx, "INSERT INTO account_ledger(id,user_id,order_id,task_id,gift_id,reason,amount,balance_after,created_at) VALUES (?,?,?,?,?,?,?,?,?)", platform.ID(), user, order, task, gift, reason, amount, balance, now)
 	return balance, err
 }
 func Balance(ctx context.Context, tx *sql.Tx, user string) (int64, error) {

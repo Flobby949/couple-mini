@@ -68,7 +68,7 @@ func run() error {
 	stopped, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	jobsDone := make(chan struct{})
-	go func() { defer close(jobsDone); scheduler.Run(stopped, 30*time.Second, service.SettleOrders) }()
+	go func() { defer close(jobsDone); scheduler.Run(stopped, 30*time.Second, service.SettleDue) }()
 	failure := make(chan error, 1)
 	go func() { failure <- server.ListenAndServe() }()
 	slog.Info("server ready", "address", config.Address, "environment", config.Env)

@@ -93,6 +93,11 @@ func LockCouple(ctx context.Context, tx *sql.Tx, user string, ready bool) (Coupl
 	}
 	return c, nil
 }
+func LockCoupleID(ctx context.Context, tx *sql.Tx, id string) (Couple, error) {
+	var c Couple
+	err := tx.QueryRowContext(ctx, "SELECT id,daily_limit,double_days FROM couples WHERE id=? FOR UPDATE", id).Scan(&c.ID, &c.DailyLimit, &c.DoubleDays)
+	return c, err
+}
 
 func Invite(ctx context.Context, tx *sql.Tx, user string, now time.Time) (any, error) {
 	var n int

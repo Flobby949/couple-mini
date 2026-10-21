@@ -1,4 +1,4 @@
-.theme-root {
+.theme-root, html {
   --page: #f6f7fc; --surface: #ffffff; --ink: #29223b; --muted: #71677e;
   --line: #e4dfed; --input: #fdfcff; --disabled-bg: #e4dfed; --disabled-ink: #655c70;
   --warning-bg: #fff4e7; --warning: #92501b; --partner-bg: #fff0e5;
@@ -143,6 +143,22 @@ button::after { border: 0; }
 .cart-row { display: flex; align-items: center; gap: 10px; padding: 16px 0; border-bottom: 1px solid var(--line); }
 .cart-product { flex: 1; min-width: 0; }
 .cart-choice { width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.task-budget { margin-top: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.task-summary, .task-list-item { display: flex; flex-direction: column; gap: 10px; }
+.task-list-item { margin-top: 16px; }
+.task-summary .section-title { overflow-wrap: anywhere; }
+.task-summary .muted { white-space: normal; }
+.budget-preview { display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 12px; background: var(--tint); color: var(--primary); }
+.task-preview, .task-result { display: flex; flex-direction: column; gap: 12px; }
+.settlement-line { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.settlement-line .muted { width: 100%; }
+.date-time-field { display: flex; flex-direction: column; gap: 8px; }
+.date-time-pickers { display: flex; gap: 12px; flex-wrap: wrap; }
+.date-time-pickers > * { flex: 1; min-width: 120px; }
+.date-picker-value { border: 1px solid var(--line); border-radius: 10px; color: var(--ink); background: var(--input); min-height: 48px; padding: 12px; }
+.partner-summary { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.theme-root .segmented > * { color: var(--muted); }
+.theme-root .segmented > .selected { color: var(--on-primary); }
 .cart-product .cover { width: 64px; height: 72px; }
 .cart-product .text-button { margin-left: 78px; }
 .warning-text { color: var(--warning); font-size: 14px; white-space: pre-wrap; }
@@ -178,3 +194,15 @@ button::after { border: 0; }
   .product-tile .cover-large { height: 205px; }
   .sheet { padding-left: 14px; padding-right: 14px; }
 }
+
+/* Taro H5 picker overlays attach to body, outside the page theme wrapper. */
+html .weui-mask { z-index: 10010; }
+html .weui-picker { z-index: 10020; }
+html .weui-picker, html .weui-picker__hd, html .weui-picker__bd { background: var(--surface); color: var(--ink); }
+html .weui-picker__item { color: var(--ink); }
+html .weui-picker__item_disabled, html .weui-picker__action:first-child { color: var(--muted); }
+html .weui-picker__action:last-child { color: var(--primary); }
+html .weui-picker__hd::after, html .weui-picker__indicator::before, html .weui-picker__indicator::after { border-color: var(--line); }
+html .weui-picker__mask { background-image: linear-gradient(var(--surface), transparent), linear-gradient(transparent, var(--surface)); }
+.textarea .taro-textarea { width: 100%; min-height: 120px; box-sizing: border-box; padding: 0; border: 0; resize: none; background: transparent; color: inherit; font: inherit; }
+.textarea .taro-textarea::placeholder { color: var(--muted); }

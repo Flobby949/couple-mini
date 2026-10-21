@@ -22,6 +22,7 @@ import frame from '../../assets/avatar-stitch-frame.png'
 import shelf from '../../assets/home-shelf.png'
 import { ProductSummary } from '../../features/catalog/components'
 import { statuses } from '../../features/orders/presentation'
+import { TaskSummary } from '../../features/tasks/components'
 
 export default function HomePage() {
   const gate = useGate(), action = useAction()
@@ -42,9 +43,10 @@ export default function HomePage() {
       <View className='surface pool' onClick={() => void navigate('/packages/account/history/index')}><Image src={jar} className='jar' mode='aspectFit' /><View className='pool-total'><Text className='section-title'>共同积分池</Text><Text><Text className='number'>{data.points.total}</Text> 积分</Text></View><View className='pool-details'><Text>可用 {data.points.available}</Text><Text className='muted'>已预留 {data.points.reserved}</Text></View></View>
       <View className='metrics'><View><Text className='muted'>我的积分</Text><Text><Text className='metric'>{data.points.balance}</Text> 积分</Text></View><View><Text className='muted'>今日已获得 / 上限</Text><Text><Text className='metric'>{data.points.earned}</Text> / {data.points.dailyLimit}</Text><Text className='muted'>剩余额度 {data.points.remaining} 积分</Text></View></View>
       <Text className='section-title section-heading'>今日待办</Text>
-      {data.todos.length === 0 && data.orderTodos.length === 0 && <Empty title='今天的待办都处理好了' description='慢慢来，留一点时间给彼此。' />}
+      {data.todos.length === 0 && data.orderTodos.length === 0 && (data.taskTodos || []).length === 0 && <Empty title='今天的待办都处理好了' description='慢慢来，留一点时间给彼此。' />}
       {data.todos.map(p => <View className='surface row todo' key={p.id}><View><Text className='section-title'>共同规则待确认</Text><Text className='muted'>每日上限 {p.dailyLimit} 积分</Text></View><Button className='button small' onClick={() => void navigate(`/packages/account/rules/index?id=${p.id}`)}>去确认</Button></View>)}
       {data.orderTodos.map(o => <View className='surface order-summary' key={o.id}><Text className='tag'>{o.cancelPending ? '取消申请待处理' : statuses[o.status]}</Text><ProductSummary product={o.snapshot} /><Button className='button secondary' onClick={() => void navigate(`/packages/commerce/order-detail/index?id=${o.id}`)}>去处理订单</Button></View>)}
+      {(data.taskTodos || []).map(task => <View className='surface task-list-item' key={task.id}><TaskSummary task={task} /><Button className='button secondary' onClick={() => void navigate(`/packages/tasks/detail/index?id=${task.id}`)}>去处理任务</Button></View>)}
       <View className='surface milestone'><Text className='section-title'>累计双人签到 {data.context.couple!.doubleDays} 天</Text><Text className='muted'>{next ? `下个里程碑 ${next.days} 天 · +${next.reward} 积分入池` : '所有签到里程碑都已达成'}</Text><View className='progress'><View style={{ width: `${next ? Math.min(100, data.context.couple!.doubleDays / next.days * 100) : 100}%` }} /></View><Text className='muted'>漏签不清零，每一份陪伴都算数。</Text></View>
     </>}
   </Page>

@@ -9,9 +9,10 @@ export interface Home {
   checkin: { me: boolean; partner: boolean }
   todos: Proposal[]
   orderTodos: import('./commerce').Order[]
+  taskTodos: import('./tasks').Task[]
   milestones: { days: number; reward: number }[]
 }
 export interface CheckinResult { date: string; base: number; doubleBonus: number; milestoneBonus: number; total: number; doubleDays: number }
 export interface Pending { key: string; path: string; body: unknown; actor: string; createdAt: string }
 export interface Operation { status: 'absent' | 'succeeded' | 'rejected' | 'closed'; httpStatus?: number; response?: unknown }
-export interface History { entries: { id: string; actorId: string; reason: string; amount: number; createdAt: string }[] }
+export interface History { entries: { id: string; actorId: string; reason: string; amount: number; createdAt: string; taskId?: string | null }[] }

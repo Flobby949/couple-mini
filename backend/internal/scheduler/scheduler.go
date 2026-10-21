@@ -13,7 +13,7 @@ func Run(ctx context.Context, interval time.Duration, work func(context.Context)
 	for {
 		runCtx, cancel := context.WithTimeout(ctx, 20*time.Second)
 		if err := work(runCtx); err != nil && ctx.Err() == nil {
-			slog.Error("background job failed", "job", "order-auto-confirm", "error", err)
+			slog.Error("background job failed", "job", "relationship-due-settlement", "error", err)
 		}
 		cancel()
 		select {

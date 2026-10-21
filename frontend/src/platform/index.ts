@@ -10,6 +10,7 @@ export async function online() {
 }
 export const platformLogin = () => Taro.login()
 export const navigate = (url: string) => Taro.navigateTo({ url })
+export const replace = (url: string) => Taro.redirectTo({ url })
 export const home = () => Taro.switchTab({ url: '/pages/home/index' })
 export const switchTab = (url: string) => Taro.switchTab({ url })
 export const redirect = (url: string) => Taro.reLaunch({ url })

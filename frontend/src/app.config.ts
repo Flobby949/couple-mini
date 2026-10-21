@@ -1,8 +1,9 @@
 export default defineAppConfig({
   pages: ['pages/entry/index', 'pages/home/index', 'pages/tasks/index', 'pages/shop/index', 'pages/me/index'],
   subPackages: [
-    { root: 'packages/account', pages: ['binding/index', 'rules/index', 'history/index', 'appearance/index', 'points/index'] },
+    { root: 'packages/account', pages: ['binding/index', 'rules/index', 'history/index', 'appearance/index', 'points/index', 'partner/index', 'gift/index', 'gift-detail/index'] },
     { root: 'packages/commerce', pages: ['store/index', 'product-edit/index', 'product/index', 'checkout/index', 'orders/index', 'order-detail/index'] },
+    { root: 'packages/tasks', pages: ['edit/index', 'detail/index'] },
   ],
   darkmode: true,
   themeLocation: 'theme.json',

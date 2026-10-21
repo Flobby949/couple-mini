@@ -22,4 +22,4 @@ export interface OrderReceipt {
   buyerBalance: number; sellerBalance: number; occurredAt: string; snapshot: Snapshot
 }
 export interface OrderPage { items: Order[]; nextCursor: string }
-export interface AccountHistory { entries: { id: string; orderId: string; reason: string; amount: number; balanceAfter: number; createdAt: string }[] }
+export interface AccountHistory { entries: { id: string; orderId: string | null; taskId: string | null; giftId: string | null; reason: string; amount: number; balanceAfter: number; createdAt: string }[] }

@@ -191,7 +191,7 @@ func testCommerce(f *fixture, buyer, seller, outsider, couple string) {
 	action(buyer, held, "request_cancel")
 	f.error(f.call(seller, "POST", "/orders/"+held+"/actions", platform.ID(), map[string]string{"action": "fulfill"}), 409, "ORDER_STATE_CHANGED")
 	f.clock.Add(int64(4 * 24 * time.Hour))
-	if err := f.server.SettleOrders(context.Background()); err != nil {
+	if err := f.server.SettleDue(context.Background()); err != nil {
 		t.Fatal(err)
 	}
 	heldState := detail(buyer, held)
@@ -214,7 +214,7 @@ func testCommerce(f *fixture, buyer, seller, outsider, couple string) {
 	if detail(buyer, held)["endedReason"] != "auto_confirmed" {
 		t.Fatal("failed action rolled back due completion")
 	}
-	if err = f.server.SettleOrders(context.Background()); err != nil {
+	if err = f.server.SettleDue(context.Background()); err != nil {
 		t.Fatal(err)
 	}
 	var n int

@@ -14,6 +14,7 @@ import (
 	"couple-mini/backend/internal/orders"
 	"couple-mini/backend/internal/platform"
 	"couple-mini/backend/internal/points"
+	"couple-mini/backend/internal/tasks"
 	"github.com/gin-gonic/gin"
 )
 
@@ -168,20 +169,21 @@ func (s *Server) orderAction(c *gin.Context) {
 }
 func (s *Server) accountHistory(c *gin.Context) {
 	s.read(c, "ready", func(ctx context.Context, tx *sql.Tx, state identity.Context) (any, error) {
-		rows, err := tx.QueryContext(ctx, "SELECT id,order_id,reason,amount,balance_after,created_at FROM account_ledger WHERE user_id=? ORDER BY created_at DESC,id DESC LIMIT 100", state.Me.ID)
+		rows, err := tx.QueryContext(ctx, "SELECT id,order_id,task_id,gift_id,reason,amount,balance_after,created_at FROM account_ledger WHERE user_id=? ORDER BY created_at DESC,id DESC LIMIT 100", state.Me.ID)
 		if err != nil {
 			return nil, err
 		}
 		defer rows.Close()
 		out := []gin.H{}
 		for rows.Next() {
-			var id, order, reason string
+			var id, reason string
+			var order, task, gift *string
 			var amount, balance int64
 			var at time.Time
-			if err = rows.Scan(&id, &order, &reason, &amount, &balance, &at); err != nil {
+			if err = rows.Scan(&id, &order, &task, &gift, &reason, &amount, &balance, &at); err != nil {
 				return nil, err
 			}
-			out = append(out, gin.H{"id": id, "orderId": order, "reason": reason, "amount": amount, "balanceAfter": balance, "createdAt": at})
+			out = append(out, gin.H{"id": id, "orderId": order, "taskId": task, "giftId": gift, "reason": reason, "amount": amount, "balanceAfter": balance, "createdAt": at})
 		}
 		return gin.H{"entries": out}, rows.Err()
 	})
@@ -272,26 +274,19 @@ func (s *Server) readMedia(c *gin.Context) {
 // the caller's savepoint, so rejecting the user's next action cannot undo it.
 func (s *Server) beginRelation(ctx context.Context, user string, users []string) (*sql.Tx, time.Time, error) {
 	for {
-		tx, err := s.DB.BeginTx(ctx, nil)
+		tx, couple, now, err := s.lockRelation(ctx, user, users)
 		if err != nil {
 			return nil, time.Time{}, err
 		}
-		if len(users) > 0 {
-			if err = identity.LockUsers(ctx, tx, users...); err != nil {
-				tx.Rollback()
-				return nil, time.Time{}, err
-			}
+		if couple == nil {
+			return tx, now, nil
 		}
-		couple, err := identity.LockCouple(ctx, tx, user, false)
-		if e, ok := err.(*platform.Error); ok && e.Code == "BINDING_REQUIRED" {
-			return tx, s.Now().UTC(), nil
+		count, err := tasks.SettleDue(ctx, tx, couple.ID, now)
+		if err == nil {
+			var orderCount int
+			orderCount, err = orders.SettleDue(ctx, tx, couple.ID, now)
+			count += orderCount
 		}
-		if err != nil {
-			tx.Rollback()
-			return nil, time.Time{}, err
-		}
-		now := s.Now().UTC()
-		count, err := orders.SettleDue(ctx, tx, couple.ID, now)
 		if err != nil {
 			tx.Rollback()
 			return nil, time.Time{}, err
@@ -304,8 +299,57 @@ func (s *Server) beginRelation(ctx context.Context, user string, users []string)
 		}
 	}
 }
-func (s *Server) SettleOrders(ctx context.Context) error {
-	rows, err := s.DB.QueryContext(ctx, "SELECT DISTINCT couple_id FROM orders WHERE status=? AND cancel_pending=FALSE AND auto_confirm_at<=?", orders.Awaiting, s.Now().UTC())
+
+// A bound relationship is immutable. Discover it before opening the transaction,
+// then lock it before any user row or repeatable-read snapshot. This also avoids
+// cycles between actor locks and foreign-key checks for the partner's user row.
+func (s *Server) lockRelation(ctx context.Context, user string, users []string) (*sql.Tx, *identity.Couple, time.Time, error) {
+	for {
+		var id string
+		err := s.DB.QueryRowContext(ctx, "SELECT couple_id FROM members WHERE user_id=?", user).Scan(&id)
+		if err != nil && err != sql.ErrNoRows {
+			return nil, nil, time.Time{}, err
+		}
+		tx, err := s.DB.BeginTx(ctx, nil)
+		if err != nil {
+			return nil, nil, time.Time{}, err
+		}
+		if id != "" {
+			couple, err := identity.LockCoupleID(ctx, tx, id)
+			if err != nil {
+				tx.Rollback()
+				return nil, nil, time.Time{}, err
+			}
+			if len(users) > 0 {
+				if err = identity.LockUsers(ctx, tx, user); err != nil {
+					tx.Rollback()
+					return nil, nil, time.Time{}, err
+				}
+			}
+			return tx, &couple, s.Now().UTC(), nil
+		}
+		if len(users) > 0 {
+			if err = identity.LockUsers(ctx, tx, users...); err != nil {
+				tx.Rollback()
+				return nil, nil, time.Time{}, err
+			}
+		}
+		// Binding may have committed while this request waited for its user lock.
+		err = tx.QueryRowContext(ctx, "SELECT couple_id FROM members WHERE user_id=?", user).Scan(&id)
+		if err == nil {
+			tx.Rollback()
+			continue
+		}
+		if err != sql.ErrNoRows {
+			tx.Rollback()
+			return nil, nil, time.Time{}, err
+		}
+		return tx, nil, s.Now().UTC(), nil
+	}
+}
+func (s *Server) SettleDue(ctx context.Context) error {
+	now := s.Now().UTC()
+	rows, err := s.DB.QueryContext(ctx, "SELECT couple_id FROM orders WHERE status=? AND cancel_pending=FALSE AND auto_confirm_at<=? UNION SELECT couple_id FROM tasks WHERE kind='partner' AND status IN ('pending','active') AND COALESCE(correction_deadline,deadline)<=?", orders.Awaiting, now, now)
 	if err != nil {
 		return err
 	}
@@ -328,10 +372,13 @@ func (s *Server) SettleOrders(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-		var found string
-		err = tx.QueryRowContext(ctx, "SELECT id FROM couples WHERE id=? FOR UPDATE", id).Scan(&found)
+		_, err = identity.LockCoupleID(ctx, tx, id)
 		if err == nil {
-			_, err = orders.SettleDue(ctx, tx, id, s.Now().UTC())
+			now := s.Now().UTC()
+			_, err = tasks.SettleDue(ctx, tx, id, now)
+			if err == nil {
+				_, err = orders.SettleDue(ctx, tx, id, now)
+			}
 		}
 		if err == nil {
 			err = tx.Commit()

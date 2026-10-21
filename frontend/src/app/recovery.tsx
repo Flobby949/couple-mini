@@ -4,7 +4,7 @@ import { useDidShow } from '@tarojs/taro'
 import { pending, recover } from '../core/operations'
 import { useAction } from '../core/use-action'
 import { ErrorState } from '../ui'
-import { navigate } from '../platform'
+import { navigate, replace } from '../platform'
 
 export function Recovery() {
   const [record, setRecord] = useState(pending)
@@ -22,8 +22,10 @@ export function Recovery() {
       if (result.status === 'succeeded') setMessage('原操作已成功，请以刷新后的当前状态为准。')
       else if (result.status === 'closed') setMessage('原操作已关闭，确认未执行。可以重新操作。')
       else setMessage('原操作未生效，请检查输入后重新操作。')
-      const receipt = result.response as { orderId?: string } | undefined
+      const receipt = result.response as { orderId?: string; taskId?: string; id?: string } | undefined
       if (result.status === 'succeeded' && original?.path === '/orders' && receipt?.orderId && /^[a-f0-9]{32}$/.test(receipt.orderId)) await navigate(`/packages/commerce/order-detail/index?id=${receipt.orderId}`)
+      if (result.status === 'succeeded' && /^\/tasks(?:\/[a-f0-9]{32})?$/.test(original?.path || '') && receipt?.taskId && /^[a-f0-9]{32}$/.test(receipt.taskId)) await replace(`/packages/tasks/detail/index?id=${receipt.taskId}`)
+      if (result.status === 'succeeded' && original?.path === '/gifts' && receipt?.id && /^[a-f0-9]{32}$/.test(receipt.id)) await replace(`/packages/account/gift-detail/index?id=${receipt.id}`)
     })
   }
   if (!current && !message && !action.error) return null

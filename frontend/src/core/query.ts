@@ -9,5 +9,8 @@ export const keys = {
   catalog: (view: string) => ['catalog', view] as const, product: (id: string) => ['product', id] as const,
   cart: ['cart'] as const, orders: (role: string, status: string) => ['orders', role, status] as const,
   order: (id: string) => ['order', id] as const, accountHistory: ['account-history'] as const,
+  tasks: (kind: string, filter: string) => ['tasks', kind, filter] as const,
+  task: (id: string) => ['task', id] as const, giftPreview: ['gift-preview'] as const,
+  gifts: ['gifts'] as const, gift: (id: string) => ['gift', id] as const, reservations: ['reservations'] as const,
 }
 export function refresh() { return queries.invalidateQueries() }
