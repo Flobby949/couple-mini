@@ -20,9 +20,9 @@ export function useGate(minimum: 'bound' | 'ready' = 'ready') {
   const query = useQuery({ queryKey: keys.context, queryFn: getContext, enabled: visible && !!session(), refetchInterval: visible ? 15000 : false })
   useEffect(() => {
     if (!visible) return
-    if (!session()) { rememberTarget(router.path, router.params.id); void redirect('/pages/entry/index'); return }
+    if (!session()) { rememberTarget(router.path, router.params.id, router.params.code); void redirect('/pages/entry/index'); return }
     if (query.data?.stage === 'binding' || minimum === 'ready' && query.data?.stage === 'rules') {
-      rememberTarget(router.path, router.params.id)
+      rememberTarget(router.path, router.params.id, router.params.code)
       void routeContext(query.data)
     }
   }, [visible, query.data?.stage, minimum])

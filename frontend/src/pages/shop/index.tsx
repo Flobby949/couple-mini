@@ -21,7 +21,7 @@ export default function Shop() {
   const gate = useGate()
   const [cart, setCart] = useState(false)
   const query = useQuery({ queryKey: keys.catalog('partner'), queryFn: () => getCatalog('partner'), enabled: gate.allowed, refetchInterval: gate.allowed ? 30000 : false, staleTime: 0 })
-  return <Page title='只为你开的小店' subtitle='用积分，兑换一份属于两个人的小确幸。'>
+  return <Page messageEntry title='只为你开的小店' subtitle='用积分，兑换一份属于两个人的小确幸。'>
     <ErrorState error={gate.error || query.error} retry={() => { void gate.refetch(); void query.refetch() }} />
     {(!gate.allowed || !query.data) && !query.error ? <Loading /> : gate.allowed && query.data && <>
       <View className='surface shop-header'><View><Text className='section-title'>{gate.data!.partner!.nickname}的小店</Text><Text className='muted'>我的余额 {query.data.balance} 积分</Text></View><Button className='text-button' onClick={() => void navigate('/packages/commerce/orders/index')}>我的订单 ›</Button></View>

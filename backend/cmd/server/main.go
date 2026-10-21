@@ -3,17 +3,21 @@ package main
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
 	schema "couple-mini/backend"
 	"couple-mini/backend/internal/app"
+	"couple-mini/backend/internal/notifications"
 	"couple-mini/backend/internal/platform"
 	"couple-mini/backend/internal/scheduler"
+	"couple-mini/backend/internal/wechat"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
@@ -64,11 +68,40 @@ func run() error {
 		return err
 	}
 	service := &app.Server{DB: db, Redis: cache, Config: config, Now: time.Now, Client: &http.Client{Timeout: 8 * time.Second}}
+	service.NotificationMappings, err = notifications.LoadMappings(os.Getenv("WECHAT_NOTIFICATION_MAPPINGS"))
+	if err != nil {
+		return err
+	}
+	service.Config.MiniProgramState = env("WECHAT_MINIPROGRAM_STATE", "trial")
+	if service.Config.MiniProgramState != "trial" && service.Config.MiniProgramState != "developer" && service.Config.MiniProgramState != "formal" {
+		return fmt.Errorf("invalid WECHAT_MINIPROGRAM_STATE")
+	}
+	if config.WechatID != "" && config.WechatSecret != "" {
+		service.Wechat = &wechat.Client{AppID: config.WechatID, Secret: config.WechatSecret, HTTP: service.Client}
+	}
+	if err = service.Subscription().Validate(); err != nil {
+		return err
+	}
 	server := &http.Server{Addr: config.Address, Handler: service.Router(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 20 * time.Second, IdleTimeout: 60 * time.Second}
 	stopped, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	jobsDone := make(chan struct{})
-	go func() { defer close(jobsDone); scheduler.Run(stopped, 30*time.Second, service.SettleDue) }()
+	go func() {
+		defer close(jobsDone)
+		var jobs sync.WaitGroup
+		for _, job := range []struct {
+			interval time.Duration
+			name     string
+			run      func(context.Context) error
+		}{{30 * time.Second, "due-settlement", service.SettleDue}, {3 * time.Second, "event-dispatch", service.DispatchNotifications}, {5 * time.Second, "wechat-delivery", service.DeliverNotifications}} {
+			jobs.Add(1)
+			go func(interval time.Duration, name string, run func(context.Context) error) {
+				defer jobs.Done()
+				scheduler.Run(stopped, interval, name, run)
+			}(job.interval, job.name, job.run)
+		}
+		jobs.Wait()
+	}()
 	failure := make(chan error, 1)
 	go func() { failure <- server.ListenAndServe() }()
 	slog.Info("server ready", "address", config.Address, "environment", config.Env)

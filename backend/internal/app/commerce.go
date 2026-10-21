@@ -9,8 +9,10 @@ import (
 	"time"
 
 	"couple-mini/backend/internal/catalog"
+	"couple-mini/backend/internal/eventbus"
 	"couple-mini/backend/internal/identity"
 	"couple-mini/backend/internal/media"
+	"couple-mini/backend/internal/notifications"
 	"couple-mini/backend/internal/orders"
 	"couple-mini/backend/internal/platform"
 	"couple-mini/backend/internal/points"
@@ -348,6 +350,7 @@ func (s *Server) lockRelation(ctx context.Context, user string, users []string) 
 	}
 }
 func (s *Server) SettleDue(ctx context.Context) error {
+	ctx = eventbus.WithCapture(ctx, notifications.Capture)
 	now := s.Now().UTC()
 	rows, err := s.DB.QueryContext(ctx, "SELECT couple_id FROM orders WHERE status=? AND cancel_pending=FALSE AND auto_confirm_at<=? UNION SELECT couple_id FROM tasks WHERE kind='partner' AND status IN ('pending','active') AND COALESCE(correction_deadline,deadline)<=?", orders.Awaiting, now, now)
 	if err != nil {

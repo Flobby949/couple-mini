@@ -177,6 +177,7 @@ func TestIntegration(t *testing.T) {
 	second := f.must(alice, "POST", "/rules", map[string]string{"dailyLimit": "103.4"})["id"].(string)
 	f.error(f.call(alice, "POST", "/rules/"+first+"/confirm", platform.ID(), map[string]any{}), 403, "PARTNER_CONFIRM_REQUIRED")
 	f.error(f.call(outsider, "POST", "/rules/"+first+"/confirm", platform.ID(), map[string]any{}), 403, "BINDING_REQUIRED")
+	testFirstRuleMessages(f, alice, partner, first)
 	f.must(partner, "POST", "/rules/"+first+"/confirm", map[string]any{})
 	f.error(f.call(partner, "POST", "/rules/"+second+"/confirm", platform.ID(), map[string]any{}), 409, "PROPOSAL_INACTIVE")
 	if f.must(alice, "GET", "/context", nil)["stage"] != "ready" {
@@ -303,6 +304,7 @@ func TestIntegration(t *testing.T) {
 	}
 	t.Run("commerce", func(t *testing.T) { f.t = t; testCommerce(f, alice, partner, outsider, couple) })
 	t.Run("tasks-and-gifts", func(t *testing.T) { f.t = t; testTasksAndGifts(f, alice, partner, outsider, couple) })
+	t.Run("notifications", func(t *testing.T) { f.t = t; testNotifications(f, alice, partner, outsider, couple) })
 	f.t = t
 	f.server.Config.DevLogin = false
 	f.error(f.call("", "POST", "/login", "", map[string]string{"devIdentity": "disabled"}), 403, "DEV_LOGIN_DISABLED")

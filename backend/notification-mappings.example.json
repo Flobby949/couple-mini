@@ -1,0 +1,10 @@
+{
+  "P01": {
+    "templateId": "replace-with-your-approved-platform-template-id",
+    "fields": {
+      "thing1": "actor",
+      "number2": "amount",
+      "time3": "occurredAt"
+    }
+  }
+}

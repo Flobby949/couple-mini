@@ -4,6 +4,7 @@ import Taro, { useDidHide, useDidShow } from '@tarojs/taro'
 import { onUnauthorized } from './core/api'
 import { queries } from './core/query'
 import { redirect, storage } from './platform'
+import { rememberTarget } from './app/navigation'
 import { ThemeProvider } from './app/theme'
 import { clearMedia } from './core/media'
 import { clearCheckoutPrice } from './features/orders/checkout-intent'
@@ -15,6 +16,8 @@ onlineManager.setEventListener(setOnline => {
   return () => Taro.offNetworkStatusChange(handler)
 })
 onUnauthorized(() => {
+  const route = Taro.getCurrentInstance().router
+  if (route) rememberTarget(route.path,route.params.id,route.params.code)
   storage.remove('session')
   queries.clear()
   clearMedia()

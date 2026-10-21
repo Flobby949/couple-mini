@@ -55,6 +55,14 @@ func Confirm(ctx context.Context, tx *sql.Tx, user, couple, id string, now time.
 	if status != "pending" {
 		return nil, platform.Fail(409, "PROPOSAL_INACTIVE", "这份提议已生效或作废，请查看当前规则")
 	}
+	var previous *int64
+	var voided int
+	if err = tx.QueryRowContext(ctx, "SELECT daily_limit FROM couples WHERE id=?", couple).Scan(&previous); err != nil {
+		return nil, err
+	}
+	if err = tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM rule_proposals WHERE couple_id=? AND status='pending' AND id<>?", couple, id).Scan(&voided); err != nil {
+		return nil, err
+	}
 	if _, err = tx.ExecContext(ctx, "UPDATE rule_proposals SET status='void' WHERE couple_id=? AND status='pending'", couple); err != nil {
 		return nil, err
 	}
@@ -64,5 +72,5 @@ func Confirm(ctx context.Context, tx *sql.Tx, user, couple, id string, now time.
 	if _, err = tx.ExecContext(ctx, "UPDATE couples SET daily_limit=? WHERE id=?", limit, couple); err != nil {
 		return nil, err
 	}
-	return map[string]any{"proposalId": id, "dailyLimit": limit, "activatedAt": now}, nil
+	return map[string]any{"proposalId": id, "dailyLimit": limit, "activatedAt": now, "proposerId": proposer, "previousLimit": previous, "voidedCount": voided}, nil
 }

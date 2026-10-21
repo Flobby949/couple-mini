@@ -18,11 +18,13 @@ import (
 	"couple-mini/backend/internal/checkin"
 	"couple-mini/backend/internal/eventbus"
 	"couple-mini/backend/internal/identity"
+	"couple-mini/backend/internal/notifications"
 	"couple-mini/backend/internal/orders"
 	"couple-mini/backend/internal/platform"
 	"couple-mini/backend/internal/points"
 	"couple-mini/backend/internal/rules"
 	"couple-mini/backend/internal/tasks"
+	"couple-mini/backend/internal/wechat"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 )
@@ -30,13 +32,16 @@ import (
 type Config struct {
 	Env, Address, DSN, RedisAddress, RedisPassword, WechatID, WechatSecret, Origin, MediaRoot string
 	DevLogin                                                                                  bool
+	MiniProgramState                                                                          string
 }
 type Server struct {
-	DB     *sql.DB
-	Redis  *redis.Client
-	Config Config
-	Now    func() time.Time
-	Client *http.Client
+	DB                   *sql.DB
+	Redis                *redis.Client
+	Config               Config
+	Now                  func() time.Time
+	Client               *http.Client
+	NotificationMappings notifications.Mappings
+	Wechat               *wechat.Client
 }
 type mutation func(context.Context, *sql.Tx, string, time.Time) (any, error)
 
@@ -46,6 +51,10 @@ var developmentID = regexp.MustCompile(`^[A-Za-z0-9_-]{1,40}$`)
 func (s *Server) Router() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Recovery())
+	r.Use(func(c *gin.Context) {
+		c.Request = c.Request.WithContext(eventbus.WithCapture(c.Request.Context(), notifications.Capture))
+		c.Next()
+	})
 	r.Use(func(c *gin.Context) {
 		c.Header("X-Request-ID", platform.ID())
 		c.Header("Cache-Control", "no-store")
@@ -95,6 +104,7 @@ func (s *Server) Router() *gin.Engine {
 	a.POST("/checkins", s.checkin)
 	s.commerceRoutes(a)
 	s.taskRoutes(a)
+	s.notificationRoutes(a)
 	return r
 }
 
@@ -477,6 +487,14 @@ func (s *Server) readContext(c *gin.Context) {
 func (s *Server) listRules(c *gin.Context) {
 	s.read(c, "bound", func(ctx context.Context, tx *sql.Tx, state identity.Context) (any, error) {
 		p, err := rules.List(ctx, tx, state.Couple.ID)
+		if id := c.Query("id"); id != "" {
+			var selected rules.Proposal
+			err = tx.QueryRowContext(ctx, "SELECT id,proposer_id,previous_limit,daily_limit,status,created_at FROM rule_proposals WHERE id=? AND couple_id=?", id, state.Couple.ID).Scan(&selected.ID, &selected.ProposerID, &selected.PreviousLimit, &selected.DailyLimit, &selected.Status, &selected.CreatedAt)
+			if err == sql.ErrNoRows {
+				return nil, platform.Fail(404, "NOT_FOUND", "规则提议不存在或无权查看")
+			}
+			p = []rules.Proposal{selected}
+		}
 		return gin.H{"proposals": p, "dailyLimit": state.Couple.DailyLimit}, err
 	})
 }

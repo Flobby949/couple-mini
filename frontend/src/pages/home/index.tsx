@@ -30,7 +30,7 @@ export default function HomePage() {
   const query = useQuery({ queryKey: keys.home, queryFn: getHome, enabled: gate.allowed, refetchInterval: gate.allowed ? 15000 : false })
   const data = gate.allowed ? query.data : undefined
   const next = data?.milestones.find(m => m.days > data.context.couple!.doubleDays)
-  return <Page title='今天，也一起' subtitle='生活很普通，但因为有你，才特别。'>
+  return <Page messageEntry title='今天，也一起' subtitle='生活很普通，但因为有你，才特别。'>
     <Image className='home-shelf' src={shelf} mode='aspectFit' />
     <ErrorState error={gate.error || query.error || action.error} retry={() => { void gate.refetch(); void query.refetch() }} />
     {!data && !query.error && <Loading />}

@@ -29,7 +29,7 @@
 
 主要业务码：`UNAUTHENTICATED`、`BINDING_REQUIRED`、`RULES_REQUIRED`、`INVITE_INVALID`、`SELF_BINDING`、`ALREADY_BOUND`、`PARTNER_CONFIRM_REQUIRED`、`PROPOSAL_INACTIVE`、`INVALID_POINTS`、`ALREADY_CHECKED_IN`、`IDEMPOTENCY_CONFLICT`、`OPERATION_CLOSED`。5xx 和网络异常均按结果未知处理，不能换键重试。
 
-绑定、规则、签到、订单、任务及赠送的事件与业务、流水、成功回执同事务保存。当前只落 Outbox，不宣称通知已经生成或微信已经发送；通知偏好、快照、独立消费事务与消费收据需在消息阶段一起落实。
+绑定、规则、签到、订单、任务及赠送的事件与业务、流水、成功回执同事务保存。业务响应不等待通知消费，也不代表微信已经发送；已按冻结偏好及昵称生成站内/微信渠道记录，消费与收据独立于主业务原子提交。
 
 ## 小店、图片与购物车
 
@@ -99,3 +99,39 @@
 赠送不扣本人余额或共享池，实际到账计入接收方当天获得额度，与任务共享上限。单次上限按当前每日上限的 20% 四舍五入（103 → 21）；超额请求拒绝，剩余额度不足时仅发放剩余，差额丢弃。每人北京时间每天三次，申请 0 或实际到账 0 也占一次；规则修改不重置次数或已获得额。记录含 `id, senderId, receiverId, requested, actual, discarded, dailyLimit, createdAt`，原键重放不重复占次数或发放。
 
 新增业务码：`INVALID_TASK_TYPE`、`INVALID_TASK`、`TASK_TYPE_LOCKED`、`INVALID_DEADLINE`、`TASK_STATE_CHANGED`、`CANCEL_REQUEST_CHANGED`、`INSUFFICIENT_POOL`、`INVALID_FILTER`、`GIFT_LIMIT`、`GIFT_COUNT_LIMIT`。
+
+## 消息与逐模板偏好
+
+所有日常消息接口要求首次规则生效，并仅返回本人数据（包括“仅微信”投递历史）。默认每模板 `in_app`，四种渠道为 `in_app / wechat / both / off`；设置只影响之后新业务事件。
+
+| 方法、路径 | 请求 / 返回 |
+| --- | --- |
+| GET `/notifications?filter=all\|unread&cursor=` | `{items, nextCursor}`；每页 50；按业务发生时间、接收序号倒序 |
+| GET `/notifications/unread` | `{count}`；只计本人已入站且未读的消息 |
+| GET `/notifications/:id` | 本人站内消息全文；读取本身不标读 |
+| POST `/notifications/read` | `{ids: [通知ID]}`，1–200 条明确集合；必须全部属于本人站内消息 |
+| POST `/notifications/read-all` | `{}` → `{read}`；在事务的一致性快照内固定当前可见未读 ID 再逐条更新，晚提交或晚生成消息不被旧操作覆盖 |
+| POST `/rules/:id/read-notification` | `{}`；特殊门禁：已绑定即可。成功打开具体规则提议后，只标读本人该提议的 R02，不创建缺失站内记录，不开放消息列表 |
+| GET `/rules?id=提议ID` | 已绑定可读取同一关系该份具体提议，包括已作废或超出最近 100 条的提议 |
+| GET `/notification-preferences` | `{items}`，完整 O01–O12、T01–T12、P01–P03、R01–R03，共 30 项 |
+| POST `/notification-preferences/:code` | `{channel}` → `{code, channel, savedAt}`；关系锁下先补齐到期任务后再修改 |
+| POST `/notification-authorizations/:code` | `{platformTemplateId, result, reportId}`；result=`accept / reject / ban / filter / fail`；持久稳定 `reportId` 需为16–80字符操作键格式，同一报告换请求键重同步仍只记一次，改内容拒绝 |
+| GET `/notification-deliveries?template=P01` | `{items}`，本人该模板最近30笔微信渠道状态，不泄露OpenID、平台凭据或发送载荷 |
+
+消息字段：`id, sequence, template, title, body, target:{type,id}, occurredAt, receivedAt, readAt, deliveryStatus, deliveryReason`。ID/sequence 均为字符串；目标受控为 `order / task / gift / rules / partner / home`，客户端映射到已注册页面并重新校验业务权限。展示全文后标读；门禁重定向不提前标读。历史正文不改写，点击打开业务当前状态，旧通知不恢复旧按钮。
+
+偏好项包含 `code, name, group, channel, wechatAvailable, platformTemplateId, authorization, authorizationAt, reportedRemaining`。可用性仅代表服务配置与映射存在，授权是客户端上报；剩余报告机会不是平台保证。保存微信偏好不会自动弹授权；前端提前加载模板ID，用户点击时只请求该模板，再单独同步结果。拒绝/禁止会废弃该平台模板未使用的旧接受报告；共享同一平台模板的内部模板共用机会池。
+
+站内消费者按事件、订阅者保存收据，通知按事件/接收人/模板唯一；全关仍消费成功。业务事务只读取有效偏好和必要昵称快照、不渲染正文。消费不重读可变商品/任务/额度；模板异常与收据失败使本次消费整体回滚，不回滚已完成业务。订单名称用原订单快照，任务用该次事件名称，实际结果按个人分别渲染。
+
+微信状态：`pending / claimed / sending / succeeded / retry / unavailable / unknown / failed`。`succeeded` 只代表平台接口明确返回成功，不代表用户已读；`retry` 只用于明确失败，最多5次。领取后未进入发送的过期租约可安全恢复；进入发送后崩溃、响应不明或超时为 `unknown`，不自动重发。渠道异常不增加站内消息或改变冻结偏好。
+
+新增业务码：`INVALID_MESSAGES`、`INVALID_PREFERENCE`、`INVALID_AUTHORIZATION`、`AUTHORIZATION_CONFLICT`、`TEMPLATE_UNAVAILABLE`。原幂等/未知结果恢复约定同样适用。
+
+### 消息维护与重放
+
+先备份，再通过仅运维可访问的数据库连接检查 `event_consumptions` 的 `retry / failed`、事件ID、订阅者和次数，以及 `notification_deliveries` 的 `unknown / failed / unavailable` 及原因。日志只记录事件标识和稳定错误码，不包含昵称、正文或平台凭据。
+
+修复模板处理代码后，可针对**已核对的单个事件ID与订阅者**，将 `event_consumptions` 的 `failed` 改回 `retry`、重置次数及下次时间，保留原事件/快照；分发器只重跑消息消费。消费收据与消息同事务，唯一约束防止重复内部通知；不要删除已成功收据，不重跑原下单、发奖或罚分。`legacy_without_snapshot` 的 `skipped` 不重放。
+
+`unknown` 微信记录须先核对平台调用结果；确认已成功则人工记录成功，确认未发出且仍具备订阅机会时才针对该条重新排队，并保留核查记录；无法确认时继续保留 unknown。不可投递与明确耗尽的记录不批量补发。恢复旧数据库备份前先停止应用进程及发送作业，核对备份时间之后可能已发送的记录，保持其 unknown/已成功状态后再恢复发送，避免旧备份导致重复微信提醒。真实账号恢复演练仍待部署阶段。
