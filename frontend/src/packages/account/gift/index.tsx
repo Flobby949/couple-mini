@@ -5,7 +5,7 @@ import { Page } from '../../../app/page'
 import { useGate } from '../../../app/hooks'
 import { getGiftPreview, getGifts, sendGift } from '../../../features/points/gifts'
 import { keys } from '../../../core/query'
-import { useAction } from '../../../core/use-action'
+import { useReminderAction } from '../../../features/notifications/use-reminder-action'
 import { parsePoints, beijingTime } from '../../../core/values'
 import { pending } from '../../../core/operations'
 import { navigate } from '../../../platform'
@@ -13,7 +13,7 @@ import { Empty, ErrorState, Loading, Notice } from '../../../ui'
 import { PersonRow, InlineInfo, Icon } from '../../../ui/visual'
 
 export default function GiftPage() {
-  const gate = useGate(), action = useAction(), [amount, setAmount] = useState('')
+  const gate = useGate(), action = useReminderAction(gate.allowed), [amount, setAmount] = useState('')
   const query = useQuery({ queryKey: keys.giftPreview, queryFn: getGiftPreview, enabled: gate.allowed, staleTime: 0, refetchInterval: gate.allowed ? 15000 : false })
   const history = useQuery({ queryKey: keys.gifts, queryFn: getGifts, enabled: gate.allowed, staleTime: 0, refetchInterval: gate.allowed ? 30000 : false })
   const value = parsePoints(amount), preview = query.data

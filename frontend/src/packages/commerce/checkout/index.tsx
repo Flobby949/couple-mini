@@ -10,14 +10,14 @@ import { placeOrder } from '../../../features/orders/api'
 import { purchaseBlock } from '../../../features/orders/presentation'
 import { checkoutPrice, clearCheckoutPrice } from '../../../features/orders/checkout-intent'
 import { keys } from '../../../core/query'
-import { useAction } from '../../../core/use-action'
+import { useReminderAction } from '../../../features/notifications/use-reminder-action'
 import { pending } from '../../../core/operations'
 import { back, navigate } from '../../../platform'
 import { Avatar, Icon, InlineInfo } from '../../../ui/visual'
 import { ErrorState, Loading, Notice } from '../../../ui'
 
 export default function Checkout() {
-  const gate = useGate(), id = useRouter().params.id || '', action = useAction()
+  const gate = useGate(), id = useRouter().params.id || '', action = useReminderAction(gate.allowed)
   const [originalPrice, setOriginalPrice] = useState<number | undefined>(() => checkoutPrice(id))
   const query = useQuery({ queryKey: keys.product(id), queryFn: () => getProduct(id), enabled: gate.allowed && !!id, refetchInterval: gate.allowed ? 30000 : false, staleTime: 0 })
   const data = gate.allowed ? query.data : undefined

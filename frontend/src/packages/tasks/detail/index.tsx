@@ -8,10 +8,11 @@ import { useGate } from '../../../app/hooks'
 import { actOnTask, getTask } from '../../../features/tasks/api'
 import { TaskResult, TaskSummary } from '../../../features/tasks/components'
 import { taskActions, taskHistoryNames } from '../../../features/tasks/presentation'
+import { SubscriptionCard } from '../../../features/notifications/subscription-card'
 import type { TaskAction, TaskReceipt } from '../../../contracts/tasks'
 import { keys } from '../../../core/query'
 import { pending } from '../../../core/operations'
-import { useAction } from '../../../core/use-action'
+import { useReminderAction } from '../../../features/notifications/use-reminder-action'
 import { beijingDeadline, beijingTimeSeconds } from '../../../core/values'
 import { navigate, switchTab } from '../../../platform'
 import { BeijingDateTime } from '../../../ui/date-time'
@@ -19,7 +20,7 @@ import { ErrorState, Loading, Notice } from '../../../ui'
 import { Avatar, Icon, InlineInfo, PersonRow } from '../../../ui/visual'
 export default function TaskDetailPage(){
  const { milestoneRosette: badge } = useArtwork()
- const gate=useGate(),id=useRouter().params.id||'',action=useAction()
+ const gate=useGate(),id=useRouter().params.id||'',action=useReminderAction(gate.allowed)
  const [confirm,setConfirm]=useState<Exclude<TaskAction,'edit'>>(),[date,setDate]=useState(''),[time,setTime]=useState(''),[receipt,setReceipt]=useState<TaskReceipt>(),[requestId,setRequestId]=useState<string>(),[historyOpen,setHistoryOpen]=useState(false)
  const query=useQuery({queryKey:keys.task(id),queryFn:()=>getTask(id),enabled:gate.allowed&&!!id,staleTime:0,refetchInterval:gate.allowed?30000:false})
  const data=gate.allowed?query.data:undefined,task=data?.task,me=gate.data?.me.id||''
@@ -43,6 +44,7 @@ export default function TaskDetailPage(){
    {terminal&&<TaskResult result={terminal} name={userName} people={people}/>}
    {receipt&&!terminal&&<View className='receipt'>{taskHistoryNames[receipt.action]||'本次操作已完成'}</View>}
    <View className='order-actions'>{task.allowedActions.filter(n=>!!taskActions[n]).map((n,index)=><Button key={n} className={`button ${index===0&&n!=='request_cancel'?'':'secondary'}`} disabled={action.busy||!!pending()} onClick={()=>{if(n==='edit')void navigate(`/packages/tasks/edit/index?id=${id}`);else{setRequestId(task.cancelRequest?.id);setConfirm(n)}}}>{taskActions[n]}</Button>)}</View>
+   {['pending','active','awaiting'].includes(task.status)&&<SubscriptionCard enabled={gate.allowed} group='任务' disabled={action.busy||!!confirm}/>}
    {terminal&&<View className='form'><Button className='button secondary' onClick={()=>setHistoryOpen(!historyOpen)}>{historyOpen?'收起任务记录':'查看任务记录'}</Button><Button className='button' onClick={()=>void switchTab('/pages/tasks/index')}>返回任务</Button></View>}
    {(!terminal||historyOpen)&&<><Text className='section-title section-heading'>任务动态</Text><View className='timeline'>{data.history.map(e=><View className='timeline-row' key={e.id}><Text className='timeline-dot'>•</Text><View><Text className='section-title'>{taskHistoryNames[e.action]||'任务状态已更新'}</Text><Text className='muted'>{e.actorId?userName(e.actorId):'系统'} · {beijingTimeSeconds(e.occurredAt)} 北京时间</Text></View></View>)}</View></>}
    {!terminal&&<Button className='text-button detail-backlink' onClick={()=>void switchTab('/pages/tasks/index')}>返回任务列表</Button>}

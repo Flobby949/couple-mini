@@ -8,10 +8,12 @@ export function clearPending() { storage.remove(pendingKey()) }
 export function newKey() { return `op_${Date.now().toString(36)}_${Math.random().toString(36).slice(2)}_${Math.random().toString(36).slice(2)}` }
 function terminal(result: Operation) { return ['succeeded', 'rejected', 'closed'].includes(result?.status) }
 export async function mutate<T>(path: string, body: unknown = {}): Promise<T> {
+  const actor = session()?.user.id
   if (!await online()) throw new ApiError('OFFLINE', '当前无网络，请联网后重新操作', 0)
   if (pending()) throw new ApiError('PENDING', '有一笔操作结果待核查，请先处理', 0)
   const identity = session()
   if (!identity) throw new ApiError('UNAUTHENTICATED', '请重新登录后操作', 401)
+  if (identity.user.id !== actor) throw new ApiError('SESSION_CHANGED', '登录身份已变化，请重新读取', 0)
   const record: Pending = { key: newKey(), path, body, actor: identity.user.id, createdAt: new Date().toISOString() }
   const storageKey = pendingKey()
   storage.write(storageKey, record)

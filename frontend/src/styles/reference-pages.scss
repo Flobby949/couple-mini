@@ -9,6 +9,14 @@
 .icon-button { padding:0; margin:0; width:44px; height:44px; min-width:44px; display:flex; align-items:center; justify-content:center; background:transparent; line-height:1; border-radius:50%; }
 .ui-icon { flex-shrink:0; display:inline-block; vertical-align:middle; }
 .message-entry { position:absolute; right:-8px; bottom:0; }
+ &.route-home .page-heading {padding-right:112px;}
+ .home-header-actions {position:absolute;right:-8px;bottom:0;display:flex;align-items:center;gap:4px;}
+ .home-header-actions .message-entry {position:relative;right:auto;bottom:auto;}
+ .header-subscription {display:flex;align-items:center;justify-content:center;width:60px;min-height:44px;margin:0;padding:0;background:transparent;line-height:1.5;}
+ .header-subscription::after {border:0;}
+ .header-subscription-label {padding:4px 10px;border-radius:12px;background:var(--tint);color:var(--primary);font-size:12px;white-space:nowrap;}
+ .header-subscription[disabled]:not([disabled='false']) .header-subscription-label {color:var(--muted);}
+ .header-subscription:focus-visible {outline:2px solid var(--primary);outline-offset:2px;}
 .unread-badge { position:absolute; top:1px; right:3px; background:var(--surface); color:var(--badge-ink); border:1px solid var(--badge-line); min-width:15px; padding:1px 3px; border-radius:9px; font-size:9px; line-height:13px; text-align:center; }
 .muted { display:block; color:var(--muted); font-size:12px; line-height:1.6; overflow-wrap:anywhere; }
 .primary-text { color:var(--primary); }
@@ -450,6 +458,22 @@
  .channel-option .muted {font-size:11px;margin-top:3px;}
  .channel-option.is-selected .section-title {color:var(--primary);}
  .subscription-toggle {margin:14px auto;}
+ .subscription-card {display:flex;flex-direction:column;gap:12px;}
+ .subscription-heading {display:flex;align-items:center;gap:8px;}
+ .subscription-heading .section-title {font-size:16px;}
+ .subscription-options {display:flex;flex-direction:column;}
+ .subscription-option,.subscription-summary {display:flex;align-items:center;gap:10px;width:100%;min-height:48px;margin:0;padding:12px 0;background:transparent;color:var(--ink);text-align:left;line-height:1.5;border:0;border-radius:0;}
+ .subscription-option::after {border:0;}
+ .subscription-option+.subscription-option,.subscription-summary+.subscription-summary {border-top:1px solid var(--line);}
+ .subscription-option[disabled]:not([disabled='false']) {color:var(--muted);background:transparent;}
+ .subscription-check {display:flex;align-items:center;justify-content:center;flex:0 0 20px;height:20px;border:1px solid var(--muted);border-radius:5px;font-size:12px;}
+ .subscription-check.selected {border-color:var(--primary);background:var(--tint);color:var(--primary);}
+ .subscription-option:focus-visible {outline:2px solid var(--primary);outline-offset:2px;}
+ .subscription-name {flex:1;min-width:0;font-size:13px;overflow-wrap:anywhere;}
+ .subscription-remaining {flex-shrink:0;font-size:12px;color:var(--muted);}
+ .subscription-remaining.warning-text {color:var(--warning);}
+ .subscription-help {font-size:12px;line-height:1.6;}
+ .subscription-select-toggle {justify-content:flex-start;margin:0;}
  .account-balance {background:var(--tint);padding:20px;text-align:center;}
  .account-balance-title {display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;color:var(--muted);margin-bottom:8px;}
  .account-balance .number {font-size:42px;}

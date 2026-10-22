@@ -7,17 +7,18 @@ import { useGate } from '../../../app/hooks'
 import { actOnOrder, getOrder } from '../../../features/orders/api'
 import { ProductSummary } from '../../../features/catalog/components'
 import { actionNames, cancellationPreview, historyNames, statuses } from '../../../features/orders/presentation'
+import { SubscriptionCard } from '../../../features/notifications/subscription-card'
 import type { OrderAction, OrderReceipt } from '../../../contracts/commerce'
 import { keys } from '../../../core/query'
 import { beijingTime } from '../../../core/values'
-import { useAction } from '../../../core/use-action'
+import { useReminderAction } from '../../../features/notifications/use-reminder-action'
 import { pending } from '../../../core/operations'
 import { navigate } from '../../../platform'
 import { Icon, PersonRow } from '../../../ui/visual'
 import { ErrorState, Loading, Notice } from '../../../ui'
 
 export default function OrderDetailPage() {
-  const gate = useGate(), id = useRouter().params.id || '', action = useAction()
+  const gate = useGate(), id = useRouter().params.id || '', action = useReminderAction(gate.allowed)
   const [confirm, setConfirm] = useState<OrderAction>(), [receipt, setReceipt] = useState<OrderReceipt>()
   const query = useQuery({ queryKey: keys.order(id), queryFn: () => getOrder(id), enabled: gate.allowed && !!id, refetchInterval: gate.allowed ? 30000 : false, staleTime: 0 })
   const data = gate.allowed ? query.data : undefined, order = data?.order
@@ -41,6 +42,7 @@ export default function OrderDetailPage() {
       {(order.status === 'cancelled' || order.status === 'rejected') && <View className='receipt'><Text className='section-title'>{order.refunded === 0 ? '本单为 0 积分，无需退分，已返还 1 份库存' : `已退还 ${order.refunded} 积分，返还 1 份库存`}</Text><Text>{order.endedReason === 'seller_cancelled' ? `店主另扣 ${order.penalty} 积分并入池` : '本次没有取消罚分'}</Text></View>}
       {receipt && <View className='receipt'><Text className='section-title'>{receipt.action === 'request_cancel' ? '取消申请已提交，尚未退款' : '本次操作已完成'}</Text><Text>{actionNames[receipt.action as OrderAction] || receipt.action}</Text>{['cancel','reject','approve_cancel'].includes(receipt.action) && <><Text>实际退还 {receipt.refunded} · 取消罚分 {receipt.penalty} 积分</Text><Text>本次操作后我的余额 {me === order.buyerId ? receipt.buyerBalance : receipt.sellerBalance} 积分</Text></>}</View>}
       <View className='order-actions'>{order.allowedActions.filter(name => !!actionNames[name]).map((name, index) => <Button key={name} className={`button ${index === 0 ? '' : 'secondary'}`} disabled={action.busy || !!pending()} onClick={() => setConfirm(name)}>{name === 'cancel' && me === order.sellerId ? '店主主动取消' : actionNames[name]}</Button>)}</View>
+      {['pending','fulfilling','awaiting_receipt'].includes(order.status)&&<SubscriptionCard enabled={gate.allowed} group='订单' disabled={action.busy||!!confirm}/>}
       <Text className='section-title section-heading'>订单进度</Text>
       <View className='timeline'>{data.history.map(event => <View className='timeline-row' key={event.id}><Text className='timeline-dot'>•</Text><View><Text className='section-title'>{historyNames[event.action] || '订单状态已更新'}</Text><Text className='muted'>{event.actorId === null ? '系统' : event.actorId === me ? '我' : '伴侣'} · {beijingTime(event.occurredAt)} 北京时间</Text></View></View>)}</View>
       {confirm && <View className='sheet-backdrop' onClick={() => { if (!action.busy) setConfirm(undefined) }}><View className='sheet' role='dialog' ariaLabel={actionNames[confirm]} onClick={e => e.stopPropagation()}><Text className='section-title'>{sellerCancel ? '确定取消这笔订单？' : confirm === 'confirm' ? '确认收货？' : `确认${actionNames[confirm]}？`}</Text><ProductSummary product={order.snapshot} />

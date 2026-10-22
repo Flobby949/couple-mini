@@ -6,7 +6,7 @@ vi.mock('@tanstack/react-query', () => ({ useQuery: ({ queryKey }: { queryKey: s
 vi.mock('../src/app/hooks', () => ({ useGate: () => ({ allowed: true, data: { me: { id: 'buyer' }, partner: { id: 'seller', nickname: '伴侣' } } }) }))
 vi.mock('../src/app/page', () => ({ Page: ({ children }: { children: React.ReactNode }) => children }))
 vi.mock('../src/core/query', () => ({ keys: { giftPreview: ['gift-preview'], gifts: ['gifts'] } }))
-vi.mock('../src/core/use-action', () => ({ useAction: () => ({ busy: false, run: vi.fn() }) }))
+vi.mock('../src/features/notifications/use-reminder-action', () => ({ useReminderAction: () => ({ busy: false, run: vi.fn() }) }))
 vi.mock('../src/core/operations', () => ({ pending: () => undefined }))
 vi.mock('../src/features/points/gifts', () => ({ getGiftPreview: vi.fn(), getGifts: vi.fn(), sendGift: vi.fn() }))
 vi.mock('../src/platform', () => ({ navigate: vi.fn() }))

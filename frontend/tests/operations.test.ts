@@ -10,6 +10,7 @@ vi.mock('../src/platform', () => ({
 }))
 import { ApiError } from '../src/core/api'
 import { mutate, pending, recover } from '../src/core/operations'
+import { reportAuthorization } from '../src/features/notifications/api'
 beforeEach(() => {
   vi.resetAllMocks(); mocks.data.clear(); mocks.session.user.id = 'alice'; mocks.online.mockResolvedValue(true)
   mocks.write.mockImplementation((key, value) => mocks.data.set(key, value))
@@ -47,6 +48,32 @@ it('another actor cannot query, clear or resubmit the first actor intent', async
   mocks.request.mockRejectedValue(new ApiError('NETWORK', 'timeout', 0)); await expect(mutate('/checkins')).rejects.toThrow()
   const original = pending(); mocks.session.user.id = 'bob'; expect(pending()).toBeUndefined(); expect(await recover()).toBeUndefined()
   mocks.session.user.id = 'alice'; expect(pending()).toEqual(original)
+})
+it('does not submit a business mutation for another account after the asynchronous network check', async () => {
+  let finish!: (online: boolean) => void
+  mocks.online.mockImplementationOnce(() => new Promise(resolve => { finish = resolve }))
+  const submission = mutate('/checkins')
+  const rejected = expect(submission).rejects.toThrow('登录身份已变化')
+  mocks.session.user.id = 'bob'
+  finish(true)
+  await rejected
+  expect(mocks.request).not.toHaveBeenCalled()
+  expect(mocks.write).not.toHaveBeenCalled()
+})
+it('authorization sync failures never occupy business recovery and retry with the same report ID', async () => {
+  mocks.request.mockRejectedValueOnce(new ApiError('NETWORK','authorization timeout',0))
+  await expect(reportAuthorization('T01','template','accept','original_subscription_report')).rejects.toThrow('authorization timeout')
+  expect(pending()).toBeUndefined()
+  expect(mocks.write).not.toHaveBeenCalled()
+  const first = mocks.request.mock.calls[0]
+  mocks.request.mockResolvedValueOnce({total:10})
+  expect(await mutate('/checkins')).toEqual({total:10})
+  mocks.request.mockResolvedValueOnce({id:'authorization'})
+  await reportAuthorization('T01','template','accept','original_subscription_report')
+  const retry = mocks.request.mock.calls[2]
+  expect(retry.slice(0,3)).toEqual(first.slice(0,3))
+  expect(retry[3]).not.toBe(first[3])
+  expect(pending()).toBeUndefined()
 })
 it('an unknown server operation state never clears recovery data', async () => {
   mocks.request.mockRejectedValueOnce(new ApiError('NETWORK', 'timeout', 0)); await expect(mutate('/checkins')).rejects.toThrow()

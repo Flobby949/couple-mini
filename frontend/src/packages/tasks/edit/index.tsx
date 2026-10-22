@@ -6,7 +6,7 @@ import { Page } from '../../../app/page'
 import { useGate } from '../../../app/hooks'
 import { session } from '../../../core/api'
 import { keys } from '../../../core/query'
-import { useAction } from '../../../core/use-action'
+import { useReminderAction } from '../../../features/notifications/use-reminder-action'
 import { beijingDeadline, beijingTimeSeconds, parsePoints } from '../../../core/values'
 import { getTask, saveTask } from '../../../features/tasks/api'
 import { reservationChange } from '../../../features/tasks/presentation'
@@ -32,7 +32,7 @@ function TaskForm({ task, initialKind, available, serverTime, canSubmit, partner
   const [kind, setKind] = useState<TaskKind>(task?.kind || initialKind), [name, setName] = useState(task?.name || ''), [description, setDescription] = useState(task?.description || ''), [reward, setReward] = useState(task ? String(task.reward) : '')
   const initial = task?.deadline ? beijingTimeSeconds(task.deadline) : ''
   const [date, setDate] = useState(initial.slice(0,10)), [time, setTime] = useState(initial.slice(11,16)), [changed, setChanged] = useState(false)
-  const action = useAction(), amount = parsePoints(reward)
+  const action = useReminderAction(canSubmit), amount = parsePoints(reward)
   const deadline = !changed && task?.deadline ? task.deadline : beijingDeadline(date,time)
   const preview = amount === null ? undefined : reservationChange(kind, amount, task?.reserved || 0, available)
   const locked = !!task && task.status !== 'pending'

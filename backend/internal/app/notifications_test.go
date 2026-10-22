@@ -163,13 +163,22 @@ func testNotifications(f *fixture, creator, partner, outsider, couple string) {
 		t.Fatal("due event used new preference")
 	}
 	// Client report retries use a stable report ID beyond the request key; credits cannot duplicate.
-	f.server.NotificationMappings = notifications.Mappings{"P01": {TemplateID: "platform-test", Fields: map[string]string{"thing1": "name", "number2": "amount"}}}
+	f.server.NotificationMappings = notifications.Mappings{
+		"P01": {TemplateID: "platform-test", Fields: map[string]string{"thing1": "name", "number2": "amount"}},
+		"P02": {TemplateID: "platform-test", Fields: map[string]string{"thing1": "name", "number2": "amount"}},
+	}
 	f.server.Wechat = &wechat.Client{}
 	report := map[string]string{"platformTemplateId": "platform-test", "result": "accept", "reportId": platform.ID()}
-	f.must(partner, "POST", "/notification-authorizations/P01", report)
-	f.must(partner, "POST", "/notification-authorizations/P01", report)
+	f.must(partner, "POST", "/notification-authorizations/P02", report)
+	f.must(partner, "POST", "/notification-authorizations/P02", report)
 	if count("SELECT COUNT(*) FROM subscription_authorizations WHERE user_id=? AND used=FALSE", pID) != 1 {
 		t.Fatal("authorization resync minted credits")
+	}
+	for _, item := range f.must(partner, "GET", "/notification-preferences", nil)["items"].([]any) {
+		p := item.(map[string]any)
+		if (p["code"] == "P01" || p["code"] == "P02") && p["reportedRemaining"] != float64(1) {
+			t.Fatal("shared templates did not expose the same credit", p)
+		}
 	}
 	// A real platform identity with an accepted one-shot report can be claimed once.
 	if _, err := db.Exec("UPDATE users SET openid=? WHERE id=?", "test-platform-"+pID, pID); err != nil {
@@ -181,6 +190,9 @@ func testNotifications(f *fixture, creator, partner, outsider, couple string) {
 	dispatch()
 	if count("SELECT COUNT(*) FROM notification_deliveries d JOIN notifications n ON n.id=d.notification_id WHERE n.target_id=? AND d.status='pending'", pendingGift["id"]) != 1 {
 		t.Fatal("authorized delivery not queued")
+	}
+	if count("SELECT COUNT(*) FROM subscription_authorizations WHERE user_id=? AND template_code='P02' AND used=TRUE", pID) != 1 {
+		t.Fatal("gift did not consume the shared sign-in subscription")
 	}
 	sender := &unknownSender{}
 	if err := notifications.Deliver(ctx, db, sender, f.server.Now()); err != nil {

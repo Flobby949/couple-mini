@@ -1,0 +1,40 @@
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+
+const {native,settings} = vi.hoisted(() => ({native: vi.fn(),settings: vi.fn()}))
+vi.mock('@tarojs/taro', () => ({default: {requestSubscribeMessage: native,getSetting: settings}}))
+beforeEach(() => { vi.resetModules(); native.mockReset(); settings.mockReset(); vi.stubEnv('TARO_ENV','weapp') })
+afterEach(() => vi.unstubAllEnvs())
+
+it('calls WeChat immediately with at most three distinct nonempty template IDs', async () => {
+  native.mockResolvedValue({a: 'accept',b: 'reject',c: 'filter'})
+  const {requestSubscriptions} = await import('../src/platform/subscription')
+  const result = requestSubscriptions(['a','a','','b','c','d'])
+  expect(native).toHaveBeenCalledExactlyOnceWith({tmplIds: ['a','b','c']})
+  expect(await result).toEqual({a: 'accept',b: 'reject',c: 'filter'})
+})
+it('does not turn a missing result or a platform failure into an acceptance', async () => {
+  const {requestSubscriptions,requestSubscription} = await import('../src/platform/subscription')
+  native.mockResolvedValueOnce({a: 'accept'})
+  expect(await requestSubscriptions(['a','b'])).toEqual({a: 'accept',b: 'fail'})
+  native.mockRejectedValueOnce(new Error('intercepted'))
+  expect(await requestSubscription('a')).toBe('fail')
+  expect(await requestSubscriptions([])).toEqual({})
+  expect(native).toHaveBeenCalledTimes(2)
+})
+it('does not invoke the subscription API outside WeChat', async () => {
+  vi.stubEnv('TARO_ENV','h5')
+  const {requestSubscriptions} = await import('../src/platform/subscription')
+  expect(await requestSubscriptions(['a'])).toEqual({a: 'unavailable'})
+  expect(native).not.toHaveBeenCalled()
+})
+it('only returns remembered acceptances while the master switch is enabled', async () => {
+  const {rememberedSubscriptions} = await import('../src/platform/subscription')
+  settings.mockResolvedValueOnce({subscriptionsSetting: {mainSwitch:true,itemSettings:{a:'accept',b:'reject',c:'ban'}}})
+  expect(await rememberedSubscriptions()).toEqual(['a'])
+  expect(settings).toHaveBeenCalledWith({withSubscriptions:true})
+  settings.mockResolvedValueOnce({subscriptionsSetting: {mainSwitch:false,itemSettings:{a:'accept'}}})
+  expect(await rememberedSubscriptions()).toEqual([])
+  settings.mockRejectedValueOnce(new Error('unavailable'))
+  expect(await rememberedSubscriptions()).toEqual([])
+  expect(native).not.toHaveBeenCalled()
+})

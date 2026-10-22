@@ -1,10 +1,32 @@
 {
-  "P01": {
-    "templateId": "replace-with-your-approved-platform-template-id",
-    "fields": {
-      "thing1": "actor",
-      "number2": "amount",
-      "time3": "occurredAt"
-    }
-  }
+  "O01": {"templateId": "replace-with-your-approved-order-status-template-id", "fields": {"thing2": "name", "thing8": "title", "time15": "occurredAt"}},
+  "O02": {"templateId": "replace-with-your-approved-order-status-template-id", "fields": {"thing2": "name", "thing8": "title", "time15": "occurredAt"}},
+  "O03": {"templateId": "replace-with-your-approved-order-status-template-id", "fields": {"thing2": "name", "thing8": "title", "time15": "occurredAt"}},
+  "O04": {"templateId": "replace-with-your-approved-order-status-template-id", "fields": {"thing2": "name", "thing8": "title", "time15": "occurredAt"}},
+  "O05": {"templateId": "replace-with-your-approved-order-status-template-id", "fields": {"thing2": "name", "thing8": "title", "time15": "occurredAt"}},
+  "O06": {"templateId": "replace-with-your-approved-order-status-template-id", "fields": {"thing2": "name", "thing8": "title", "time15": "occurredAt"}},
+  "O07": {"templateId": "replace-with-your-approved-order-status-template-id", "fields": {"thing2": "name", "thing8": "title", "time15": "occurredAt"}},
+  "O08": {"templateId": "replace-with-your-approved-order-status-template-id", "fields": {"thing2": "name", "thing8": "title", "time15": "occurredAt"}},
+  "O09": {"templateId": "replace-with-your-approved-order-status-template-id", "fields": {"thing2": "name", "thing8": "title", "time15": "occurredAt"}},
+  "O10": {"templateId": "replace-with-your-approved-order-status-template-id", "fields": {"thing2": "name", "thing8": "title", "time15": "occurredAt"}},
+  "O11": {"templateId": "replace-with-your-approved-order-status-template-id", "fields": {"thing2": "name", "thing8": "title", "time15": "occurredAt"}},
+  "O12": {"templateId": "replace-with-your-approved-order-status-template-id", "fields": {"thing2": "name", "thing8": "title", "time15": "occurredAt"}},
+  "P01": {"templateId": "replace-with-your-approved-points-change-template-id", "fields": {"thing3": "name", "number8": "amount", "thing7": "title"}},
+  "P02": {"templateId": "replace-with-your-approved-points-change-template-id", "fields": {"thing3": "name", "number8": "amount", "thing7": "title"}},
+  "P03": {"templateId": "replace-with-your-approved-points-change-template-id", "fields": {"thing3": "name", "number8": "amount", "thing7": "title"}},
+  "R01": {"templateId": "replace-with-your-approved-todo-template-id", "fields": {"thing10": "name", "thing1": "title", "time12": "occurredAt"}},
+  "R02": {"templateId": "replace-with-your-approved-todo-template-id", "fields": {"thing10": "name", "thing1": "title", "time12": "occurredAt"}},
+  "R03": {"templateId": "replace-with-your-approved-todo-template-id", "fields": {"thing10": "name", "thing1": "title", "time12": "occurredAt"}},
+  "T01": {"templateId": "replace-with-your-approved-todo-template-id", "fields": {"thing10": "name", "thing1": "title", "time12": "occurredAt"}},
+  "T02": {"templateId": "replace-with-your-approved-todo-template-id", "fields": {"thing10": "name", "thing1": "title", "time12": "occurredAt"}},
+  "T03": {"templateId": "replace-with-your-approved-todo-template-id", "fields": {"thing10": "name", "thing1": "title", "time12": "occurredAt"}},
+  "T04": {"templateId": "replace-with-your-approved-todo-template-id", "fields": {"thing10": "name", "thing1": "title", "time12": "occurredAt"}},
+  "T05": {"templateId": "replace-with-your-approved-todo-template-id", "fields": {"thing10": "name", "thing1": "title", "time12": "occurredAt"}},
+  "T06": {"templateId": "replace-with-your-approved-todo-template-id", "fields": {"thing10": "name", "thing1": "title", "time12": "occurredAt"}},
+  "T07": {"templateId": "replace-with-your-approved-todo-template-id", "fields": {"thing10": "name", "thing1": "title", "time12": "occurredAt"}},
+  "T08": {"templateId": "replace-with-your-approved-points-change-template-id", "fields": {"thing3": "name", "number8": "amount", "thing7": "title"}},
+  "T09": {"templateId": "replace-with-your-approved-todo-template-id", "fields": {"thing10": "name", "thing1": "title", "time12": "occurredAt"}},
+  "T10": {"templateId": "replace-with-your-approved-todo-template-id", "fields": {"thing10": "name", "thing1": "title", "time12": "occurredAt"}},
+  "T11": {"templateId": "replace-with-your-approved-todo-template-id", "fields": {"thing10": "name", "thing1": "title", "time12": "occurredAt"}},
+  "T12": {"templateId": "replace-with-your-approved-todo-template-id", "fields": {"thing10": "name", "thing1": "title", "time12": "occurredAt"}}
 }

@@ -16,13 +16,13 @@ import type { CheckinResult } from '../../contracts/api'
 import { navigate } from '../../platform'
 import { useTheme } from '../../app/theme'
 import { Page } from '../../app/page'
-import { useAction } from '../../core/use-action'
+import { useReminderAction } from '../../features/notifications/use-reminder-action'
 import { ErrorState, Loading } from '../../ui'
 import { statuses } from '../../features/orders/presentation'
 import { Avatar, BalanceTiles, Icon, PoolCard, Section } from '../../ui/visual'
 export default function HomePage() {
  const { checkinPanel: panel } = useArtwork()
-  const gate = useGate(), action = useAction(), {scheme,appearance} = useTheme()
+  const gate = useGate(), action = useReminderAction(gate.allowed), {scheme,appearance} = useTheme()
   const [receipt, setReceipt] = useState<CheckinResult>()
   const query = useQuery({ queryKey: keys.home, queryFn: getHome, enabled: gate.allowed, refetchInterval: gate.allowed ? 15000 : false })
   const data = gate.allowed ? query.data : undefined

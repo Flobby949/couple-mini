@@ -5,6 +5,7 @@ import { Page } from '../../../app/page'
 import { useGate } from '../../../app/hooks'
 import { getPreferences } from '../../../features/notifications/api'
 import { channelNames } from '../../../features/notifications/presentation'
+import { SubscriptionCard } from '../../../features/notifications/subscription-card'
 import { keys } from '../../../core/query'
 import { navigate } from '../../../platform'
 import { ErrorState, Loading } from '../../../ui'
@@ -18,6 +19,7 @@ export default function NotificationSettingsPage() {
     <View className='surface preference-intro'><Icon name='settings' tone='primary' size={34}/><View><Text className='section-title'>只设置你自己的接收方式</Text><Text className='muted'>按每一种通知分别设置。</Text></View></View>
     <ErrorState error={gate.error || query.error} retry={() => { void gate.refetch(); void query.refetch() }} />
     {!query.data && !query.error && <Loading />}
+    <SubscriptionCard enabled={gate.allowed}/>
     {gate.allowed && ['任务','订单','积分与签到','绑定与规则'].map(group => {
       const members=items.filter(t=>t.group===group),open=expanded.includes(group)
       const visible=group==='任务'&&!allTasks?members.filter(t=>['T01','T02','T03','T06','T10'].includes(t.code)):members
