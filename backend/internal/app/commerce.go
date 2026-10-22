@@ -3,7 +3,10 @@ package app
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"io"
+	"mime/multipart"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -218,6 +221,11 @@ func (s *Server) uploadImage(c *gin.Context, requireReady bool) {
 		defer c.Request.MultipartForm.RemoveAll()
 	}
 	if err != nil {
+		var tooLarge *http.MaxBytesError
+		if errors.As(err, &tooLarge) || errors.Is(err, multipart.ErrMessageTooLarge) {
+			s.fail(c, platform.Fail(413, "IMAGE_TOO_LARGE", "图片不能超过 5 MiB"))
+			return
+		}
 		s.fail(c, platform.Fail(422, "INVALID_IMAGE", "请选择一张 PNG 或 JPEG 图片，大小不超过 5 MiB"))
 		return
 	}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ApiError, rejectUnauthorized, session } from './api'
-import { downloadCover, releaseCover, uploadCover } from '../platform/media'
+import { checkUploadSize, downloadCover, releaseCover, uploadCover } from '../platform/media'
 import { cacheCover, cachedCover, clearCachedCovers, coverExists, forgetCachedCover } from '../platform/media-cache'
 
 const cache = new Map<string, string>()
@@ -33,6 +33,8 @@ function cachedMedia(fileId: string) {
 export async function uploadMedia(path: string, purpose: 'cover' | 'avatar' = 'cover') {
   const token = session()?.token
   if (!token) throw new ApiError('UNAUTHENTICATED', '请重新登录', 401)
+  await checkUploadSize(path)
+  if (session()?.token !== token) throw new ApiError('SESSION_CHANGED', '登录身份已变化，请重新选择图片', 0)
   let result: Awaited<ReturnType<typeof uploadCover>>
   try { result = await uploadCover(path, token, purpose) } catch { throw new ApiError('NETWORK', '图片上传中断，请重新上传，其他输入已保留', 0) }
   if (session()?.token !== token) throw new ApiError('SESSION_CHANGED', '登录身份已变化，请重新选择图片', 0)

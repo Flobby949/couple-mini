@@ -45,7 +45,7 @@
 
 | 方法、路径 | 请求 / 返回 |
 | --- | --- |
-| POST `/media` | multipart 字段 `file` → `{fileId, mime, size, width, height}`；最多 5 MiB、PNG/JPEG、单边最多 4096；不信任扩展名/MIME，解码重编码；重试可能形成新的未引用文件，不改变商品或积分 |
+| POST `/media` | multipart 字段 `file` → `{fileId, mime, size, width, height}`；原始文件最多 5 MiB、PNG/JPEG、单边最多 4096；不信任扩展名/MIME，完整解码校验后无损优化；`size` 为实际保存字节数；重试可能形成新的未引用文件，不改变商品或积分 |
 | GET `/media/:id` | 带 Bearer 的二进制读取；只允许本人及固定伴侣，返回准确 MIME、`nosniff`、`no-store`，没有公开文件 URL |
 | GET `/catalog?view=partner\|mine` | `{products, ownerId, balance}`，默认伴侣店；不返回其他关系的商品 |
 | GET `/products/:id` | `{product, balance}`，限本人或伴侣商品 |
@@ -55,6 +55,8 @@
 | POST `/cart/:id/add` | `{}`；只允许伴侣商品，重复加入保持一个候选，不扣库存或积分 |
 | POST `/cart/:id/remove` | `{}`；只删除本人的该候选 |
 | GET `/points/history` | `{entries}`，最近 100 笔本人积分流水，含关联 `orderId / taskId / giftId`（仅一个非空）、金额、变动后余额与时间 |
+
+封面选择请求原图，不调用平台有损压缩；微信原生头像路径在上传前单独读取大小。后端对 PNG 的 IDAT 数据做无损压缩，保留更小的编码及颜色、透明度、方向等显示信息；JPEG 保留图像编码和应用元数据，仅去除注释与文件尾部冗余数据，不做质量 85 的重复编码。保存体积不超过原始上传文件，已压缩的图片可能不会继续缩小。两种格式均不缩放、不降低画质，`size` 和数据库记录使用最终文件大小。此策略仅作用于新上传，既有图片不批量重写；超过 5 MiB 的原始文件仍拒绝上传。
 
 商品字段：`id, ownerId, name, description, coverId, price, stock, createdAt, updatedAt`。名称去首尾空白后 1–80 字，说明最多 2000 字；封面必须已上传且属于本人；价格沿用积分规则。设置库存接受 0–1000000 的整数，取消恢复的库存仍必须完整返还，不按输入上限截断。
 

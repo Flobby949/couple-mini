@@ -6,8 +6,8 @@ import (
 	"database/sql"
 	"errors"
 	"image"
-	"image/jpeg"
-	"image/png"
+	_ "image/jpeg"
+	_ "image/png"
 	"io"
 	"os"
 	"path/filepath"
@@ -29,7 +29,7 @@ type File struct {
 	Height int    `json:"height"`
 }
 
-// Decode a bounded raster and re-encode it; extensions and claimed MIME are not trusted.
+// Validate a bounded raster before lossless optimization; never trust extensions or MIME.
 func Store(root string, reader io.Reader) (File, error) {
 	var f File
 	data, err := io.ReadAll(io.LimitReader(reader, MaxBytes+1))
@@ -46,22 +46,22 @@ func Store(root string, reader io.Reader) (File, error) {
 	if cfg.Width < 1 || cfg.Height < 1 || cfg.Width > 4096 || cfg.Height > 4096 {
 		return f, platform.Fail(422, "IMAGE_DIMENSIONS", "图片宽高不能超过 4096 像素")
 	}
-	img, _, err := image.Decode(bytes.NewReader(data))
+	_, _, err = image.Decode(bytes.NewReader(data))
 	if err != nil {
 		return f, platform.Fail(422, "INVALID_IMAGE", "图片文件不完整，请重新选择")
 	}
-	var encoded bytes.Buffer
+	var encoded []byte
 	f.MIME = "image/png"
 	if format == "jpeg" {
 		f.MIME = "image/jpeg"
-		err = jpeg.Encode(&encoded, img, &jpeg.Options{Quality: 85})
+		encoded, err = optimizeJPEG(data)
 	} else {
-		err = png.Encode(&encoded, img)
+		encoded, err = optimizePNG(data, cfg)
 	}
 	if err != nil {
 		return f, err
 	}
-	if encoded.Len() > MaxBytes {
+	if len(encoded) > MaxBytes {
 		return f, platform.Fail(413, "IMAGE_TOO_LARGE", "图片处理后超过 5 MiB，请缩小后重试")
 	}
 	if err = os.MkdirAll(root, 0700); err != nil {
@@ -70,13 +70,13 @@ func Store(root string, reader io.Reader) (File, error) {
 	f.ID = platform.ID()
 	f.Width = cfg.Width
 	f.Height = cfg.Height
-	f.Size = encoded.Len()
+	f.Size = len(encoded)
 	temp, err := os.CreateTemp(root, ".upload-*")
 	if err != nil {
 		return f, err
 	}
 	defer os.Remove(temp.Name())
-	if _, err = temp.Write(encoded.Bytes()); err != nil {
+	if _, err = temp.Write(encoded); err != nil {
 		temp.Close()
 		return f, err
 	}

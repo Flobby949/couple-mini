@@ -9,9 +9,12 @@ import (
 	"image/png"
 	"mime/multipart"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
+	"couple-mini/backend/internal/media"
 	"couple-mini/backend/internal/platform"
 )
 
@@ -58,11 +61,27 @@ func testCommerce(f *fixture, buyer, seller, outsider, couple string) {
 	png.Encode(&encoded, img)
 	f.error(f.upload(outsider, encoded.Bytes()), 403, "BINDING_REQUIRED")
 	f.error(f.upload(seller, []byte("not an image")), 422, "INVALID_IMAGE")
+	for _, path := range []string{"/media", "/profile/avatar"} {
+		for _, size := range []int{5<<20 + 1, 6<<20 + 1} {
+			f.error(f.uploadTo(seller, path, bytes.Repeat([]byte{0}, size)), 413, "IMAGE_TOO_LARGE")
+		}
+	}
 	upload := f.upload(seller, encoded.Bytes())
 	if upload.status != 200 {
 		t.Fatal(upload.raw)
 	}
 	cover := upload.body["fileId"].(string)
+	stored, err := os.Stat(filepath.Join(f.server.Config.MediaRoot, cover))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var size int
+	if err := db.QueryRow("SELECT size_bytes FROM media_files WHERE id=?", cover).Scan(&size); err != nil {
+		t.Fatal(err)
+	}
+	if size != int(stored.Size()) || upload.body["size"] != float64(size) || size > encoded.Len() || size > media.MaxBytes {
+		t.Fatal("stored size differs from upload response or database", upload.body, size, stored.Size())
+	}
 	second := f.upload(seller, encoded.Bytes())
 	if second.status != 200 {
 		t.Fatal(second.raw)
