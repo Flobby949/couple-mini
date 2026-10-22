@@ -1,10 +1,11 @@
 import Taro from '@tarojs/taro'
 import { storage } from '../platform'
+import type { User } from '../contracts/api'
 
 export class ApiError extends Error {
   constructor(public code: string, message: string, public status: number) { super(message) }
 }
-export type Session = { token: string; user: { id: string; nickname: string }; expiresAt: string }
+export type Session = { token: string; user: User; expiresAt: string }
 export function session() { return storage.read<Session>('session') }
 let unauthorized: (() => void) | undefined
 export function onUnauthorized(handler: () => void) { unauthorized = handler }

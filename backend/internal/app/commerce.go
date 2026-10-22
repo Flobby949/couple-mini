@@ -192,6 +192,9 @@ func (s *Server) accountHistory(c *gin.Context) {
 }
 
 func (s *Server) uploadMedia(c *gin.Context) {
+	s.uploadImage(c, true)
+}
+func (s *Server) uploadImage(c *gin.Context, requireReady bool) {
 	if s.Config.MediaRoot == "" {
 		s.fail(c, platform.Fail(503, "MEDIA_NOT_CONFIGURED", "尚未配置图片存储"))
 		return
@@ -202,7 +205,9 @@ func (s *Server) uploadMedia(c *gin.Context) {
 		s.fail(c, err)
 		return
 	}
-	_, err = identity.LockCouple(c.Request.Context(), tx, c.GetString("user"), true)
+	if requireReady {
+		_, err = identity.LockCouple(c.Request.Context(), tx, c.GetString("user"), true)
+	}
 	tx.Rollback()
 	if err != nil {
 		s.fail(c, err)

@@ -69,7 +69,7 @@ func (s *Server) Router() *gin.Engine {
 			return
 		}
 		limit := int64(16 << 10)
-		if c.Request.URL.Path == "/api/v1/media" {
+		if c.Request.URL.Path == "/api/v1/media" || c.Request.URL.Path == "/api/v1/profile/avatar" {
 			limit = 6 << 20
 		}
 		c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, limit)
@@ -88,6 +88,8 @@ func (s *Server) Router() *gin.Engine {
 	r.POST("/api/v1/login", s.login)
 	a := r.Group("/api/v1", s.authenticate)
 	a.GET("/context", s.readContext)
+	a.POST("/profile", s.saveProfile)
+	a.POST("/profile/avatar", s.uploadAvatar)
 	a.GET("/home", s.home)
 	a.GET("/rules", s.listRules)
 	a.GET("/history", s.history)

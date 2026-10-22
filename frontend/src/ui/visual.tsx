@@ -7,16 +7,23 @@ import type { IconName } from './icons'
 import { avatarWoman as woman } from './artwork'
 import { avatarMan as man } from './artwork'
 import { useArtwork } from './use-artwork'
+import { useMedia } from '../core/media'
+import type { User } from '../contracts/api'
 
 export function Icon({ name, tone = 'ink', size = 24 }: {name: IconName; tone?: 'ink'|'muted'|'primary'; size?: number}) {
   const { scheme, appearance } = useTheme()
   return <Image className='ui-icon' src={`/assets/ui-icons/${name}-${tone === 'primary' ? appearance.accent : tone}-${scheme}.png`} style={{width:Taro.pxTransform(size),height:Taro.pxTransform(size)}} mode='aspectFit' ariaHidden />
 }
-export function Avatar({ user, partnerId, size = 52, stitched = false, checked }: {user: {id: string; nickname: string}; partnerId: string; size?: number; stitched?: boolean; checked?: boolean}) {
+function AvatarPhoto({ user }: { user: User }) {
+  const media = useMedia(user.avatarId!)
+  if (media.path) return <Image className='portrait-art portrait-photo' src={media.path} mode='aspectFill' ariaLabel={`${user.nickname}的头像`} onError={media.invalidate}/>
+  return <View className='portrait-placeholder' ariaLabel={media.error ? '头像读取失败，点击重试' : '正在读取头像'} onClick={media.error ? e => { e.stopPropagation(); media.retry() } : undefined}><Icon name='user' tone='muted' size={24}/>{media.error && <Text>重试</Text>}</View>
+}
+export function Avatar({ user, partnerId, size = 52, stitched = false, checked }: {user: User; partnerId: string; size?: number; stitched?: boolean; checked?: boolean}) {
   const { avatarFrame: frame } = useArtwork()
   const first = user.id < partnerId
   return <View className={`portrait ${stitched ? 'portrait-stitched' : ''} ${!first ? 'portrait-blue' : ''}`} style={{width:Taro.pxTransform(size),height:Taro.pxTransform(size)}}>
-    <View className='portrait-crop'><Image className='portrait-art' src={first ? woman : man} mode='aspectFill' ariaLabel={`${user.nickname}的默认插画头像`} /></View>
+    <View className='portrait-crop'>{user.avatarId ? <AvatarPhoto user={user}/> : <Image className='portrait-art' src={first ? woman : man} mode='aspectFill' ariaLabel={`${user.nickname}的默认插画头像`} />}</View>
     {stitched && <Image className='portrait-frame' src={frame} mode='aspectFit' ariaHidden />}
     {checked !== undefined && <View className={`portrait-state ${checked ? 'is-checked' : ''}`}>{checked && <Text>✓</Text>}</View>}
   </View>
@@ -34,9 +41,9 @@ export function BalanceTiles({ balance, earned, limit, remaining }: {balance:num
 }
 export function Section({ title, children }: PropsWithChildren<{title:string}>) {return <View className='section'><View className='row section-head'><Text className='section-title'>{title}</Text></View>{children}</View>}
 export function InlineInfo({children}:{children:React.ReactNode}) {return <View className='inline-info'><Icon name='info' tone='primary' size={18}/><View>{children}</View></View>}
-export function PersonRow({user,partnerId,title,description}:{user:{id:string;nickname:string};partnerId:string;title?:string;description?:string}) {return <View className='person-row'><Avatar user={user} partnerId={partnerId} size={52}/><View><Text className='section-title'>{title||user.nickname}</Text>{description&&<Text className='muted'>{description}</Text>}</View></View>}
+export function PersonRow({user,partnerId,title,description}:{user:User;partnerId:string;title?:string;description?:string}) {return <View className='person-row'><Avatar user={user} partnerId={partnerId} size={52}/><View><Text className='section-title'>{title||user.nickname}</Text>{description&&<Text className='muted'>{description}</Text>}</View></View>}
 export function BudgetCard({children}:{children:React.ReactNode}){const { pointsJar: jar } = useArtwork();return <View className='budget-preview'><Image className='budget-jar' src={jar} mode='aspectFit' ariaHidden/><View className='budget-copy'>{children}</View></View>}
-export function ConnectedPair({me,partner}:{me:{id:string;nickname:string};partner?:{id:string;nickname:string}}) {
+export function ConnectedPair({me,partner}:{me:User;partner?:User}) {
  const {scheme,appearance}=useTheme()
  return <View className='connected-pair'><View><Avatar user={me} partnerId={partner?.id||'~'} size={106} stitched/><Text>{me.nickname}</Text></View><Image className='connected-thread' src={`/assets/ui-icons/checkin-connection-${appearance.accent}-${scheme}.png`} mode='aspectFit' ariaHidden/><View>{partner?<Avatar user={partner} partnerId={me.id} size={106} stitched/>:<View className='unknown-portrait'><Icon name='user' tone='muted' size={48}/></View>}<Text>{partner?.nickname||'等待另一半'}</Text></View></View>
 }

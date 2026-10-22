@@ -16,6 +16,9 @@ import (
 )
 
 func (f *fixture) upload(token string, data []byte) result {
+	return f.uploadTo(token, "/media", data)
+}
+func (f *fixture) uploadTo(token, path string, data []byte) result {
 	var body bytes.Buffer
 	form := multipart.NewWriter(&body)
 	file, err := form.CreateFormFile("file", "cover.png")
@@ -24,7 +27,7 @@ func (f *fixture) upload(token string, data []byte) result {
 	}
 	file.Write(data)
 	form.Close()
-	req := httptest.NewRequest("POST", "/api/v1/media", &body)
+	req := httptest.NewRequest("POST", "/api/v1"+path, &body)
 	req.Header.Set("Content-Type", form.FormDataContentType())
 	req.Header.Set("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()

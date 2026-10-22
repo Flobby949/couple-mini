@@ -1,6 +1,8 @@
-import { ApiError, request, type Session } from '../../core/api'
+import { ApiError, request, session, type Session } from '../../core/api'
 import { mutate } from '../../core/operations'
-import type { Context } from '../../contracts/api'
+import type { Context, Home, User } from '../../contracts/api'
+import { keys, queries } from '../../core/query'
+import { storage } from '../../platform'
 
 export const login = (body: { code: string } | { devIdentity: string }) => request<Session>('/login', 'POST', body)
 export async function getContext() {
@@ -14,3 +16,14 @@ export async function getContext() {
 }
 export const invitePartner = () => mutate<{ code: string; expiresAt: string }>('/invitations')
 export const bindPartner = (code: string) => mutate('/binding', { code })
+export async function saveProfile(body: { nickname: string; avatarId: string }) {
+  const identity = session()
+  const user = await mutate<User>('/profile', body)
+  if (!identity || session()?.token !== identity.token || user.id !== identity.user.id) {
+    throw new ApiError('SESSION_CHANGED', '登录身份已变化，请重新读取', 0)
+  }
+  storage.write('session', { ...identity, user })
+  queries.setQueryData<Context>(keys.context, current => current ? { ...current, me: user } : current)
+  queries.setQueryData<Home>(keys.home, current => current ? { ...current, context: { ...current.context, me: user } } : current)
+  return user
+}

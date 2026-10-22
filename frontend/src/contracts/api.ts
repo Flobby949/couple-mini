@@ -1,4 +1,4 @@
-export interface User { id: string; nickname: string }
+export interface User { id: string; nickname: string; avatarId?: string }
 export interface Couple { id: string; dailyLimit: number | null; doubleDays: number }
 export interface Context { me: User; partner: User | null; couple: Couple | null; stage: 'binding' | 'rules' | 'ready'; serverTime: string; businessDate: string }
 export interface Proposal { id: string; proposerId: string; previousLimit: number | null; dailyLimit: number; status: 'pending' | 'active' | 'void'; createdAt: string }

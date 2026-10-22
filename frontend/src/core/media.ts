@@ -14,11 +14,11 @@ function scope() {
   return current
 }
 export function clearMedia() { for (const path of cache.values()) releaseCover(path); cache.clear(); inFlight.clear(); account = '' }
-export async function uploadMedia(path: string) {
+export async function uploadMedia(path: string, purpose: 'cover' | 'avatar' = 'cover') {
   const token = session()?.token
   if (!token) throw new ApiError('UNAUTHENTICATED', '请重新登录', 401)
   let result: Awaited<ReturnType<typeof uploadCover>>
-  try { result = await uploadCover(path, token) } catch { throw new ApiError('NETWORK', '图片上传中断，请重新上传，其他输入已保留', 0) }
+  try { result = await uploadCover(path, token, purpose) } catch { throw new ApiError('NETWORK', '图片上传中断，请重新上传，其他输入已保留', 0) }
   if (session()?.token !== token) throw new ApiError('SESSION_CHANGED', '登录身份已变化，请重新选择图片', 0)
   let body: { fileId?: string; error?: { code: string; message: string } }
   try { body = JSON.parse(result.data) } catch { throw new ApiError('INVALID_RESPONSE', '图片上传结果无法识别，请重试', 0) }

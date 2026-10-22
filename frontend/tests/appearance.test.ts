@@ -45,7 +45,7 @@ it('the native cold-start theme matches shared page and tab colors', () => {
 })
 
 it('packages transparent palette sprites at the original dimensions with an open avatar frame', async () => {
-  expect(new Set(artworkFiles).size).toBe(20)
+  expect(new Set(artworkFiles).size).toBe(21)
   for (const accent of ['teal', 'apricot'] as const) {
     const original = getArtwork('iris'), palette = getArtwork(accent)
     for (const name of ['avatarFrame', 'pointsJar', 'checkinPanel', 'milestoneRosette', 'emptyTasks', 'emptyStore'] as const) {

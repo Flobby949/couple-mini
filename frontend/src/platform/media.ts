@@ -10,8 +10,8 @@ export async function chooseCover() {
   if (file.size > 5 * 1024 * 1024) throw new Error('图片不能超过 5 MiB')
   return file.tempFilePath
 }
-export const uploadCover = (path: string, token: string) => Taro.uploadFile({
-  url: `${API_BASE}/media`, filePath: path, name: 'file', timeout: 30000,
+export const uploadCover = (path: string, token: string, purpose: 'cover' | 'avatar' = 'cover') => Taro.uploadFile({
+  url: `${API_BASE}${purpose === 'avatar' ? '/profile/avatar' : '/media'}`, filePath: path, name: 'file', timeout: 30000,
   header: { Authorization: `Bearer ${token}` },
   ...(process.env.TARO_ENV === 'h5' ? { withCredentials: false } : {}),
 })

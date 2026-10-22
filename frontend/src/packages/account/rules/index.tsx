@@ -10,6 +10,7 @@ import { Page } from '../../../app/page'
 import { useAction } from '../../../core/use-action'
 import { readRuleMessage } from '../../../features/notifications/api'
 import { pending } from '../../../core/operations'
+import { navigate } from '../../../platform'
 import { ErrorState, Loading, Notice } from '../../../ui'
 import { Avatar, BudgetCard, ConnectedPair, Icon, InlineInfo } from '../../../ui/visual'
 
@@ -25,7 +26,7 @@ export default function RulesPage() {
     <ErrorState error={gate.error || query.error || action.error} retry={() => { void gate.refetch(); void query.refetch() }} />
     {gate.allowed && <>
       {confirmation && <Notice>{confirmation}</Notice>}
-      {query.data?.dailyLimit == null && <><View className='onboarding-heading'><Text className='page-title'>先约定，再一起开始</Text><Text className='muted'>由一方提出，另一方确认后生效</Text></View><ConnectedPair me={gate.data!.me} partner={gate.data!.partner!}/></>}
+      {query.data?.dailyLimit == null && <><View className='onboarding-heading'><Text className='page-title'>先约定，再一起开始</Text><Text className='muted'>由一方提出，另一方确认后生效</Text></View><ConnectedPair me={gate.data!.me} partner={gate.data!.partner!}/><Button className='text-button' onClick={() => void navigate('/packages/account/profile/index')}>设置我的头像和昵称</Button></>}
       {query.data?.dailyLimit != null && <BudgetCard><Text className='section-title'>当前每日获得上限</Text><Text><Text className='number'>{query.data.dailyLimit}</Text> 积分 / 人 / 天</Text><Text className='muted'>任务奖励与伴侣赠送共用额度</Text></BudgetCard>}
       {query.data?.dailyLimit != null && <Button className='text-button propose-toggle' onClick={()=>setEditing(!editing)}><Icon name='plus' size={18} tone='primary'/>{editing?'收起新方案':'提出新方案'}</Button>}
       {(editing||query.data?.dailyLimit==null) && <View className='surface form rules-form'><Text className='section-title'>每日积分获得上限</Text><View className='gift-amount'><Input className='input' ariaLabel='新每日获得上限' type='digit' value={limit} placeholder='输入上限' onInput={e => setLimit(e.detail.value)}/><Text>积分</Text></View><Text className='muted'>{normalized===null?'允许 0，最多六位小数。':`四舍五入后为 ${normalized} 积分`}</Text><Button className='button' loading={action.busy} disabled={action.busy||normalized===null} onClick={()=>void action.run(()=>proposeRules(limit),()=>{setLimit('');setEditing(false)})}>提出共同规则</Button></View>}

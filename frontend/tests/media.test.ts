@@ -12,6 +12,10 @@ it('client rejects oversized selections before starting upload', async () => {
   taro.chooseMedia.mockResolvedValue({ tempFiles: [{ size: 5 * 1024 * 1024 + 1, tempFilePath: '/too-large.png' }] })
   await expect(chooseCover()).rejects.toThrow('5 MiB'); expect(taro.uploadFile).not.toHaveBeenCalled()
 })
+it('uploads avatars through the authenticated profile endpoint before binding', () => {
+  uploadCover('wxfile://avatar', 'session-token', 'avatar')
+  expect(taro.uploadFile).toHaveBeenCalledWith(expect.objectContaining({ url: 'http://localhost:8080/api/v1/profile/avatar', filePath: 'wxfile://avatar', header: { Authorization: 'Bearer session-token' } }))
+})
 it('selects exactly one image and preserves the platform temporary path', async () => {
   taro.chooseMedia.mockResolvedValue({ tempFiles: [{ size: 123, tempFilePath: '/cover.png' }] })
   expect(await chooseCover()).toBe('/cover.png')

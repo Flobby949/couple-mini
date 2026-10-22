@@ -305,6 +305,10 @@ func TestIntegration(t *testing.T) {
 	t.Run("commerce", func(t *testing.T) { f.t = t; testCommerce(f, alice, partner, outsider, couple) })
 	t.Run("tasks-and-gifts", func(t *testing.T) { f.t = t; testTasksAndGifts(f, alice, partner, outsider, couple) })
 	t.Run("notifications", func(t *testing.T) { f.t = t; testNotifications(f, alice, partner, outsider, couple) })
+	t.Run("profile", func(t *testing.T) {
+		f.t = t
+		testProfile(f, login("ProfileAlice"), login("ProfileBob"), login("ProfileOutsider"))
+	})
 	f.t = t
 	f.server.Config.DevLogin = false
 	f.error(f.call("", "POST", "/login", "", map[string]string{"devIdentity": "disabled"}), 403, "DEV_LOGIN_DISABLED")

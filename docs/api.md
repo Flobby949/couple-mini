@@ -8,6 +8,8 @@
 | --- | --- | --- |
 | POST `/login` | `{code}`；仅开发环境可用 `{devIdentity}`。返回 `{token, expiresAt, user}` | 无 |
 | GET `/context` | `{me, partner, couple, stage, serverTime, businessDate}`；`stage` 为 `binding / rules / ready` | 已登录 |
+| POST `/profile` | `{nickname, avatarId}` → `{id, nickname, avatarId}`；保存本人资料，使用幂等键 | 已登录，无绑定或首次规则门禁 |
+| POST `/profile/avatar` | multipart 字段 `file` → `{fileId, mime, size, width, height}`；图片限制同 `/media`，上传后再保存资料引用 | 已登录，无绑定或首次规则门禁 |
 | POST `/invitations` | `{}` → `{code, expiresAt}`；12 位随机十六进制、24 小时、一次性，数据库只保存摘要 | 已登录且未绑定 |
 | POST `/binding` | `{code}` → `{coupleId, boundAt}` | 双方未绑定，不能绑定自己 |
 | GET `/rules` | `{dailyLimit, proposals}`，最近 100 份，按创建时间/ID 降序；提议有 `id, proposerId, previousLimit, dailyLimit, status, createdAt` | 已绑定 |
@@ -30,6 +32,12 @@
 主要业务码：`UNAUTHENTICATED`、`BINDING_REQUIRED`、`RULES_REQUIRED`、`INVITE_INVALID`、`SELF_BINDING`、`ALREADY_BOUND`、`PARTNER_CONFIRM_REQUIRED`、`PROPOSAL_INACTIVE`、`INVALID_POINTS`、`ALREADY_CHECKED_IN`、`IDEMPOTENCY_CONFLICT`、`OPERATION_CLOSED`。5xx 和网络异常均按结果未知处理，不能换键重试。
 
 绑定、规则、签到、订单、任务及赠送的事件与业务、流水、成功回执同事务保存。业务响应不等待通知消费，也不代表微信已经发送；已按冻结偏好及昵称生成站内/微信渠道记录，消费与收据独立于主业务原子提交。
+
+## 用户资料
+
+登录返回的 `user`、启动及首页上下文中的 `me / partner` 均包含 `{id, nickname, avatarId}`。`avatarId` 未设置时为 `""`，前端使用默认插画；已设置时通过带会话头的 `/media/:id` 下载，图片读取失败提供重试。昵称去除首尾空白，最多 40 个 Unicode 字符，不允许换行或控制字符；留空恢复为“微信用户”。保存的头像必须是本人已上传的文件，空字符串恢复默认头像。重新登录不会覆盖已保存的资料。
+
+小程序资料页使用 `Button openType="chooseAvatar"` 取得临时路径，上传取得持久 `fileId` 后再保存 `avatarId`；昵称使用 `Input type="nickname"`，从 `Form` 提交值收集微信填写结果。用户可在绑定页或“我的 → 本人资料行”进入，不强制设置资料。保存后刷新本人会话及页面缓存，伴侣端在重新读取上下文后更新；既有通知保留生成时冻结的昵称。
 
 ## 小店、图片与购物车
 
