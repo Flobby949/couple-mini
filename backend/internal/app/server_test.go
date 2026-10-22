@@ -116,11 +116,35 @@ func TestIntegration(t *testing.T) {
 	f.clock.Store(time.Date(2026, 10, 20, 15, 59, 59, 0, time.UTC).UnixNano())
 	f.server = &Server{DB: db, Redis: cache, Config: Config{Env: "development", Address: "127.0.0.1:8080", DevLogin: true}, Now: func() time.Time { return time.Unix(0, f.clock.Load()).UTC() }, Client: &http.Client{Timeout: time.Second}}
 	f.handler = f.server.Router()
-	// Delete only the sessions created by this isolated suite, never flush the user's Redis.
+	// Delete only keys belonging to this isolated suite, never flush the user's Redis.
 	tokens := []string{}
 	defer func() {
 		for _, token := range tokens {
 			cache.Del(context.Background(), "couple:session:"+platform.Hash(token))
+		}
+		for _, table := range []string{"users", "couples"} {
+			rows, err := db.Query("SELECT id FROM " + table)
+			if err != nil {
+				t.Error(err)
+				continue
+			}
+			for rows.Next() {
+				var id string
+				if err := rows.Scan(&id); err != nil {
+					t.Error(err)
+					continue
+				}
+				if table == "users" {
+					f.server.invalidateReadCache(context.Background(), id, "membership", "media", "preferences")
+				} else {
+					f.server.invalidateReadCache(context.Background(), id, "context", "rules", "checkins", "tasks", "orders", "gifts", "gift-details")
+					f.server.invalidateCatalog(context.Background(), id)
+				}
+			}
+			if err := rows.Err(); err != nil {
+				t.Error(err)
+			}
+			rows.Close()
 		}
 	}()
 	login := func(name string) string { token := f.login(name); tokens = append(tokens, token); return token }
@@ -308,6 +332,10 @@ func TestIntegration(t *testing.T) {
 	t.Run("profile", func(t *testing.T) {
 		f.t = t
 		testProfile(f, login("ProfileAlice"), login("ProfileBob"), login("ProfileOutsider"))
+	})
+	t.Run("read-caches", func(t *testing.T) {
+		f.t = t
+		testReadCaches(f, login("CacheAlice"), login("CacheBob"), login("CacheOutsider"), login("CacheOtherPartner"))
 	})
 	f.t = t
 	f.server.Config.DevLogin = false

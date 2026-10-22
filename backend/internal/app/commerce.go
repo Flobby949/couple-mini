@@ -140,6 +140,7 @@ func (s *Server) placeOrder(c *gin.Context) {
 		receipt, err := orders.Place(ctx, tx, couple.ID, user, body.ProductID, price, now)
 		if err == nil {
 			s.invalidateCatalog(ctx, couple.ID)
+			s.invalidateReadCache(ctx, couple.ID, "orders")
 		}
 		return receipt, err
 	})
@@ -147,16 +148,26 @@ func (s *Server) placeOrder(c *gin.Context) {
 func (s *Server) listOrders(c *gin.Context) {
 	s.read(c, "ready", func(ctx context.Context, tx *sql.Tx, state identity.Context) (any, error) {
 		role := c.DefaultQuery("role", "buyer")
-		return orders.List(ctx, tx, state.Couple.ID, state.Me.ID, role, c.Query("status"), c.Query("cursor"))
+		load := func() (orders.Page, error) {
+			return orders.List(ctx, tx, state.Couple.ID, state.Me.ID, role, c.Query("status"), c.Query("cursor"))
+		}
+		if c.Query("cursor") != "" {
+			return load()
+		}
+		return cachedRead(s, ctx, readCacheKey("orders", state.Couple.ID), "list:"+state.Me.ID+":"+role+":"+c.Query("status"), activityCacheTTL, load)
 	})
 }
 func (s *Server) order(c *gin.Context) {
 	s.read(c, "ready", func(ctx context.Context, tx *sql.Tx, state identity.Context) (any, error) {
-		o, err := orders.Get(ctx, tx, state.Couple.ID, state.Me.ID, c.Param("id"))
+		o, err := cachedRead(s, ctx, readCacheKey("orders", state.Couple.ID), "id:"+state.Me.ID+":"+c.Param("id"), activityCacheTTL, func() (orders.Order, error) {
+			return orders.Get(ctx, tx, state.Couple.ID, state.Me.ID, c.Param("id"))
+		})
 		if err != nil {
 			return nil, err
 		}
-		history, err := orders.Timeline(ctx, tx, o.ID)
+		history, err := cachedRead(s, ctx, readCacheKey("orders", state.Couple.ID), "history:"+o.ID, activityCacheTTL, func() ([]orders.History, error) {
+			return orders.Timeline(ctx, tx, o.ID)
+		})
 		if err != nil {
 			return nil, err
 		}
@@ -178,6 +189,9 @@ func (s *Server) orderAction(c *gin.Context) {
 			return nil, err
 		}
 		receipt, err := orders.Apply(ctx, tx, couple.ID, user, c.Param("id"), body.Action, now)
+		if err == nil {
+			s.invalidateReadCache(ctx, couple.ID, "orders")
+		}
 		if err == nil && (body.Action == "cancel" || body.Action == "reject" || body.Action == "approve_cancel") {
 			s.invalidateCatalog(ctx, couple.ID)
 		}
@@ -215,7 +229,7 @@ func (s *Server) uploadImage(c *gin.Context, requireReady bool) {
 		return
 	}
 	// Authorize before parsing an image; no database lock is held during CPU or file work.
-	tx, _, err := s.beginRelation(c.Request.Context(), c.GetString("user"), nil)
+	tx, _, _, err := s.beginRelation(c.Request.Context(), c.GetString("user"), nil)
 	if err != nil {
 		s.fail(c, err)
 		return
@@ -257,7 +271,7 @@ func (s *Server) uploadImage(c *gin.Context, requireReady bool) {
 		return
 	}
 	path, _ := media.Path(s.Config.MediaRoot, stored.ID)
-	tx, now, err := s.beginRelation(c.Request.Context(), c.GetString("user"), nil)
+	tx, _, now, err := s.beginRelation(c.Request.Context(), c.GetString("user"), nil)
 	if err != nil {
 		os.Remove(path)
 		s.fail(c, err)
@@ -278,7 +292,13 @@ func (s *Server) uploadImage(c *gin.Context, requireReady bool) {
 	c.JSON(200, stored)
 }
 func (s *Server) readMedia(c *gin.Context) {
-	f, err := media.Authorized(c.Request.Context(), s.DB, c.GetString("user"), c.Param("id"))
+	ctx := c.Request.Context()
+	user, id := c.GetString("user"), c.Param("id")
+	// Successful access remains valid: media metadata and bound relationships
+	// are immutable. Denials are never cached, so binding grants access at once.
+	f, err := cachedRead(s, ctx, readCacheKey("media", user), id, stableCacheTTL, func() (media.File, error) {
+		return media.Authorized(ctx, s.DB, user, id)
+	})
 	if err != nil {
 		s.fail(c, err)
 		return
@@ -299,30 +319,25 @@ func (s *Server) readMedia(c *gin.Context) {
 
 // Locks precede the shared business timestamp. A due transition is committed before
 // the caller's savepoint, so rejecting the user's next action cannot undo it.
-func (s *Server) beginRelation(ctx context.Context, user string, users []string) (*sql.Tx, time.Time, error) {
+func (s *Server) beginRelation(ctx context.Context, user string, users []string) (*sql.Tx, *identity.Couple, time.Time, error) {
 	for {
 		tx, couple, now, err := s.lockRelation(ctx, user, users)
 		if err != nil {
-			return nil, time.Time{}, err
+			return nil, nil, time.Time{}, err
 		}
 		if couple == nil {
-			return tx, now, nil
+			return tx, nil, now, nil
 		}
-		count, err := tasks.SettleDue(ctx, tx, couple.ID, now)
-		if err == nil {
-			var orderCount int
-			orderCount, err = orders.SettleDue(ctx, tx, couple.ID, now)
-			count += orderCount
-		}
+		count, err := s.settleRelationDue(ctx, tx, couple.ID, now)
 		if err != nil {
 			tx.Rollback()
-			return nil, time.Time{}, err
+			return nil, nil, time.Time{}, err
 		}
 		if count == 0 {
-			return tx, now, nil
+			return tx, couple, now, nil
 		}
 		if err = tx.Commit(); err != nil {
-			return nil, time.Time{}, err
+			return nil, nil, time.Time{}, err
 		}
 	}
 }
@@ -332,8 +347,7 @@ func (s *Server) beginRelation(ctx context.Context, user string, users []string)
 // cycles between actor locks and foreign-key checks for the partner's user row.
 func (s *Server) lockRelation(ctx context.Context, user string, users []string) (*sql.Tx, *identity.Couple, time.Time, error) {
 	for {
-		var id string
-		err := s.DB.QueryRowContext(ctx, "SELECT couple_id FROM members WHERE user_id=?", user).Scan(&id)
+		id, err := s.cachedCoupleID(ctx, user)
 		if err != nil && err != sql.ErrNoRows {
 			return nil, nil, time.Time{}, err
 		}
@@ -403,10 +417,7 @@ func (s *Server) SettleDue(ctx context.Context) error {
 		_, err = identity.LockCoupleID(ctx, tx, id)
 		if err == nil {
 			now := s.Now().UTC()
-			_, err = tasks.SettleDue(ctx, tx, id, now)
-			if err == nil {
-				_, err = orders.SettleDue(ctx, tx, id, now)
-			}
+			_, err = s.settleRelationDue(ctx, tx, id, now)
 		}
 		if err == nil {
 			err = tx.Commit()
@@ -417,4 +428,20 @@ func (s *Server) SettleDue(ctx context.Context) error {
 		}
 	}
 	return nil
+}
+
+func (s *Server) settleRelationDue(ctx context.Context, tx *sql.Tx, couple string, now time.Time) (int, error) {
+	count, err := tasks.SettleDue(ctx, tx, couple, now)
+	if err != nil {
+		return 0, err
+	}
+	orderCount, err := orders.SettleDue(ctx, tx, couple, now)
+	if err != nil {
+		return 0, err
+	}
+	count += orderCount
+	if count > 0 {
+		s.invalidateReadCache(ctx, couple, "tasks", "orders")
+	}
+	return count, nil
 }

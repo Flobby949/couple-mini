@@ -25,7 +25,14 @@ func (s *Server) taskRoutes(a *gin.RouterGroup) {
 }
 func (s *Server) listTasks(c *gin.Context) {
 	s.read(c, "ready", func(ctx context.Context, tx *sql.Tx, state identity.Context) (any, error) {
-		return tasks.List(ctx, tx, state.Couple.ID, state.Me.ID, c.DefaultQuery("kind", "partner"), c.DefaultQuery("filter", "active"), c.Query("cursor"))
+		kind, filter := c.DefaultQuery("kind", "partner"), c.DefaultQuery("filter", "active")
+		load := func() (tasks.Page, error) {
+			return tasks.List(ctx, tx, state.Couple.ID, state.Me.ID, kind, filter, c.Query("cursor"))
+		}
+		if c.Query("cursor") != "" {
+			return load()
+		}
+		return cachedRead(s, ctx, readCacheKey("tasks", state.Couple.ID), "list:"+state.Me.ID+":"+kind+":"+filter, activityCacheTTL, load)
 	})
 }
 func (s *Server) saveTask(c *gin.Context) {
@@ -43,16 +50,24 @@ func (s *Server) saveTask(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
-		return tasks.Save(ctx, tx, couple.ID, user, state.Partner.ID, c.Param("id"), body, now)
+		receipt, err := tasks.Save(ctx, tx, couple.ID, user, state.Partner.ID, c.Param("id"), body, now)
+		if err == nil {
+			s.invalidateReadCache(ctx, couple.ID, "tasks")
+		}
+		return receipt, err
 	})
 }
 func (s *Server) task(c *gin.Context) {
 	s.read(c, "ready", func(ctx context.Context, tx *sql.Tx, state identity.Context) (any, error) {
-		t, err := tasks.Get(ctx, tx, state.Couple.ID, state.Me.ID, c.Param("id"))
+		t, err := cachedRead(s, ctx, readCacheKey("tasks", state.Couple.ID), "id:"+state.Me.ID+":"+c.Param("id"), activityCacheTTL, func() (tasks.Task, error) {
+			return tasks.Get(ctx, tx, state.Couple.ID, state.Me.ID, c.Param("id"))
+		})
 		if err != nil {
 			return nil, err
 		}
-		history, err := tasks.Timeline(ctx, tx, t.ID)
+		history, err := cachedRead(s, ctx, readCacheKey("tasks", state.Couple.ID), "history:"+t.ID, activityCacheTTL, func() ([]tasks.History, error) {
+			return tasks.Timeline(ctx, tx, t.ID)
+		})
 		if err != nil {
 			return nil, err
 		}
@@ -75,7 +90,11 @@ func (s *Server) taskAction(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
-		return tasks.Apply(ctx, tx, couple.ID, user, c.Param("id"), body, *couple.DailyLimit, now)
+		receipt, err := tasks.Apply(ctx, tx, couple.ID, user, c.Param("id"), body, *couple.DailyLimit, now)
+		if err == nil {
+			s.invalidateReadCache(ctx, couple.ID, "tasks")
+		}
+		return receipt, err
 	})
 }
 func (s *Server) giftPreview(c *gin.Context) {
@@ -100,19 +119,28 @@ func (s *Server) give(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
-		return points.Give(ctx, tx, couple.ID, user, amount, *couple.DailyLimit, now)
+		gift, err := points.Give(ctx, tx, couple.ID, user, amount, *couple.DailyLimit, now)
+		if err == nil {
+			s.invalidateReadCache(ctx, couple.ID, "gifts")
+		}
+		return gift, err
 	})
 }
 func (s *Server) gifts(c *gin.Context) {
 	s.read(c, "ready", func(ctx context.Context, tx *sql.Tx, state identity.Context) (any, error) {
-		gifts, err := points.Gifts(ctx, tx, state.Couple.ID)
+		gifts, err := cachedRead(s, ctx, readCacheKey("gifts", state.Couple.ID), "list", activityCacheTTL, func() ([]points.Gift, error) {
+			return points.Gifts(ctx, tx, state.Couple.ID)
+		})
 		return gin.H{"items": gifts}, err
 	})
 }
 func (s *Server) gift(c *gin.Context) {
 	s.read(c, "ready", func(ctx context.Context, tx *sql.Tx, state identity.Context) (any, error) {
-		var g points.Gift
-		err := tx.QueryRowContext(ctx, "SELECT id,sender_id,receiver_id,requested,actual,discarded,daily_limit,created_at FROM point_gifts WHERE id=? AND couple_id=?", c.Param("id"), state.Couple.ID).Scan(&g.ID, &g.SenderID, &g.ReceiverID, &g.Requested, &g.Actual, &g.Discarded, &g.DailyLimit, &g.CreatedAt)
+		g, err := cachedRead(s, ctx, readCacheKey("gift-details", state.Couple.ID), c.Param("id"), stableCacheTTL, func() (points.Gift, error) {
+			var gift points.Gift
+			err := tx.QueryRowContext(ctx, "SELECT id,sender_id,receiver_id,requested,actual,discarded,daily_limit,created_at FROM point_gifts WHERE id=? AND couple_id=?", c.Param("id"), state.Couple.ID).Scan(&gift.ID, &gift.SenderID, &gift.ReceiverID, &gift.Requested, &gift.Actual, &gift.Discarded, &gift.DailyLimit, &gift.CreatedAt)
+			return gift, err
+		})
 		if err == sql.ErrNoRows {
 			return nil, platform.Fail(404, "NOT_FOUND", "赠送记录不存在或无权查看")
 		}

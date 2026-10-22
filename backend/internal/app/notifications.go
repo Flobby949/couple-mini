@@ -196,7 +196,9 @@ func (s *Server) preferences(c *gin.Context) {
 	s.read(c, "ready", func(ctx context.Context, tx *sql.Tx, state identity.Context) (any, error) {
 		items := []gin.H{}
 		for _, t := range notifications.Templates {
-			channel, err := notifications.Channel(ctx, tx, state.Me.ID, t.Code)
+			channel, err := cachedRead(s, ctx, readCacheKey("preferences", state.Me.ID), t.Code, stableCacheTTL, func() (string, error) {
+				return notifications.Channel(ctx, tx, state.Me.ID, t.Code)
+			})
 			if err != nil {
 				return nil, err
 			}
@@ -234,6 +236,9 @@ func (s *Server) savePreference(c *gin.Context) {
 			return nil, platform.Fail(422, "INVALID_PREFERENCE", "请选择具体模板与有效渠道")
 		}
 		_, err := tx.ExecContext(ctx, "INSERT INTO notification_preferences VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE channel=VALUES(channel),updated_at=VALUES(updated_at)", user, code, body.Channel, now)
+		if err == nil {
+			s.invalidateReadCache(ctx, user, "preferences")
+		}
 		return gin.H{"code": code, "channel": body.Channel, "savedAt": now}, err
 	})
 }

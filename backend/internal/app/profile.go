@@ -16,7 +16,18 @@ func (s *Server) saveProfile(c *gin.Context) {
 		return
 	}
 	s.write(c, nil, func(ctx context.Context, tx *sql.Tx, user string, now time.Time) (any, error) {
-		return identity.SaveProfile(ctx, tx, user, body)
+		profile, err := identity.SaveProfile(ctx, tx, user, body)
+		if err != nil {
+			return nil, err
+		}
+		couple, err := s.cachedCoupleID(ctx, user)
+		if err != nil && err != sql.ErrNoRows {
+			return nil, err
+		}
+		if couple != "" {
+			s.invalidateReadCache(ctx, couple, "context")
+		}
+		return profile, nil
 	})
 }
 

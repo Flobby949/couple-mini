@@ -242,7 +242,7 @@ func (s *Server) write(c *gin.Context, extraUsers []string, fn mutation) {
 	normalized, _ := json.Marshal(canonical)
 	hash := platform.Hash(c.Request.Method + " " + c.Request.URL.Path + " " + string(normalized))
 	ctx := c.Request.Context()
-	tx, now, err := s.beginRelation(ctx, user, append(extraUsers, user))
+	tx, _, now, err := s.beginRelation(ctx, user, append(extraUsers, user))
 	if err != nil {
 		s.fail(c, err)
 		return
@@ -421,6 +421,7 @@ func (s *Server) propose(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
+		s.invalidateReadCache(ctx, couple.ID, "rules")
 		return result, eventbus.Save(ctx, tx, couple.ID, user, "RulesProposed", result, now)
 	})
 }
@@ -434,6 +435,7 @@ func (s *Server) confirm(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
+		s.invalidateReadCache(ctx, couple.ID, "rules")
 		return result, eventbus.Save(ctx, tx, couple.ID, user, "RulesActivated", result, now)
 	})
 }
@@ -447,19 +449,20 @@ func (s *Server) checkin(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
+		s.invalidateReadCache(ctx, couple.ID, "checkins")
 		return result, eventbus.Save(ctx, tx, couple.ID, user, "CheckinRecorded", result, now)
 	})
 }
 
 func (s *Server) read(c *gin.Context, required string, fn func(context.Context, *sql.Tx, identity.Context) (any, error)) {
 	ctx := c.Request.Context()
-	tx, now, err := s.beginRelation(ctx, c.GetString("user"), nil)
+	tx, couple, now, err := s.beginRelation(ctx, c.GetString("user"), nil)
 	if err != nil {
 		s.fail(c, err)
 		return
 	}
 	defer tx.Rollback()
-	state, err := identity.ReadContext(ctx, tx, c.GetString("user"), now)
+	state, err := s.cachedContext(ctx, tx, c.GetString("user"), couple, now)
 	if err != nil {
 		s.fail(c, err)
 		return
@@ -488,10 +491,14 @@ func (s *Server) readContext(c *gin.Context) {
 }
 func (s *Server) listRules(c *gin.Context) {
 	s.read(c, "bound", func(ctx context.Context, tx *sql.Tx, state identity.Context) (any, error) {
-		p, err := rules.List(ctx, tx, state.Couple.ID)
+		p, err := s.cachedRules(ctx, tx, state.Couple.ID)
 		if id := c.Query("id"); id != "" {
 			var selected rules.Proposal
-			err = tx.QueryRowContext(ctx, "SELECT id,proposer_id,previous_limit,daily_limit,status,created_at FROM rule_proposals WHERE id=? AND couple_id=?", id, state.Couple.ID).Scan(&selected.ID, &selected.ProposerID, &selected.PreviousLimit, &selected.DailyLimit, &selected.Status, &selected.CreatedAt)
+			selected, err = cachedRead(s, ctx, readCacheKey("rules", state.Couple.ID), "id:"+id, stableCacheTTL, func() (rules.Proposal, error) {
+				var proposal rules.Proposal
+				err := tx.QueryRowContext(ctx, "SELECT id,proposer_id,previous_limit,daily_limit,status,created_at FROM rule_proposals WHERE id=? AND couple_id=?", id, state.Couple.ID).Scan(&proposal.ID, &proposal.ProposerID, &proposal.PreviousLimit, &proposal.DailyLimit, &proposal.Status, &proposal.CreatedAt)
+				return proposal, err
+			})
 			if err == sql.ErrNoRows {
 				return nil, platform.Fail(404, "NOT_FOUND", "规则提议不存在或无权查看")
 			}
@@ -506,11 +513,13 @@ func (s *Server) home(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
-		checked, err := checkin.Read(ctx, tx, state.Me.ID, state.Couple.ID, state.BusinessDate)
+		checked, err := cachedRead(s, ctx, readCacheKey("checkins", state.Couple.ID), state.BusinessDate+":"+state.Me.ID, activityCacheTTL, func() (checkin.Status, error) {
+			return checkin.Read(ctx, tx, state.Me.ID, state.Couple.ID, state.BusinessDate)
+		})
 		if err != nil {
 			return nil, err
 		}
-		proposals, err := rules.List(ctx, tx, state.Couple.ID)
+		proposals, err := s.cachedRules(ctx, tx, state.Couple.ID)
 		if err != nil {
 			return nil, err
 		}
@@ -520,11 +529,15 @@ func (s *Server) home(c *gin.Context) {
 				todo = append(todo, p)
 			}
 		}
-		orderTodos, err := orders.Todos(ctx, tx, state.Couple.ID, state.Me.ID)
+		orderTodos, err := cachedRead(s, ctx, readCacheKey("orders", state.Couple.ID), "todos:"+state.Me.ID, activityCacheTTL, func() ([]orders.Order, error) {
+			return orders.Todos(ctx, tx, state.Couple.ID, state.Me.ID)
+		})
 		if err != nil {
 			return nil, err
 		}
-		taskTodos, err := tasks.Todos(ctx, tx, state.Couple.ID, state.Me.ID)
+		taskTodos, err := cachedRead(s, ctx, readCacheKey("tasks", state.Couple.ID), "todos:"+state.Me.ID, activityCacheTTL, func() ([]tasks.Task, error) {
+			return tasks.Todos(ctx, tx, state.Couple.ID, state.Me.ID)
+		})
 		if err != nil {
 			return nil, err
 		}
