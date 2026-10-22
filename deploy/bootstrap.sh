@@ -22,7 +22,7 @@ backup="/opt/couple-mini/nginx-before-$(date -u +%Y%m%dT%H%M%SZ).conf"
 if ! grep -Fq "$include" "$site"; then
     [[ $(grep -Ec '^[[:space:]]*server_name[[:space:]]+www[.]flobby[.]top;' "$site") -eq 1 ]]
     cp -p "$site" "$backup"
-    awk -v include="$include" '{print} /^[[:space:]]*server_name[[:space:]]+www[.]flobby[.]top;/ {print include}' \
+    awk -v snippet="$include" '{print} /^[[:space:]]*server_name[[:space:]]+www[.]flobby[.]top;/ {print snippet}' \
         "$site" > "$site.next"
     cat "$site.next" > "$site"
     rm "$site.next"
