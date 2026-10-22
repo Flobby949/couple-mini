@@ -229,6 +229,7 @@ func testReadCaches(f *fixture, alice, bob, outsider, otherPartner string) {
 		t.Fatal("order detail cached the live balance")
 	}
 	// A separate bound couple must not see warmed records from this couple.
+	f.must(bob, "GET", "/catalog", nil)
 	invite = f.must(outsider, "POST", "/invitations", map[string]any{})["code"].(string)
 	f.must(otherPartner, "POST", "/binding", map[string]string{"code": invite})
 	if len(f.must(outsider, "GET", "/rules", nil)["proposals"].([]any)) != 0 {
@@ -238,6 +239,9 @@ func testReadCaches(f *fixture, alice, bob, outsider, otherPartner string) {
 	if f.image(outsider, cover) != 404 {
 		t.Fatal("cached media authorization leaked across users")
 	}
+	otherRule := f.must(outsider, "POST", "/rules", map[string]string{"dailyLimit": "0"})["id"].(string)
+	f.must(otherPartner, "POST", "/rules/"+otherRule+"/confirm", map[string]any{})
+	f.error(f.call(outsider, "GET", "/products/"+product, "", nil), 404, "NOT_FOUND")
 	for _, entry := range []struct {
 		kind, scope string
 		ttl         time.Duration

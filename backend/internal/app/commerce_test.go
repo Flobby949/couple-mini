@@ -104,6 +104,12 @@ func testCommerce(f *fixture, buyer, seller, outsider, couple string) {
 	testCatalogCache(f, buyer, seller, outsider, couple, partner, id)
 	assertCatalog := func(name string, stock int, balance int64) {
 		t.Helper()
+		// Check detail before reloading the list can prewarm it again.
+		detail := f.must(buyer, "GET", "/products/"+id, nil)
+		productDetail := detail["product"].(map[string]any)
+		if productDetail["name"] != name || productDetail["stock"] != float64(stock) || detail["balance"] != float64(balance) {
+			t.Fatal("stale product detail or balance", detail)
+		}
 		listed := f.must(buyer, "GET", "/catalog", nil)
 		products := listed["products"].([]any)
 		if len(products) != 1 {

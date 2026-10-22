@@ -67,7 +67,7 @@ func (s *Server) listProducts(c *gin.Context) {
 }
 func (s *Server) product(c *gin.Context) {
 	s.read(c, "ready", func(ctx context.Context, tx *sql.Tx, state identity.Context) (any, error) {
-		p, err := catalog.Get(ctx, tx, c.Param("id"), state.Couple.ID)
+		p, err := s.cachedProduct(ctx, tx, state.Couple.ID, c.Param("id"))
 		if err != nil {
 			return nil, err
 		}
