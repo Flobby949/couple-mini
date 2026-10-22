@@ -54,7 +54,7 @@ git push origin v0.1.0
 curl --fail https://www.flobby.top/couple-mini/health/ready
 ```
 
-生产 API 地址设置为 `TARO_APP_API_BASE=https://www.flobby.top/couple-mini/api/v1` 后重新构建并上传小程序。微信后台的 request/uploadFile/downloadFile 合法域名都需包含 `https://www.flobby.top`。后端始终关闭开发登录；当前仍为开发版联调，`WECHAT_MINIPROGRAM_STATE=developer`，设置体验版或正式版时同步调整。
+开发版 `0.1.1` 已使用 `TARO_APP_API_BASE=https://www.flobby.top/couple-mini/api/v1` 重新构建并上传。微信后台的 request/uploadFile/downloadFile 合法域名都需包含 `https://www.flobby.top`。后端始终关闭开发登录；当前仍为开发版联调，`WECHAT_MINIPROGRAM_STATE=developer`，设置体验版或正式版时同步调整。
 
 ## 运维与恢复边界
 

@@ -102,3 +102,10 @@
 - 复用现有 Nginx 与 `www.flobby.top` 的 HTTPS，通过 `/couple-mini/` 路径代理；初始化适配了服务器 gawk 保留变量名和非 systemd Nginx 启动方式，现有站点配置已通过 `nginx -t`。
 - 三个容器均 healthy；实测 API 约 14.7 MiB、MySQL 约 162.2 MiB、Redis 约 8.3 MiB。公网 `/health/ready` 和 `/health/live` 返回 200，Cache-Control 为 no-store；无会话 `/api/v1/context` 返回 401，开发身份登录返回 403/DEV_LOGIN_DISABLED。
 - 本轮没有迁入本地开发验收数据、绑定真实伴侣关系或批量发送消息。小程序仍需改用 `https://www.flobby.top/couple-mini/api/v1` 重新构建并上传，微信后台配置 request/upload/download 合法域名；这些客户端和平台配置不计为后端首发已完成项。
+
+## 生产 API 开发版上传（2026-10-22）
+
+- 本地前端 `.env` 已指向 `https://www.flobby.top/couple-mini/api/v1`，关闭开发登录；原本地开发配置保存在被 Git 忽略的 `.env.local-dev`。
+- 重新完成生产构建和产物检查：26 条路由、4 个 Tab，主包 1,634,686 字节，总包 1,754,446 字节；产物包含生产 API 地址。
+- 微信开发者工具上传 `0.1.1`，备注为接入生产 HTTPS 后端、真实微信登录与线上联调，界面确认“代码上传成功”。未提交审核或正式发布，无需再次发布后端。
+- 微信后台的 request/uploadFile/downloadFile 合法域名均需新增 `https://www.flobby.top`，不填写 API 路径，保留已有域名。用户将手动完成此项；截至本记录尚未确认保存，也未验证手机上的生产登录。
