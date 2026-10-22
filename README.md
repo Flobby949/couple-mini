@@ -108,4 +108,6 @@ T01“新任务待接受”已通过真实订阅授权、接口直发、手机�
 
 测试期间可通过[服务器重置脚本](deploy/reset-test-data.sh)清空业务数据、会话及图片，默认仅预览，执行前自动备份；命令及范围见[测试数据重置说明](docs/deployment.md#测试数据重置)。
 
+单独导出数据与上传图片使用[备份脚本](deploy/backup-data.sh)：默认预览，`--backup` 生成仅包含完整 SQL、图片文件及校验和的单个压缩包；命令和恢复边界见[数据导出与图片备份](docs/deployment.md#数据导出与图片备份)。
+
 GitHub Actions、Docker Compose、现有 Nginx 路径转发和首次安装步骤见[部署说明](docs/deployment.md)。发布采用与 knowledge 项目一致的版本标签触发方式，服务器运行独立 MySQL/Redis，API 目标地址为 `https://www.flobby.top/couple-mini/api/v1`。服务器首次安装和专用部署密钥授权已完成，`v0.1.1` 已通过完整 Actions 发布。公网 `https://www.flobby.top/couple-mini/health/ready` 返回 ready。之后推送新的版本标签发布；小程序开发版 `0.1.3` 已使用上述 HTTPS API 地址重新构建并上传，微信后台合法域名由用户手动配置。

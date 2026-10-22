@@ -80,6 +80,47 @@ curl --fail https://www.flobby.top/couple-mini/health/ready
 
 ## 运维与恢复边界
 
+### 数据导出与图片备份
+
+新增独立脚本 [backup-data.sh](../deploy/backup-data.sh)。将它放在服务器 `/opt/couple-mini/`，与 `compose.yaml`、`.env`、`.current-image` 同目录，再执行：
+
+```sh
+# 仅检查目标和预览范围，不导出、不重启 API
+bash /opt/couple-mini/backup-data.sh
+
+# 导出数据库和图片，保留现有业务数据
+bash /opt/couple-mini/backup-data.sh --backup
+```
+
+2026-10-22 14:53（北京时间），已通过 Netcatty 管理连接更新 `/opt/couple-mini/backup-data.sh`，移除镜像版本引用，权限为 `700 root:root`。服务器 SHA-256 与本地一致（`ffdac1b9534f5bc36753bed87ea0977e1639f3188a295e0676662aabbd13dff9`），`bash -n` 与 `--dry-run` 通过，预览识别 18 个已登记图片。仅更新及预览，未执行实际导出；检查时 API 为 running/healthy，本次操作未停止或启动 API。
+
+MySQL 需处于运行状态，API 容器需存在。脚本与部署/重置共用 `.deploy.lock`；实际导出时短暂停止原本运行的 API，暂停请求写入、后台结算和通知任务，让 SQL 与图片形成同一个恢复点。成功或失败都会尝试启动原容器并等待健康，不重建容器、不切换镜像；API 原本已停止则保持停止。导出期间不要另行手工写入数据库或图片目录。
+
+输出是单个 `backups/export-<UTC时间>-<进程号>.tar.gz`，包含：
+
+- `database.sql`：MySQL 表结构、全部数据及 `schema_migrations`，包含头像和商品封面的文件关联。
+- `media.tar.gz`：`/app/uploads/` 下的全部实际图片文件，包括头像、封面、旧订单快照引用的图片及未引用文件；保留原文件 ID 和目录。
+- `SHA256SUMS`：上述两个数据文件的 SHA-256 校验和。
+
+纯 SQL 不能同时打包图片，因此由脚本生成可直接导入的 SQL，并和图片放在同一个压缩包中。图片以文件 ID 保存，没有扩展名，不能在恢复时改名；备份的是服务器实际保存的文件，当前上传流程会重编码，不是手机上传前未经处理的原图。Redis 登录会话及服务器配置/凭据不包含在压缩包中，导出不会清理它们。
+
+备份包不包含 Docker 镜像或镜像版本引用。脚本读取 `.current-image` 只是为了使用现有 Compose 配置，不将其打包。
+
+导出还会核对每个 `media_files.id` 是否在图片包中，发现缺失图片即失败。未完成文件保留在 `.partial` 目录，不能当作成功备份。最终压缩包只在 SQL、图片及校验检查通过后生成；若随后 API 恢复失败，脚本仍返回失败并保留已经完成的压缩包。权限默认仅允许执行用户读写，仓库忽略 `deploy/backups/`。
+
+复制压缩包到独立备份位置后，可先在独立目录解包和校验：
+
+```sh
+mkdir restore-check
+tar -xzf /path/to/export-YYYYMMDDTHHMMSSZ-PID.tar.gz -C restore-check
+(cd restore-check && sha256sum --check SHA256SUMS)
+tar -tzf restore-check/media.tar.gz
+```
+
+恢复时 SQL 和图片须使用同一份压缩包，先在独立数据库/图片目录演练，再按下文恢复边界处理生产数据和已发通知，必要时重新登录。以上导出命令不执行恢复或清空。
+
+隔离验证使用 `bash deploy/tests/backup-data.sh`，需要 Docker、Compose、已缓存的 MySQL/Redis 镜像及 `couple-mini-backend:deploy-check`。测试覆盖默认预览、互斥锁、完整 SQL/图片恢复、用户头像循环外键、图片字节及校验和、备份失败恢复 API、缺失引用图片、原本停止的 API、恢复失败时保留压缩包；只创建和清理独立测试项目。
+
 ### 测试数据重置
 
 服务器脚本 [reset-test-data.sh](../deploy/reset-test-data.sh) 已安装在 `/opt/couple-mini/reset-test-data.sh`，权限为 `700 root:root`，已通过校验及预览。脚本使用同目录的 Compose 配置、`.env` 和 `.current-image`，与部署共用锁；默认只预览各业务表行数，不清空数据。

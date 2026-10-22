@@ -37,6 +37,8 @@ coverage.out
 *.sqlite3-wal
 uploads/
 tmp/
+backups/
+
 
 # WeChat developer-specific settings
 project.private.config.json
