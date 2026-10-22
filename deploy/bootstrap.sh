@@ -30,9 +30,9 @@ if ! grep -Fq "$include" "$site"; then
         cp -p "$backup" "$site"
         exit 1
     fi
-    if ! systemctl reload nginx; then
+    if ! nginx -s reload; then
         cp -p "$backup" "$site"
-        systemctl reload nginx
+        nginx -s reload
         exit 1
     fi
 fi
