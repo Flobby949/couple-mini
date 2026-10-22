@@ -9,6 +9,7 @@ export const checkinPanel = '/assets/checkin-fabric-panel.png'
 export const milestoneRosette = '/assets/milestone-rosette.png'
 export const emptyTasks = '/assets/empty-tasks.png'
 export const emptyStore = '/assets/empty-store.png'
+export const brandLogo = '/assets/brand/floflo-logo.png'
 
 const original = { avatarWoman, avatarMan, avatarFrame, pointsJar, checkinPanel, milestoneRosette, emptyTasks, emptyStore }
 const variants = {
@@ -30,4 +31,4 @@ const variants = {
   },
 }
 export function getArtwork(accent: Accent) { return { ...original, ...(accent === 'iris' ? {} : variants[accent]) } }
-export const artworkFiles = [...Object.values(original), ...Object.values(variants).flatMap(value => Object.values(value))]
+export const artworkFiles = [brandLogo, ...Object.values(original), ...Object.values(variants).flatMap(value => Object.values(value))]

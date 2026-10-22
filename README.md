@@ -1,4 +1,6 @@
-# 情侣小店
+# FloFlo
+
+Flobby 和 Flora 的小小日常。
 
 永久无真实金钱的两人小店。产品规则见 [PRD](docs/PRD.md)，前端分层与实施顺序见 [前端架构](docs/frontend-architecture.md)。
 

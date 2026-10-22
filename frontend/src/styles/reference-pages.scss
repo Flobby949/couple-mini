@@ -375,6 +375,7 @@
  .fixed-rules .section-title {color:var(--ink);}
  .welcome-hero {display:flex;flex-direction:column;align-items:center;text-align:center;padding:20px 0 32px;gap:10px;}
  .welcome-hero>image {width:156px;height:156px;}
+ .welcome-logo {border-radius:32px;overflow:hidden;}
  .intro {display:flex;flex-direction:column;gap:16px;}
  .ledger-row {display:flex;align-items:center;gap:12px;padding:14px 12px;background:var(--surface);border:0;border-bottom:1px solid var(--line);margin:0;}
  .ledger-row>view:not(.ledger-symbol) {min-width:0;}

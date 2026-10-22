@@ -1,4 +1,4 @@
-import { useArtwork } from '../../ui/use-artwork'
+import { brandLogo } from '../../ui/artwork'
 import { useState } from 'react'
 import { Button, Image, Input, Text, View } from '@tarojs/components'
 import { useDidShow } from '@tarojs/taro'
@@ -14,7 +14,6 @@ import { useAction } from '../../core/use-action'
 import { ErrorState } from '../../ui'
 
 export default function Entry() {
- const { milestoneRosette: rosette } = useArtwork()
   const action = useAction()
   const [identity, setIdentity] = useState('')
   async function enter() { await routeContext(await getContext()) }
@@ -25,9 +24,9 @@ export default function Entry() {
     queries.clear(); clearMedia(); clearCheckoutPrice(); storage.write('session', result)
     await enter()
   }
-  return <Page title='把日常，留给彼此' subtitle='两个人的小店，从一起开始。'>
-    <View className='welcome-hero'><Image src={rosette} mode='aspectFit'/><Text className='page-title'>把日常，留给彼此</Text><Text className='muted'>两个人的小店，从一起开始。</Text></View>
-    <View className='surface intro'><Text className='section-title'>欢迎来到情侣小店</Text><Text className='muted'>邀请伴侣、共同约定规则，再用签到与任务积攒两个人的小确幸。这里的积分永远不涉及真实金钱。</Text>
+  return <Page title='FloFlo' subtitle='Flobby 和 Flora 的小小日常。'>
+    <View className='welcome-hero'><Image className='welcome-logo' src={brandLogo} mode='aspectFit' ariaLabel='FloFlo 标志'/><Text className='page-title'>FloFlo</Text><Text className='muted'>Flobby 和 Flora 的小小日常。</Text></View>
+    <View className='surface intro'><Text className='section-title'>欢迎来到 FloFlo</Text><Text className='muted'>邀请伴侣、共同约定规则，再用签到与任务积攒两个人的小确幸。这里的积分永远不涉及真实金钱。</Text>
       <Button className='button' loading={action.busy} disabled={action.busy} onClick={() => void action.run(() => session() ? enter() : login())}>{session() ? '继续进入' : '微信登录'}</Button>
     </View>
     {DEV_LOGIN && <View className='surface form'><Text className='section-title'>本地开发登录</Text><Text className='muted'>输入稳定的测试身份；两个设备请使用不同身份。</Text><Input className='input' ariaLabel='开发身份' value={identity} placeholder='例如 alice 或 bob' onInput={e => setIdentity(e.detail.value)} maxlength={40} /><Button className='button secondary' disabled={action.busy || !identity.trim()} onClick={() => void action.run(() => login(true))}>使用开发身份登录</Button></View>}

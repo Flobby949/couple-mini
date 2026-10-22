@@ -8,7 +8,7 @@ export default defineAppConfig({
   darkmode: true,
   themeLocation: 'theme.json',
   window: {
-    navigationBarTitleText: '情侣小店',
+    navigationBarTitleText: 'FloFlo',
     navigationBarBackgroundColor: process.env.TARO_ENV === 'weapp' ? '@page' : '#F6F7FC',
     navigationBarTextStyle: process.env.TARO_ENV === 'weapp' ? '@navText' : 'black',
     backgroundColor: process.env.TARO_ENV === 'weapp' ? '@page' : '#F6F7FC',

@@ -1,0 +1,12 @@
+Generated with built-in image_gen, 2026-10-22.
+
+Use case: logo-brand.
+Asset type: final square WeChat mini-program avatar logo for an existing Chinese app called 情侣小店, a cozy private shop jointly run by two partners, rewarding shared daily life through tasks and points.
+Primary request: design ONE distinctive, exceptionally simple logo mark combining a tiny neighborhood shop with the idea of two people together. No text.
+Concept: one compact shop silhouette, a gently pitched roof whose two rounded overlapping halves suggest a heart, and a single generous heart-shaped negative-space doorway. The two roof halves subtly communicate two equal partners. Integrate these into ONE coherent geometric emblem; do not assemble unrelated clip-art.
+Style: polished flat vector-like brand identity, confident chunky curves, balanced optical proportions, precision edges, very few shapes, friendly but mature. Clearly recognizable at 48px. No thin lines or tiny decorative details.
+Palette: use the existing app's muted iris purple #6752A3 as the main color and a small warm apricot #F4BB8B accent for one roof half. Solid very pale warm ivory background #FFFAF4 fills the entire square.
+Composition: single centered logo, occupy about 65% of the canvas, broad even breathing room, all content safely inside a circular avatar crop. Full square image, not a rounded app tile floating in a scene.
+Constraints: deliver the actual standalone usable logo only. No text, letters, typography, captions, watermark, border, mockup, presentation board, multiple versions, tiny hearts floating around, people faces, currency, shopping cart, 3D, gradients, lighting, shadows, paper texture, or photographic background.
+Resolution: 1024 by 1024 square.
+
