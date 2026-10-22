@@ -19,7 +19,7 @@ import { BeijingDateTime } from '../../../ui/date-time'
 import { ErrorState, Loading, Notice } from '../../../ui'
 import { Avatar, Icon, InlineInfo, PersonRow } from '../../../ui/visual'
 export default function TaskDetailPage(){
- const { milestoneRosette: badge } = useArtwork()
+ const badge = '/packages/tasks' + useArtwork().milestoneRosette
  const gate=useGate(),id=useRouter().params.id||'',action=useReminderAction(gate.allowed)
  const [confirm,setConfirm]=useState<Exclude<TaskAction,'edit'>>(),[date,setDate]=useState(''),[time,setTime]=useState(''),[receipt,setReceipt]=useState<TaskReceipt>(),[requestId,setRequestId]=useState<string>(),[historyOpen,setHistoryOpen]=useState(false)
  const query=useQuery({queryKey:keys.task(id),queryFn:()=>getTask(id),enabled:gate.allowed&&!!id,staleTime:0,refetchInterval:gate.allowed?30000:false})

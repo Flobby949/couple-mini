@@ -11,7 +11,7 @@ import { returnTo, switchTab } from '../../../platform'
 import { ErrorState, Loading, Notice } from '../../../ui'
 
 export default function GiftDetail() {
- const { milestoneRosette: rosette } = useArtwork()
+ const rosette = '/packages/account' + useArtwork().milestoneRosette
   const gate = useGate(), id = useRouter().params.id || ''
   const query = useQuery({ queryKey: keys.gift(id), queryFn: () => getGift(id), enabled: gate.allowed && !!id, staleTime: 0 })
   const gift = gate.allowed ? query.data : undefined

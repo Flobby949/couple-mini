@@ -1,5 +1,6 @@
 import { defineConfig } from '@tarojs/cli'
 import dotenv from 'dotenv'
+import { readdirSync } from 'node:fs'
 import path from 'node:path'
 import { artworkFiles } from '../src/ui/artwork'
 
@@ -19,7 +20,19 @@ export default defineConfig<'vite'>({
     DEV_LOGIN: JSON.stringify(process.env.NODE_ENV !== 'production' && process.env.TARO_APP_DEV_LOGIN === 'true'),
   },
   mini: {},
-  copy: { patterns: [...artworkFiles.map(asset => ({ from: path.resolve(__dirname, '../src' + asset), to: asset.slice(1) })), { from: path.resolve(__dirname, '../src/assets/tab-icons'), to: 'assets/tab-icons' }, { from: path.resolve(__dirname, '../src/assets/ui-icons'), to: 'assets/ui-icons' }], options: {} },
+  copy: {
+    patterns: [
+      // Detail illustrations belong to each consuming package; subpackages cannot share each other's files.
+      ...artworkFiles.flatMap(asset => (asset.endsWith('/milestone-rosette.png') ? ['packages/account', 'packages/tasks'] : [''])
+        .map(prefix => ({ from: path.resolve(__dirname, '../src' + asset), to: (prefix + asset).replace(/^\//, '') }))),
+      { from: path.resolve(__dirname, '../src/assets/tab-icons'), to: 'assets/tab-icons' },
+      ...readdirSync(path.resolve(__dirname, '../src/assets/ui-icons')).map(file => ({
+        from: path.resolve(__dirname, '../src/assets/ui-icons', file),
+        to: `${file.startsWith('checkin-connection-') ? 'packages/account/' : ''}assets/ui-icons/${file}`,
+      })),
+    ],
+    options: {},
+  },
   h5: {
     publicPath: '/',
     postcss: { pxtransform: { config: { maxRootSize: 20.8 } } },
