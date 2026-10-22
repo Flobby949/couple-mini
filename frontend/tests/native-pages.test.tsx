@@ -1,8 +1,11 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { act, create, type ReactTestRenderer } from 'react-test-renderer'
+import { PageMeta } from '@tarojs/components'
+import { nativeColors } from '../src/core/appearance'
 
 const state = vi.hoisted(() => ({
   show: new Set<() => void>(), hide: new Set<() => void>(),
+  route: 'home',
   theme: { scheme: 'light', appearance: { mode: 'light', accent: 'iris' } },
   native: vi.fn(), title: vi.fn(), showTabBar: vi.fn(), hideTabBar: vi.fn(),
 }))
@@ -10,14 +13,14 @@ vi.mock('@tarojs/taro', async () => {
   const { useEffect } = await import('react')
   const hook = (events: Set<() => void>, callback: () => void) => useEffect(() => { events.add(callback); return () => { events.delete(callback) } }, [callback])
   return {
-    useRouter: () => ({ path: '/pages/home/index', params: {} }),
+    useRouter: () => ({ path: `/pages/${state.route}/index`, params: {} }),
     useDidShow: (callback: () => void) => hook(state.show, callback),
     useDidHide: (callback: () => void) => hook(state.hide, callback),
     default: { pxTransform: (n: number) => `${n * 750 / 390}rpx`, showTabBar: state.showTabBar },
     hideTabBar: state.hideTabBar, showTabBar: state.showTabBar,
   }
 })
-vi.mock('@tarojs/components', () => ({ View: 'view', Text: 'text', Button: 'button', Image: 'image', Radio: 'radio' }))
+vi.mock('@tarojs/components', () => ({ View: 'view', Text: 'text', Button: 'button', Image: 'image', Radio: 'radio', PageMeta: 'page-meta' }))
 vi.mock('../src/app/theme', () => ({ useTheme: () => state.theme }))
 vi.mock('../src/platform/theme', () => ({ applyNativeTheme: state.native }))
 vi.mock('../src/platform', () => ({ setPageTitle: state.title, topInset: () => 24, back: vi.fn(), storage: { read: vi.fn() } }))
@@ -35,10 +38,24 @@ let tree: ReactTestRenderer | undefined
 beforeEach(() => {
   vi.stubEnv('TARO_ENV', 'weapp'); vi.clearAllMocks(); state.show.clear(); state.hide.clear()
   state.theme = { scheme: 'light', appearance: { mode: 'light', accent: 'iris' } }
+  state.route = 'home'
   state.showTabBar.mockResolvedValue({}); state.hideTabBar.mockResolvedValue({})
 })
 afterEach(() => { act(() => tree?.unmount()); tree = undefined; vi.unstubAllEnvs() })
 function lifecycle(events: Set<() => void>) { act(() => { for (const callback of [...events]) callback() }) }
+it.each(['home', 'tasks', 'shop', 'me'])('%s paints the native page background in dark mode before onShow and keeps hidden pages in sync', route => {
+  state.route = route
+  state.theme = { scheme: 'dark', appearance: { mode: 'dark', accent: 'teal' } }
+  act(() => { tree = create(<Page messageEntry title='测试页面'/>) })
+  expect(tree!.root.findByType(PageMeta).props.pageStyle).toContain(`background-color:${nativeColors.dark.page}`)
+  expect(tree!.root.findByType(PageMeta).props.backgroundColor).toBe(nativeColors.dark.page)
+  expect(state.native).not.toHaveBeenCalled()
+  lifecycle(state.show); lifecycle(state.hide); state.native.mockClear()
+  state.theme = { scheme: 'light', appearance: { mode: 'light', accent: 'teal' } }
+  act(() => tree!.update(<Page messageEntry title='测试页面'/>))
+  expect(tree!.root.findByType(PageMeta).props.pageStyle).toContain(`background-color:${nativeColors.light.page}`)
+  expect(state.native).not.toHaveBeenCalled()
+})
 it('hidden pages cannot overwrite the current native title or theme', () => {
   act(() => { tree = create(<Page messageEntry title='今天，也一起'/>) })
   lifecycle(state.show)
@@ -62,6 +79,7 @@ it('H5 still restores the platform tab bar when returning to a tab page', () => 
   act(() => { tree = create(<Page messageEntry title='首页'/>) })
   lifecycle(state.show)
   expect(state.showTabBar).toHaveBeenCalledWith({ animation: false })
+  expect(tree!.root.findAllByType(PageMeta)).toHaveLength(0)
 })
 it('native portraits and icons use the same responsive units as their surrounding layout', () => {
   act(() => { tree = create(<><Avatar user={{ id: 'alice', nickname: '我' }} partnerId='bob' size={112}/><Icon name='bell' size={24}/></>) })

@@ -27,6 +27,8 @@
 .theme-dark .home-shelf { opacity: .55; }
 
 page, body { background: #f6f7fc; color: #29223b; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; font-size: 15px; line-height: 1.6; }
+// Cover the native page before React mounts; PageMeta then applies the saved appearance.
+@media (prefers-color-scheme: dark) { page { background: #17151e; } }
 
 view, input, button { box-sizing: border-box; }
 button { font-family: inherit; font-size: 15px; }
