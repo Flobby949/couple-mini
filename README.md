@@ -51,7 +51,7 @@ pnpm dev:weapp
 
 在微信开发者工具导入 `frontend/`，小程序根目录为 `dist/weapp/`。`project.config.json` 已配置当前小程序 AppID；后端通过本地 `.env` 配置 `WECHAT_APP_ID`、`WECHAT_APP_SECRET`，客户端与服务端 AppID 必须一致。使用本机 HTTP API 联调时，在被 Git 忽略的 `project.private.config.json` 中设置 `setting.urlCheck=false`；共享工程配置仍开启校验。
 
-真机使用微信可访问的 HTTPS API 域名，并配置小程序合法请求域名；在前端 `.env` 设置 `TARO_APP_API_BASE`。服务器关闭开发登录再部署。服务端用微信 code 换取 OpenID，Redis 保存七天有效的自有会话，平台 session_key 不返回客户端。真实微信账号已在开发者工具中完成页面登录、会话建立及未绑定跳转；后端 HTTPS 已部署，开发版 `0.1.1` 已接入线上 API；微信合法域名由用户手动配置，手机登录和兼容性仍待验证，开发者工具不能替代真机检查。
+真机使用微信可访问的 HTTPS API 域名，并配置小程序合法请求域名；在前端 `.env` 设置 `TARO_APP_API_BASE`。服务器关闭开发登录再部署。服务端用微信 code 换取 OpenID，Redis 保存七天有效的自有会话，平台 session_key 不返回客户端。真实微信账号已在开发者工具中完成页面登录、会话建立及未绑定跳转；后端 HTTPS 已部署，开发版 `0.1.3` 已接入线上 API；微信合法域名由用户手动配置，手机登录和兼容性仍待验证，开发者工具不能替代真机检查。
 
 头像昵称可从绑定页“设置我的头像和昵称”或“我的”中的本人资料行设置。小程序接入微信头像选择与昵称填写，用户主动选择并保存后，全站和伴侣端读取保存的资料；没有设置时使用默认头像和“微信用户”。重新登录保留资料。头像上传、昵称填写及键盘交互仍需微信真机验收。
 
@@ -84,7 +84,7 @@ make integration
 
 当前真实账号已配置 13 个微信平台模板，覆盖全部 30 项业务提醒。映射保存在 Git 忽略的 `backend/.env.notification-mappings.json`，后端已重启，提醒接口确认 30 项全部可用；部署时需同步该文件及 `WECHAT_NOTIFICATION_MAPPINGS` 配置。平台模板复用关系和实际字段见[验收记录](docs/acceptance-status.md)。复用同一平台模板的业务提醒分别保存渠道偏好，但共享该平台模板的一次性订阅机会。
 
-T01“新任务待接受”已通过真实订阅授权、接口直发、手机接收及默认欢迎页回跳；开发版 `0.1.1` 已上传并接入生产 HTTPS API，手机需先扫码加载有效开发版。当前消息跳转环境为 `developer`。其余逐模板实发、应用内授权同步、业务自动投递及详情回跳仍待合法域名配置和真实伴侣业务状态准备后验证。
+T01“新任务待接受”已通过真实订阅授权、接口直发、手机接收及默认欢迎页回跳；开发版 `0.1.3` 已上传并接入生产 HTTPS API，手机需先扫码加载有效开发版。当前消息跳转环境为 `developer`。其余逐模板实发、应用内授权同步、业务自动投递及详情回跳仍待合法域名配置和真实伴侣业务状态准备后验证。
 
 真实账号接入时，参考 `backend/notification-mappings.example.json`，为已审批的模板填写实际字段映射，以 `WECHAT_NOTIFICATION_MAPPINGS` 指向该 JSON。例子的 `thing1 / number2 / time3` 不是你账号的既定字段，必须按平台模板逐项替换。字段值支持 `actor / name / title / amount / occurredAt`；`amount` 对结算、罚分和赠送取对应接收人的实际结果。发送环境由 `WECHAT_MINIPROGRAM_STATE=developer|trial|formal` 指定，默认体验版。映射为空不影响站内业务。
 
@@ -106,4 +106,4 @@ T01“新任务待接受”已通过真实订阅授权、接口直发、手机�
 
 ## 后端发布
 
-GitHub Actions、Docker Compose、现有 Nginx 路径转发和首次安装步骤见[部署说明](docs/deployment.md)。发布采用与 knowledge 项目一致的版本标签触发方式，服务器运行独立 MySQL/Redis，API 目标地址为 `https://www.flobby.top/couple-mini/api/v1`。服务器首次安装和专用部署密钥授权已完成，`v0.1.0` 已通过完整 Actions 发布。公网 `https://www.flobby.top/couple-mini/health/ready` 返回 ready。之后推送新的版本标签发布；小程序开发版 `0.1.1` 已使用上述 HTTPS API 地址重新构建并上传，微信后台合法域名由用户手动配置。
+GitHub Actions、Docker Compose、现有 Nginx 路径转发和首次安装步骤见[部署说明](docs/deployment.md)。发布采用与 knowledge 项目一致的版本标签触发方式，服务器运行独立 MySQL/Redis，API 目标地址为 `https://www.flobby.top/couple-mini/api/v1`。服务器首次安装和专用部署密钥授权已完成，`v0.1.1` 已通过完整 Actions 发布。公网 `https://www.flobby.top/couple-mini/health/ready` 返回 ready。之后推送新的版本标签发布；小程序开发版 `0.1.3` 已使用上述 HTTPS API 地址重新构建并上传，微信后台合法域名由用户手动配置。

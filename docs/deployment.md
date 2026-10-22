@@ -2,6 +2,10 @@
 
 目标为 `https://www.flobby.top/couple-mini/api/v1`。复用已有 Nginx 和 HTTPS，代理至 `127.0.0.1:18081`。MySQL、Redis 不发布宿主机端口，三个持久卷独立于服务器已有项目。
 
+最新发布：2026-10-22 11:26（北京时间），后端 `v0.1.1` 已由 [Actions run 39715111101](https://github.com/Flobby949/couple-mini/actions/runs/39715111101) 部署，代码提交 `88ce23d`。当前镜像为 `ghcr.io/flobby949/couple-mini-backend@sha256:b97074541824588fb6e378f4bf5c5d919548a70e12ab97f9f55b712ef0b3e422`。发布前已保存 `backups/20261022T032613Z`（数据库、图片及旧镜像引用），`006_user_profile.sql` 已执行，API/MySQL/Redis 均健康。公网 readiness 返回 200，资料保存及头像上传接口在未登录时返回 JSON 401。镜像仓库下载较慢，部署耗时约 12 分钟。
+
+小程序开发版 `0.1.3` 已上传并确认成功，接入上述生产 HTTPS API，支持头像昵称填写。真机用户可在绑定页、首次规则页或“我的”本人资料行进入；首次主动填写，保存后后续登录复用资料。手机实际选图、昵称填写、保存恢复和伴侣同步仍由用户验收。
+
 2026-10-22，`v0.1.0` 已通过 [GitHub Actions 首次发布](https://github.com/Flobby949/couple-mini/actions/runs/39709129312)。API、MySQL、Redis 三个容器均健康，公网 readiness/liveness 返回 200，未登录读取返回 401，开发身份登录返回 403。目标服务器初始空载实测 API/MySQL/Redis 约 15/162/8 MiB；生产数据恢复演练和异地备份仍待完成。
 
 ## 发布流程
@@ -54,7 +58,7 @@ git push origin v0.1.0
 curl --fail https://www.flobby.top/couple-mini/health/ready
 ```
 
-开发版 `0.1.1` 已使用 `TARO_APP_API_BASE=https://www.flobby.top/couple-mini/api/v1` 重新构建并上传。微信后台的 request/uploadFile/downloadFile 合法域名都需包含 `https://www.flobby.top`。后端始终关闭开发登录；当前仍为开发版联调，`WECHAT_MINIPROGRAM_STATE=developer`，设置体验版或正式版时同步调整。
+开发版 `0.1.3` 已使用 `TARO_APP_API_BASE=https://www.flobby.top/couple-mini/api/v1` 重新构建并上传。微信后台的 request/uploadFile/downloadFile 合法域名都需包含 `https://www.flobby.top`。后端始终关闭开发登录；当前仍为开发版联调，`WECHAT_MINIPROGRAM_STATE=developer`，设置体验版或正式版时同步调整。
 
 ## 运维与恢复边界
 
