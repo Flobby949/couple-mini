@@ -47,9 +47,9 @@ pnpm dev:weapp
 # 或 pnpm check:weapp
 ```
 
-在微信开发者工具导入 `frontend/`，小程序根目录为 `dist/weapp/`。`project.config.json` 当前使用游客 AppID；真实联调时填写自己的 AppID，在后端配置 `WECHAT_APP_ID`、`WECHAT_APP_SECRET`，客户端与服务端 AppID 必须一致。
+在微信开发者工具导入 `frontend/`，小程序根目录为 `dist/weapp/`。`project.config.json` 已配置当前小程序 AppID；后端通过本地 `.env` 配置 `WECHAT_APP_ID`、`WECHAT_APP_SECRET`，客户端与服务端 AppID 必须一致。使用本机 HTTP API 联调时，在被 Git 忽略的 `project.private.config.json` 中设置 `setting.urlCheck=false`；共享工程配置仍开启校验。
 
-真机使用微信可访问的 HTTPS API 域名，并配置小程序合法请求域名；在前端 `.env` 设置 `TARO_APP_API_BASE`。服务器关闭开发登录再部署。服务端用微信 code 换取 OpenID，Redis 保存七天有效的自有会话，平台 session_key 不返回客户端。微信账号、体验成员、域名及真机尚未在本环境验证；H5 预览不能替代这些检查。
+真机使用微信可访问的 HTTPS API 域名，并配置小程序合法请求域名；在前端 `.env` 设置 `TARO_APP_API_BASE`。服务器关闭开发登录再部署。服务端用微信 code 换取 OpenID，Redis 保存七天有效的自有会话，平台 session_key 不返回客户端。真实微信账号已在开发者工具中完成页面登录、会话建立及未绑定跳转；体验成员、HTTPS 域名及真机仍待验证，开发者工具不能替代真机检查。
 
 封面还需配置小程序的合法上传、下载域名。图片仅接受 PNG/JPEG、最多 5 MiB、宽高不超过 4096 像素；服务端解码重编码，以随机文件 ID 保存到 `MEDIA_ROOT`（默认 `backend/uploads/`），不公开静态目录。前端通过带会话的受控下载显示图片。商品换封面不会覆盖原文件，历史订单继续引用原图；备份须同时包含数据库和该目录。本轮没有自动清理未引用图片，维护时不得删除商品或历史订单引用的文件。
 
@@ -78,9 +78,13 @@ make integration
 
 内部 30 个编号与微信模板 ID 独立。默认全部仅站内；仅微信、双渠道或关闭均可单独保存。微信凭据及真实模板未配置时，界面明确不可用；缺少授权、开发身份、模板不匹配均保留不可投递记录，不偷偷改投站内。
 
+当前真实账号已配置 13 个微信平台模板，覆盖全部 30 项业务提醒。映射保存在 Git 忽略的 `backend/.env.notification-mappings.json`，后端已重启，提醒接口确认 30 项全部可用；部署时需同步该文件及 `WECHAT_NOTIFICATION_MAPPINGS` 配置。平台模板复用关系和实际字段见[验收记录](docs/acceptance-status.md)。复用同一平台模板的业务提醒分别保存渠道偏好，但共享该平台模板的一次性订阅机会。
+
+T01“新任务待接受”已通过真实订阅授权、接口直发、手机接收及默认欢迎页回跳；开发版 `0.1.0` 已上传，手机需先扫码加载有效开发版。当前跳转环境为 `developer`，后端仍为本地环境。其余逐模板实发、应用内授权同步、业务自动投递及详情回跳仍待手机可访问的后端和真实伴侣业务状态准备后验证。
+
 真实账号接入时，参考 `backend/notification-mappings.example.json`，为已审批的模板填写实际字段映射，以 `WECHAT_NOTIFICATION_MAPPINGS` 指向该 JSON。例子的 `thing1 / number2 / time3` 不是你账号的既定字段，必须按平台模板逐项替换。字段值支持 `actor / name / title / amount / occurredAt`；`amount` 对结算、罚分和赠送取对应接收人的实际结果。发送环境由 `WECHAT_MINIPROGRAM_STATE=developer|trial|formal` 指定，默认体验版。映射为空不影响站内业务。
 
-保存接收偏好、用户点击请求单模板微信授权、同步本次授权结果是独立步骤；每条接受报告最多预留一次订阅机会，客户端报告不代表永久授权。网络中断后先核查原操作，再用同一报告标识同步，不重复增加机会。实际微信登录、账号模板字段、订阅弹窗与投递仍需微信开发者工具及真机核验。
+保存接收偏好、用户点击请求单模板微信授权、同步本次授权结果是独立步骤；每条接受报告最多预留一次订阅机会，客户端报告不代表永久授权。网络中断后先核查原操作，再用同一报告标识同步，不重复增加机会。真实微信登录已在开发者工具通过；T01 已独立验证真实授权、直发及手机接收，全部账号模板字段已逐项核对，其他模板实发与完整业务联动仍需核验。
 
 事件消费每 3 秒、微信投递每 5 秒独立扫描，网络调用不持有业务事务锁。微信接口明确失败最多尝试 5 次，结果未知单独保留并停止自动重试。旧版事件没有有效偏好快照，迁移时标记跳过，保留业务历史，不补造历史通知。故障核查与受控重放见 API 文档的维护说明。
 
@@ -95,3 +99,7 @@ make integration
 - `frontend/src/assets`：按当前用途缩小后的图片；原始素材仍在 `assets/ui/v1`，不复制整套源图到包内。
 
 接口和后续里程碑见 [API 约定](docs/api.md) 与 [实施记录](docs/implementation.md)。
+
+## 后端发布
+
+GitHub Actions、Docker Compose、现有 Nginx 路径转发和首次安装步骤见[部署说明](docs/deployment.md)。发布采用与 knowledge 项目一致的版本标签触发方式，服务器运行独立 MySQL/Redis，API 目标地址为 `https://www.flobby.top/couple-mini/api/v1`。服务器首次安装与专用部署密钥授权完成后再推送首个发布标签。

@@ -1,0 +1,106 @@
+name: couple-mini
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: "3"
+
+services:
+  api:
+    image: ${BACKEND_IMAGE:?Set BACKEND_IMAGE to the release image digest}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 256m
+    stop_grace_period: 30s
+    ports:
+      - "127.0.0.1:${API_PORT:-18081}:8080"
+    environment:
+      APP_ENV: production
+      GIN_MODE: release
+      DEV_LOGIN: "false"
+      HTTP_ADDR: 0.0.0.0:8080
+      MYSQL_DSN: "couple_mini:${MYSQL_PASSWORD:?Set MYSQL_PASSWORD}@tcp(mysql:3306)/couple_mini?parseTime=true&loc=UTC&charset=utf8mb4"
+      REDIS_ADDR: redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD}
+      MEDIA_ROOT: /app/uploads
+      WECHAT_APP_ID: ${WECHAT_APP_ID:?Set WECHAT_APP_ID}
+      WECHAT_APP_SECRET: ${WECHAT_APP_SECRET:?Set WECHAT_APP_SECRET}
+      WECHAT_NOTIFICATION_MAPPINGS: /app/notification-mappings.json
+      WECHAT_MINIPROGRAM_STATE: ${WECHAT_MINIPROGRAM_STATE:-developer}
+      GOMEMLIMIT: 160MiB
+      GOMAXPROCS: "2"
+    volumes:
+      - media:/app/uploads
+      - ./notification-mappings.json:/app/notification-mappings.json:ro
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, http://127.0.0.1:8080/health/ready]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 30s
+    logging: *logging
+
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    mem_limit: 384m
+    stop_grace_period: 60s
+    environment:
+      MYSQL_DATABASE: couple_mini
+      MYSQL_USER: couple_mini
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD}
+    command:
+      - --innodb-buffer-pool-size=64M
+      - --performance-schema=OFF
+      - --max-connections=20
+      - --table-open-cache=128
+      - --table-definition-cache=400
+      - --innodb-log-buffer-size=8M
+      - --innodb-redo-log-capacity=64M
+      - --mysqlx=OFF
+    volumes:
+      - mysql:/var/lib/mysql
+    healthcheck:
+      test: [CMD-SHELL, 'MYSQL_PWD="$$MYSQL_PASSWORD" mysql -h 127.0.0.1 -u couple_mini couple_mini -e "SELECT 1" >/dev/null']
+      interval: 5s
+      timeout: 3s
+      retries: 60
+      start_period: 60s
+    logging: *logging
+
+  redis:
+    image: redis:8.8.0-alpine
+    restart: unless-stopped
+    mem_limit: 64m
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD}
+      REDISCLI_AUTH: ${REDIS_PASSWORD:?Set REDIS_PASSWORD}
+    command:
+      - sh
+      - -c
+      - 'exec redis-server --appendonly yes --maxmemory 32mb --maxmemory-policy noeviction --requirepass "$$REDIS_PASSWORD"'
+    volumes:
+      - redis:/data
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    logging: *logging
+
+volumes:
+  mysql:
+  redis:
+  media:

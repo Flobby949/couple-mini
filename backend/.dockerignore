@@ -1,0 +1,7 @@
+.env
+.env.*
+uploads/
+tmp/
+*.log
+*.test
+coverage.out
