@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { act, create, type ReactTestRenderer } from 'react-test-renderer'
-const fixture = vi.hoisted(() => ({ navigate: vi.fn(), add: vi.fn(), refresh: vi.fn(), measure: vi.fn(), hide: new Set<() => void>(), product: { id: 'product', name: '零积分心意', price: 0, stock: 1, coverId: 'cover' } }))
+const fixture = vi.hoisted(() => ({ navigate: vi.fn(), add: vi.fn(), refresh: vi.fn(), catalogReady: true, error: null as Error | null, measure: vi.fn(), hide: new Set<() => void>(), product: { id: 'product', name: '零积分心意', price: 0, stock: 1, coverId: 'cover' } }))
 vi.mock('@tarojs/components', () => ({ View: 'view', Text: 'text', Button: 'button' }))
 vi.mock('@tarojs/taro', async () => {
   const { useEffect } = await import('react')
@@ -10,12 +10,13 @@ vi.mock('@tarojs/taro', async () => {
       return query
     } } }
 })
-vi.mock('@tanstack/react-query', () => ({ useQuery: ({ queryKey }: { queryKey: string[] }) => ({ data: queryKey[0] === 'catalog' ? { products: [fixture.product], balance: 0 } : { items: [] } }) }))
+vi.mock('@tanstack/react-query', () => ({ useQuery: () => ({ data: fixture.catalogReady ? { products: [fixture.product], balance: 0 } : undefined }) }))
 vi.mock('../src/app/hooks', () => ({ useGate: () => ({ allowed: true, canShow: true, data: { me: { id: 'buyer' }, partner: { id: 'seller', nickname: '伴侣' } } }) }))
 vi.mock('../src/app/page', () => ({ Page: ({ children }: { children: React.ReactNode }) => children }))
-vi.mock('../src/core/query', () => ({ keys: { catalog: () => ['catalog'], cart: ['cart'] }, refresh: fixture.refresh }))
+vi.mock('../src/core/query', () => ({ keys: { catalog: () => ['catalog'] }, refresh: fixture.refresh }))
 vi.mock('../src/platform', () => ({ navigate: fixture.navigate }))
-vi.mock('../src/features/catalog/api', () => ({ addCart: fixture.add, getCart: vi.fn(), getCatalog: vi.fn() }))
+vi.mock('../src/features/catalog/api', () => ({ getCatalog: vi.fn() }))
+vi.mock('../src/features/catalog/cart', () => ({ useCart: () => ({ items: [], error: fixture.error, add: fixture.add, retry: vi.fn() }) }))
 vi.mock('../src/features/catalog/components', () => ({ Cover: () => null }))
 vi.mock('../src/ui/visual', () => ({ Avatar: () => null, Icon: () => null }))
 vi.mock('../src/ui/use-artwork', () => ({ useArtwork: () => ({ emptyStore: '/empty.png' }) }))
@@ -24,7 +25,7 @@ import Shop from '../src/pages/shop'
 let tree: ReactTestRenderer | undefined
 beforeEach(() => {
   vi.useFakeTimers(); vi.resetAllMocks()
-  fixture.add.mockResolvedValue({}); fixture.refresh.mockResolvedValue(undefined)
+  fixture.add.mockReturnValue(true); fixture.refresh.mockResolvedValue(undefined); fixture.error = null; fixture.catalogReady = true
   fixture.measure.mockImplementation(callback => callback([{ left: 160, top: 320, width: 38, height: 38 }, { left: 12, top: 660, width: 27, height: 27 }]))
 })
 afterEach(() => { act(() => tree?.unmount()); tree = undefined; fixture.hide.clear(); vi.useRealTimers() })
@@ -48,27 +49,21 @@ it('the cart action does not trigger product navigation', async () => {
   const stop = vi.fn()
   await act(async () => { tree!.root.findByProps({ ariaLabel: '将零积分心意加入购物车' }).props.onClick({ stopPropagation: stop }) })
   expect(stop).toHaveBeenCalledOnce()
-  expect(fixture.add).toHaveBeenCalledExactlyOnceWith('product')
+  expect(fixture.add).toHaveBeenCalledExactlyOnceWith(fixture.product)
   expect(fixture.navigate).not.toHaveBeenCalled()
 })
-it('flies from the tap to the dock after success without waiting for query refresh', async () => {
-  let succeed!: () => void, refreshed!: () => void
-  fixture.add.mockImplementation(() => new Promise<void>(resolve => { succeed = resolve }))
-  fixture.refresh.mockImplementation(() => new Promise<void>(resolve => { refreshed = resolve }))
-  mount(); act(tap)
-  expect(flights()).toHaveLength(0)
-  await act(async () => { succeed() })
-  expect(fixture.refresh).toHaveBeenCalledOnce()
+it('flies immediately after local storage succeeds without refreshing server queries', async () => {
+  mount(); await act(async () => { tap() })
+  expect(fixture.refresh).not.toHaveBeenCalled()
   expect(flights()[0].props.style).toMatchObject({ left: '185px', top: '338px', '--cart-flight-x': '-159.5px', '--cart-flight-y': '335.5px' })
   act(() => { vi.advanceTimersByTime(560) })
   expect(flights()).toHaveLength(0)
   expect(target().props.className).toContain('is-receiving')
   act(() => { vi.advanceTimersByTime(180) })
   expect(target().props.className).not.toContain('is-receiving')
-  await act(async () => { refreshed() })
 })
 it('does not show an arrival when adding to the cart fails', async () => {
-  fixture.add.mockRejectedValueOnce(new Error('加入失败'))
+  fixture.add.mockReturnValueOnce(false); fixture.error = new Error('加入失败')
   mount(); await act(async () => { tap() })
   expect(flights()).toHaveLength(0)
   expect(target().props.className).not.toContain('is-receiving')
@@ -79,12 +74,12 @@ it('uses the button center when keyboard or mouse events have no touch coordinat
   mount(); await act(async () => { addButton().props.onClick({ stopPropagation: vi.fn() }) })
   expect(flights()[0].props.style).toMatchObject({ left: '179px', top: '59px', '--cart-flight-y': '414.5px' })
 })
-it('ignores a late successful add after leaving the page', async () => {
-  let succeed!: () => void
-  fixture.add.mockImplementation(() => new Promise<void>(resolve => { succeed = resolve }))
+it('ignores late geometry after leaving the page', async () => {
+  let measured!: (rects: unknown[]) => void
+  fixture.measure.mockImplementation(callback => { measured = callback })
   mount(); act(tap)
   act(() => { for (const callback of [...fixture.hide]) callback() })
-  await act(async () => { succeed() })
+  await act(async () => { measured([{ left: 160, top: 320, width: 38, height: 38 }, { left: 12, top: 660, width: 27, height: 27 }]) })
   expect(flights()).toHaveLength(0)
   expect(vi.getTimerCount()).toBe(0)
 })
@@ -102,6 +97,10 @@ it('replaces the previous flight on another successful click and cancels when op
 it('still adds the product if animation geometry is unavailable', async () => {
   fixture.measure.mockImplementation(callback => callback([null, null]))
   mount(); await act(async () => { tap() })
-  expect(fixture.add).toHaveBeenCalledExactlyOnceWith('product')
+  expect(fixture.add).toHaveBeenCalledExactlyOnceWith(fixture.product)
   expect(flights()).toHaveLength(0)
+})
+it('keeps the local cart entry available while the catalog request is still pending', () => {
+  fixture.catalogReady = false; mount()
+  expect(tree!.root.findByProps({ id: 'shop-cart-dock' }).props.disabled).not.toBe(true)
 })

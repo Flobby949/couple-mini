@@ -5,7 +5,7 @@ import type { Context, Home } from '../src/contracts/api'
 
 const state = vi.hoisted(() => ({
   show: new Set<() => void>(), hide: new Set<() => void>(), route: 'shop',
-  context: vi.fn(), catalog: vi.fn(), home: vi.fn(), cart: vi.fn(), tasks: vi.fn(), counts: vi.fn(),
+  context: vi.fn(), catalog: vi.fn(), home: vi.fn(), tasks: vi.fn(), counts: vi.fn(),
   product: vi.fn(), orders: vi.fn(), messages: vi.fn(), unread: vi.fn(),
   mounted: vi.fn(), unmounted: vi.fn(),
 }))
@@ -22,7 +22,8 @@ vi.mock('../src/app/navigation', () => ({ rememberTarget: vi.fn(), routeContext:
 vi.mock('../src/app/page', () => ({ Page: ({ children }: { children: React.ReactNode }) => children }))
 vi.mock('../src/app/theme', () => ({ useTheme: () => ({ scheme: 'light', appearance: { accent: 'iris' } }) }))
 vi.mock('../src/features/identity/api', () => ({ getContext: state.context }))
-vi.mock('../src/features/catalog/api', () => ({ getCatalog: state.catalog, getProduct: state.product, getCart: state.cart, addCart: vi.fn() }))
+vi.mock('../src/features/catalog/api', () => ({ getCatalog: state.catalog, getProduct: state.product }))
+vi.mock('../src/features/catalog/cart', () => ({ useCart: () => ({ items: [], error: null, add: vi.fn(), retry: vi.fn() }) }))
 vi.mock('../src/features/home/api', () => ({ getHome: state.home }))
 vi.mock('../src/features/tasks/api', () => ({ getOpenTasks: state.tasks, getTasks: vi.fn() }))
 vi.mock('../src/features/orders/api', () => ({ getOrderCounts: state.counts, getOrders: state.orders }))
@@ -66,11 +67,11 @@ let tree: ReactTestRenderer | undefined
 beforeEach(() => {
   vi.useFakeTimers(); vi.stubEnv('TARO_ENV', 'weapp'); vi.clearAllMocks(); queries.clear()
   state.context.mockResolvedValue(context); state.catalog.mockResolvedValue(catalog); state.home.mockResolvedValue(home)
-  state.cart.mockResolvedValue({ items: [] }); state.tasks.mockResolvedValue([]); state.counts.mockResolvedValue(orderCounts)
+  state.tasks.mockResolvedValue([]); state.counts.mockResolvedValue(orderCounts)
   state.product.mockResolvedValue({ product: { ...catalog.products[0], ownerId: 'seller' }, balance: 10 })
   state.orders.mockResolvedValue(orders); state.messages.mockResolvedValue(messages); state.unread.mockResolvedValue({ count: 1 })
   queries.setQueryData(keys.context, context); queries.setQueryData(keys.home, home)
-  queries.setQueryData(keys.catalog('partner'), catalog); queries.setQueryData(keys.cart, { items: [] })
+  queries.setQueryData(keys.catalog('partner'), catalog)
   queries.setQueryData(keys.openTasks, []); queries.setQueryData(keys.orderCounts, orderCounts)
   queries.setQueryData(keys.catalog('mine'), catalog)
   queries.setQueryData(keys.product('product'), { product: { ...catalog.products[0], ownerId: 'seller' }, balance: 10 })
@@ -92,7 +93,7 @@ it.each([['home', HomePage], ['tasks', Tasks], ['shop', Shop], ['me', Me], ['sto
   expect(loading()).toBe(0)
   expect(content()).toBe(before)
   expect(state.unmounted).not.toHaveBeenCalled()
-  const requests = [state.context, state.catalog, state.home, state.cart, state.tasks, state.counts, state.product, state.orders, state.messages, state.unread]
+  const requests = [state.context, state.catalog, state.home, state.tasks, state.counts, state.product, state.orders, state.messages, state.unread]
   const counts = requests.map(request => request.mock.calls.length)
   await act(async () => { await queries.invalidateQueries(); await vi.advanceTimersByTimeAsync(60000) })
   expect(requests.map(request => request.mock.calls.length)).toEqual(counts)

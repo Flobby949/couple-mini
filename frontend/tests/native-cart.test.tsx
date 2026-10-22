@@ -12,7 +12,8 @@ vi.mock('../src/app/hooks',()=>({useGate:()=>({allowed:true,canShow:true,data:{m
 vi.mock('../src/app/theme',()=>({useTheme:()=>({scheme:'light',appearance:{accent:'iris'}})}))
 vi.mock('../src/core/use-action',()=>({useAction:()=>({busy:false,error:null})}))
 vi.mock('../src/features/catalog/components',()=>({ProductSummary:()=>null,Cover:()=>null}))
-vi.mock('../src/features/catalog/api',()=>({getCart:vi.fn(),getCatalog:vi.fn(),removeCart:vi.fn(),addCart:vi.fn()}))
+vi.mock('../src/features/catalog/api',()=>({getCatalog:vi.fn()}))
+vi.mock('../src/features/catalog/cart',()=>({useCart:()=>({items:[{id:'product',name:'拥抱',price:0,stock:1}],error:null,add:vi.fn(),remove:vi.fn(),retry:vi.fn()})}))
 vi.mock('../src/platform',()=>({navigate:vi.fn(),storage:{read:vi.fn()}}))
 import Shop from '../src/pages/shop'
 let tree:ReactTestRenderer|undefined

@@ -1,7 +1,12 @@
 import { ApiError, request } from '../../core/api'
 import { mutate } from '../../core/operations'
 import type { AccountHistory, OrderAction, OrderCounts, OrderDetail, OrderPage, OrderReceipt } from '../../contracts/commerce'
-export const placeOrder = (productId: string, confirmedPrice: number) => mutate<OrderReceipt>('/orders', { productId, confirmedPrice: String(confirmedPrice) })
+import { removeCart } from '../catalog/cart'
+export async function placeOrder(productId: string, confirmedPrice: number) {
+  const receipt = await mutate<OrderReceipt>('/orders', { productId, confirmedPrice: String(confirmedPrice) })
+  removeCart(productId)
+  return receipt
+}
 export const getOrders = (role: 'buyer' | 'seller', status: string, cursor = '') => request<OrderPage>(`/orders?role=${role}&status=${encodeURIComponent(status)}&cursor=${encodeURIComponent(cursor)}`)
 export async function getOrderCounts(): Promise<OrderCounts> {
   const counts: OrderCounts = { buyer: { pending: 0, fulfilling: 0, awaiting_receipt: 0 }, seller: { pending: 0, fulfilling: 0, awaiting_receipt: 0 } }

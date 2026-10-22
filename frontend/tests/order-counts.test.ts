@@ -3,6 +3,7 @@ import { beforeEach, expect, it, vi } from 'vitest'
 const state = vi.hoisted(() => ({ request: vi.fn() }))
 vi.mock('../src/core/api', () => ({ request: state.request, ApiError: Error }))
 vi.mock('../src/core/operations', () => ({ mutate: vi.fn() }))
+vi.mock('../src/features/catalog/cart', () => ({ removeCart: vi.fn() }))
 import { getOrderCounts } from '../src/features/orders/api'
 
 beforeEach(() => vi.clearAllMocks())

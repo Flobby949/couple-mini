@@ -41,6 +41,8 @@
 
 ## 小店、图片与购物车
 
+2026-10-22 起，当前前端的购物车改为按账号隔离的本机候选，不再调用下列 `/cart` 接口，也不迁移旧候选。这些接口保留给旧版客户端；下单仍使用 `/orders` 校验服务端最新价格、库存和余额。
+
 以下业务接口要求首次规则已生效。图片读取仅校验登录及本人/同一关系访问权限，不额外依赖首次规则，以便后续承载门禁页头像。
 
 | 方法、路径 | 请求 / 返回 |
@@ -64,7 +66,7 @@
 
 | 方法、路径 | 请求 / 返回 |
 | --- | --- |
-| POST `/orders` | `{productId, confirmedPrice: "21"}` → 原下单回执；固定一件一份，下单成功后移除该购物车候选 |
+| POST `/orders` | `{productId, confirmedPrice: "21"}` → 原下单回执；固定一件一份；服务端清理旧版购物车候选，新客户端收到成功回执后清理对应本地候选 |
 | GET `/orders?role=buyer\|seller&status=&cursor=` | `{items, nextCursor}`；默认我下的单、全部状态；每页 50，按创建时间/ID 降序，游标由上次返回值提供 |
 | GET `/orders/:id` | `{order, history, balance, serverTime}`；仅本单双方 |
 | POST `/orders/:id/actions` | `{action}` → 本次回执；服务端逐次检查角色、状态及取消申请 |
