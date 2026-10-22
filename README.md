@@ -84,7 +84,7 @@ make integration
 
 当前真实账号已配置 13 个微信平台模板，覆盖全部 30 项业务提醒。映射保存在 Git 忽略的 `backend/.env.notification-mappings.json`，后端已重启，提醒接口确认 30 项全部可用；部署时需同步该文件及 `WECHAT_NOTIFICATION_MAPPINGS` 配置。平台模板复用关系和实际字段见[验收记录](docs/acceptance-status.md)。复用同一平台模板的业务提醒分别保存渠道偏好，但共享该平台模板的一次性订阅机会。
 
-T01“新任务待接受”已通过真实订阅授权、接口直发、手机接收及默认欢迎页回跳；开发版 `0.1.3` 已上传并接入生产 HTTPS API，手机需先扫码加载有效开发版。当前消息跳转环境为 `developer`。其余逐模板实发、应用内授权同步、业务自动投递及详情回跳仍待合法域名配置和真实伴侣业务状态准备后验证。
+T01“新任务待接受”已通过真实订阅授权、接口直发、手机接收及默认欢迎页回跳。2026-10-22 线上通知跳转环境已切换为体验版 `trial`，使用当前接入生产 HTTPS API 的体验版；已发出的旧消息保留原跳转环境。其余逐模板实发、应用内授权同步、业务自动投递及体验版详情回跳仍待真机验证。
 
 真实账号接入时，参考 `backend/notification-mappings.example.json`，为已审批的模板填写实际字段映射，以 `WECHAT_NOTIFICATION_MAPPINGS` 指向该 JSON。例子的 `thing1 / number2 / time3` 不是你账号的既定字段，必须按平台模板逐项替换。字段值支持 `actor / name / title / amount / occurredAt`；`amount` 对结算、罚分和赠送取对应接收人的实际结果。发送环境由 `WECHAT_MINIPROGRAM_STATE=developer|trial|formal` 指定，默认体验版。映射为空不影响站内业务。
 
@@ -105,5 +105,7 @@ T01“新任务待接受”已通过真实订阅授权、接口直发、手机�
 接口和后续里程碑见 [API 约定](docs/api.md) 与 [实施记录](docs/implementation.md)。
 
 ## 后端发布
+
+测试期间可通过[服务器重置脚本](deploy/reset-test-data.sh)清空业务数据、会话及图片，默认仅预览，执行前自动备份；命令及范围见[测试数据重置说明](docs/deployment.md#测试数据重置)。
 
 GitHub Actions、Docker Compose、现有 Nginx 路径转发和首次安装步骤见[部署说明](docs/deployment.md)。发布采用与 knowledge 项目一致的版本标签触发方式，服务器运行独立 MySQL/Redis，API 目标地址为 `https://www.flobby.top/couple-mini/api/v1`。服务器首次安装和专用部署密钥授权已完成，`v0.1.1` 已通过完整 Actions 发布。公网 `https://www.flobby.top/couple-mini/health/ready` 返回 ready。之后推送新的版本标签发布；小程序开发版 `0.1.3` 已使用上述 HTTPS API 地址重新构建并上传，微信后台合法域名由用户手动配置。

@@ -145,3 +145,11 @@
 代码提交 `88ce23d`，后端标签 `v0.1.1`，发布由 [Actions run 39715111101](https://github.com/Flobby949/couple-mini/actions/runs/39715111101) 执行。小程序开发版 `0.1.3` 已经微信开发者工具上传，界面确认“代码上传成功”；构建包核对为生产 HTTPS API、没有本地 API 地址或开发身份登录入口。微信原生头像选择、昵称填写及手机上的保存恢复交由用户真机验收。
 
 11:26（北京时间）后端发布成功，build/deploy 均通过。服务器确认 `006_user_profile.sql` 已记录、`users.avatar_id` 已建立，三个容器健康；数据库、图片及旧镜像引用备份位于 `/opt/couple-mini/backups/20261022T032613Z`。新镜像 digest 为 `sha256:b97074541824588fb6e378f4bf5c5d919548a70e12ab97f9f55b712ef0b3e422`。公网 readiness 200，`POST /profile` 与 `POST /profile/avatar` 未登录时均为 JSON 401。用户在镜像拉取期间扫码上传曾遇到“图片上传结果无法识别”，当时新接口仍是旧版 404；发布后已确认路由上线并通知用户原页重试，不将匿名接口检查等同于手机上传成功。
+
+## 测试数据重置脚本
+
+新增 `deploy/reset-test-data.sh`，通过服务器管理权限执行，不增加 HTTP 接口。默认仅预览；`--confirm-reset` 才会停 API、保存完整 SQL/图片/镜像引用备份、事务删除业务数据、清除本项目会话和上传目录，并恢复 API 及检查健康。保留表结构、外键及迁移历史，与部署共用排他锁。备份失败恢复原 API，清空开始后的失败保持 API 停止并报告备份路径。
+
+`bash deploy/tests/reset-test-data.sh` 使用独立 Docker 项目及真实 MySQL/Redis/API，已验证预览无清空、并发锁、备份失败保留数据、正常清空及健康恢复、保留迁移和其他 Redis 前缀、SQL/图片备份恢复用户头像循环引用、清空中断后 API 停止及重试完成。测试项目和数据卷已清理。
+
+Mac 解锁后已通过管理连接安装到 `/opt/couple-mini/reset-test-data.sh`，权限为 `700 root:root`。服务器 SHA-256 与本地一致（`09671bc5252e56b70235ce9d23c1976d6bc8068841e635951068fa440bb814dc`），语法检查及 `--dry-run` 均通过；预览为 2 个用户、1 对绑定关系和 6 条保留迁移。仅安装和预览，没有执行线上清空，API 启动时间仍为原发布时间，内网及公网 readiness 均为 ready。

@@ -22,12 +22,15 @@ vi.mock('../src/app/theme', () => ({ useTheme: () => state.theme }))
 vi.mock('../src/platform/theme', () => ({ applyNativeTheme: state.native }))
 vi.mock('../src/platform', () => ({ setPageTitle: state.title, topInset: () => 24, back: vi.fn(), storage: { read: vi.fn() } }))
 vi.mock('../src/features/notifications/entry', () => ({ MessageEntry: () => null }))
+vi.mock('../src/features/tasks/tab-badge', () => ({ TaskTabBadge: () => null }))
+vi.mock('../src/features/orders/tab-badge', () => ({ OrderTabBadge: () => null }))
 vi.mock('../src/app/recovery', () => ({ Recovery: () => null }))
 vi.mock('../src/core/api', () => ({ session: () => undefined }))
 vi.mock('../src/features/identity/api', () => ({ getContext: vi.fn() }))
 
 import { Page } from '../src/app/page'
 import { Avatar, Icon } from '../src/ui/visual'
+import { tabBarState, updateTabBar } from '../src/platform/tab-bar'
 let tree: ReactTestRenderer | undefined
 beforeEach(() => {
   vi.stubEnv('TARO_ENV', 'weapp'); vi.clearAllMocks(); state.show.clear(); state.hide.clear()
@@ -48,9 +51,16 @@ it('hidden pages cannot overwrite the current native title or theme', () => {
   expect(state.native).toHaveBeenLastCalledWith('dark', 'teal')
   expect(state.title).toHaveBeenLastCalledWith('隐藏页标题')
 })
-it('returning to a tab page restores its native tab bar', () => {
+it('returning to a tab page restores the custom tab bar', () => {
   act(() => { tree = create(<Page messageEntry title='首页'/>) })
-  lifecycle(state.show); lifecycle(state.hide); state.showTabBar.mockClear(); lifecycle(state.show)
+  lifecycle(state.show); lifecycle(state.hide); updateTabBar({ hidden: true }); lifecycle(state.show)
+  expect(tabBarState().hidden).toBe(false)
+  expect(tabBarState().selected).toBe('home')
+})
+it('H5 still restores the platform tab bar when returning to a tab page', () => {
+  vi.stubEnv('TARO_ENV', 'h5')
+  act(() => { tree = create(<Page messageEntry title='首页'/>) })
+  lifecycle(state.show)
   expect(state.showTabBar).toHaveBeenCalledWith({ animation: false })
 })
 it('native portraits and icons use the same responsive units as their surrounding layout', () => {

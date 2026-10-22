@@ -5,6 +5,7 @@ import {fileURLToPath} from 'node:url'
 const root=fileURLToPath(new URL('../dist/weapp/',import.meta.url))
 const readJSON=async file=>JSON.parse(await readFile(path.join(root,file),'utf8'))
 const app=await readJSON('app.json'),theme=await readJSON(app.themeLocation)
+if(app.tabBar.custom)for(const ext of ['.js','.json','.wxml','.wxss'])await stat(path.join(root,'custom-tab-bar/index'+ext))
 const subpackages=app.subPackages||app.subpackages||[]
 const routes=[...app.pages,...subpackages.flatMap(p=>p.pages.map(page=>`${p.root}/${page}`))]
 for(const route of routes)for(const ext of ['.js','.json','.wxml'])await stat(path.join(root,route+ext))

@@ -9,7 +9,7 @@
 .icon-button { padding:0; margin:0; width:44px; height:44px; min-width:44px; display:flex; align-items:center; justify-content:center; background:transparent; line-height:1; border-radius:50%; }
 .ui-icon { flex-shrink:0; display:inline-block; vertical-align:middle; }
 .message-entry { position:absolute; right:-8px; bottom:0; }
-.unread-badge { position:absolute; top:1px; right:3px; background:#d64646; color:#fff; min-width:15px; padding:1px 3px; border-radius:9px; font-size:9px; line-height:13px; text-align:center; }
+.unread-badge { position:absolute; top:1px; right:3px; background:var(--surface); color:var(--badge-ink); border:1px solid var(--badge-line); min-width:15px; padding:1px 3px; border-radius:9px; font-size:9px; line-height:13px; text-align:center; }
 .muted { display:block; color:var(--muted); font-size:12px; line-height:1.6; overflow-wrap:anywhere; }
 .primary-text { color:var(--primary); }
 .section-title { display:block; font-size:16px; line-height:1.5; font-weight:600; }
@@ -103,6 +103,11 @@
 
 .page { padding-top:18px; }
 .order-shortcuts .segmented { width:205px; margin:0; padding:2px; }
+.order-shortcuts .segmented {flex:1;min-width:0;max-width:205px;}
+.order-shortcuts .row > .section-title {flex-shrink:0;}
+.order-shortcuts .segment-option,.route-orders .segment-option {gap:4px;white-space:nowrap;}
+.order-shortcut-icon {position:relative;display:flex;align-items:center;justify-content:center;padding-top:6px;}
+.order-shortcut-icon .order-count-badge {position:absolute;top:0;right:-12px;background:var(--surface);}
 .order-shortcuts .segmented > .segment-option { min-height:28px; padding:4px; font-size:11px; }
 @media(max-width:350px) { .page {padding-left:12px;padding-right:12px} .person .portrait {width:96px;height:96px} .metric {font-size:24px} .balance-tile {padding-left:9px;padding-right:9px} .menu-copy {display:block} }
 
@@ -194,6 +199,12 @@
  .task-tabs {display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);margin:-4px 0 12px;}
  .task-tabs > .task-tab {position:relative;flex:1;margin:0;padding:11px 4px;background:transparent;color:var(--muted);font-size:16px;font-weight:600;line-height:1.5;}
  .task-tabs > .task-tab::after {border:0;}
+ .task-tabs > .task-tab {display:flex;align-items:center;justify-content:center;gap:5px;}
+ .task-count-badge,.order-count-badge {display:inline-block;flex-shrink:0;min-width:18px;padding:0 5px;border:1px solid var(--badge-line);border-radius:10px;background:transparent;color:var(--badge-ink);font-size:11px;font-weight:600;line-height:16px;text-align:center;}
+ .selected .task-count-badge,.selected .order-count-badge {background:var(--surface);}
+ .filter-option .task-count-badge,.filter-option .order-count-badge {margin-left:5px;}
+ &.route-tasks .filter-options {flex-wrap:wrap;}
+ &.route-tasks .filter-options > .filter-option {flex:1 1 calc(50% - 4px);padding:7px 4px;white-space:nowrap;}
  .task-tabs > .selected {color:var(--primary);}
  .task-tabs > .selected::before {content:'';position:absolute;bottom:-1px;left:36%;right:36%;height:3px;background:var(--primary);border-radius:3px;}
  .task-tabs > .button {flex:0 0 auto;min-width:61px;min-height:32px;font-size:12px;padding:5px 11px;color:var(--on-primary);background:var(--primary);}
@@ -285,7 +296,11 @@
  .store-products {margin-top:16px;}
  .product-footer {margin-top:10px;}
  .empty-store-note {text-align:center;margin:18px 0;}
- .shopping-action {position:sticky;bottom:0;z-index:5;display:flex;align-items:center;gap:10px;padding:9px 12px;margin:10px -16px -24px;background:var(--surface);border:1px solid var(--line);border-radius:18px 18px 0 0;}
+ &.route-shop .page {padding-bottom:calc(88px + env(safe-area-inset-bottom));}
+ &.custom-tab-page .page {padding-bottom:calc(74px + env(safe-area-inset-bottom));}
+ &.custom-tab-page.route-shop .page {padding-bottom:calc(138px + env(safe-area-inset-bottom));}
+ &.custom-tab-page .shopping-action {bottom:calc(50px + env(safe-area-inset-bottom));}
+ .shopping-action {position:fixed;left:0;right:0;bottom:0;max-width:520px;z-index:5;display:flex;align-items:center;gap:10px;padding:9px 12px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:18px 18px 0 0;}
  .cart-dock-copy {flex:1;min-width:0;}
  .cart-dock-copy .section-title {font-size:13px;}
  .cart-dock-copy .muted {font-size:10px;}
@@ -320,6 +335,8 @@
  .filter-scroll .filter-options {margin:0;}
  .filter-scroll .filter-options > .filter-option {background:transparent;min-width:64px;}
  .filter-scroll .filter-options > .selected {background:var(--tint);color:var(--primary);}
+ &.route-orders .filter-scroll .filter-options {display:inline-flex;min-width:100%;}
+ &.route-orders .filter-scroll .filter-option {flex:0 0 auto;}
  .order-summary {position:relative;padding:13px;}
  .order-summary .product-summary {align-items:flex-start;}
  .order-summary .cover {width:91px;height:110px;}
@@ -343,7 +360,7 @@
 }
 .ui-v2.theme-dark {--danger:#f0a39c;--wash:#292432;}
 .ui-v2.theme-light {--danger:#a6403e;--wash:#f5f3fc;}
-@media(max-width:350px){.ui-v2{.product-tile .cover-large{height:140px}.shopping-action{margin-left:-12px;margin-right:-12px}.product-hero{margin-left:-12px;width:calc(100% + 24px)}.checkout-owner{display:none}.checkout-product .cover{width:70px;height:78px}}}
+@media(max-width:350px){.ui-v2{.product-tile .cover-large{height:140px}.product-hero{margin-left:-12px;width:calc(100% + 24px)}.checkout-owner{display:none}.checkout-product .cover{width:70px;height:78px}}}
 
 .ui-v2 .actions {flex-direction:row;}
 .ui-v2 .actions.modal-actions {flex-direction:row-reverse;}

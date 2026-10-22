@@ -13,6 +13,11 @@ export const accentColors = {
   teal: { light: { primary: '#236D63', tint: '#E4F2EE', onPrimary: '#FFFFFF' }, dark: { primary: '#8DD7C7', tint: '#1C3934', onPrimary: '#102D27' } },
   apricot: { light: { primary: '#99501F', tint: '#FFF0E3', onPrimary: '#FFFFFF' }, dark: { primary: '#F4BB8B', tint: '#453023', onPrimary: '#382313' } },
 }
+export const badgeColors = {
+  iris: { light: { ink: '#925C00', line: '#BD8500' }, dark: { ink: '#FFD45B', line: '#FFD45B' } },
+  teal: { light: { ink: '#B13F26', line: '#DE6747' }, dark: { ink: '#FFB19B', line: '#FFB19B' } },
+  apricot: { light: { ink: '#2455BD', line: '#3D78F0' }, dark: { ink: '#94BFFF', line: '#94BFFF' } },
+}
 export const nativeColors = {
   light: { page: '#F6F7FC', surface: '#FFFFFF', muted: '#71677E', front: '#000000', border: 'white' },
   dark: { page: '#17151E', surface: '#24212D', muted: '#BBB2CA', front: '#ffffff', border: 'black' },

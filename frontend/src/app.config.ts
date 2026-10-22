@@ -6,6 +6,7 @@ export default defineAppConfig({
     { root: 'packages/tasks', pages: ['edit/index', 'detail/index'] },
   ],
   darkmode: true,
+  usingComponents: {},
   themeLocation: 'theme.json',
   window: {
     navigationBarTitleText: 'FloFlo',
@@ -14,6 +15,7 @@ export default defineAppConfig({
     backgroundColor: process.env.TARO_ENV === 'weapp' ? '@page' : '#F6F7FC',
   },
   tabBar: {
+    custom: process.env.TARO_ENV === 'weapp',
     color: process.env.TARO_ENV === 'weapp' ? '@muted' : '#71677E',
     selectedColor: process.env.TARO_ENV === 'weapp' ? '@primary' : '#6752A3',
     backgroundColor: process.env.TARO_ENV === 'weapp' ? '@surface' : '#FFFFFF',

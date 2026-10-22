@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { accentColors, accents, nativeColors, parseAppearance, resolveScheme } from '../src/core/appearance'
+import { accentColors, accents, badgeColors, nativeColors, parseAppearance, resolveScheme } from '../src/core/appearance'
 import { artworkFiles, getArtwork } from '../src/ui/artwork'
 import sharp from 'sharp'
 
@@ -20,6 +20,17 @@ it('explicit light/dark overrides the device while system follows it', () => {
   expect(resolveScheme('system', 'light')).toBe('light')
   expect(resolveScheme('light', 'dark')).toBe('light')
   expect(resolveScheme('dark', 'light')).toBe('dark')
+})
+it('keeps complementary outlined badge colors readable in all six appearances', () => {
+  const css = readFileSync(resolve('src/styles/app.scss'), 'utf8').toLowerCase()
+  for (const scheme of ['light', 'dark'] as const) for (const { value: accent } of accents) {
+    const badge = badgeColors[accent][scheme]
+    expect(contrast(badge.ink, nativeColors[scheme].surface)).toBeGreaterThanOrEqual(4.5)
+    expect(contrast(badge.ink, accentColors[accent][scheme].tint)).toBeGreaterThanOrEqual(4.5)
+    expect(contrast(badge.line, nativeColors[scheme].surface)).toBeGreaterThanOrEqual(3)
+    expect(badge.line).not.toBe(accentColors[accent][scheme].primary)
+    for (const color of Object.values(badge)) expect(css).toContain(color.toLowerCase())
+  }
 })
 describe.each(['light', 'dark'] as const)('%s theme contrast and assets', scheme => {
   it('keeps native secondary text legible', () => expect(contrast(nativeColors[scheme].muted, nativeColors[scheme].surface)).toBeGreaterThanOrEqual(4.5))

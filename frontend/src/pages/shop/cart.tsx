@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { hideTabBar, showTabBar } from '@tarojs/taro'
+import { hideTabBar, showTabBar } from '../../platform/tab-bar'
 import { useQuery } from '@tanstack/react-query'
 import { Button, Radio, Text, View } from '@tarojs/components'
 import { getCart, removeCart } from '../../features/catalog/api'

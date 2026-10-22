@@ -6,6 +6,8 @@ export interface Catalog { products: Product[]; ownerId: string; balance: number
 export interface ProductDetail { product: Product; balance: number }
 export interface Cart { items: Product[]; balance: number }
 export type OrderStatus = 'pending' | 'fulfilling' | 'awaiting_receipt' | 'completed' | 'rejected' | 'cancelled'
+export type OpenOrderStatus = Extract<OrderStatus, 'pending' | 'fulfilling' | 'awaiting_receipt'>
+export type OrderCounts = Record<'buyer' | 'seller', Record<OpenOrderStatus, number>>
 export type OrderAction = 'accept' | 'reject' | 'fulfill' | 'confirm' | 'reject_fulfillment' | 'request_cancel' | 'approve_cancel' | 'deny_cancel' | 'cancel'
 export interface Snapshot { name: string; description: string; coverId: string; price: number }
 export interface Order {

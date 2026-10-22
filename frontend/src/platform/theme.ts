@@ -1,5 +1,6 @@
 import Taro from '@tarojs/taro'
 import { accentColors, nativeColors, type Accent, type Scheme } from '../core/appearance'
+import { updateTabBar } from './tab-bar'
 
 export function systemScheme(): Scheme {
   if (process.env.TARO_ENV === 'h5') return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
@@ -17,6 +18,7 @@ export function observeScheme(listener: (value: Scheme) => void) {
   return () => Taro.offThemeChange(handler)
 }
 export function applyNativeTheme(scheme: Scheme, accent: Accent) {
+  updateTabBar({ scheme, accent })
   const base = nativeColors[scheme], colors = accentColors[accent][scheme]
   // Initial non-Tab routes have no TabBar yet; each page re-applies on show.
   void Taro.setNavigationBarColor({ frontColor: base.front, backgroundColor: base.page }).catch(() => {})

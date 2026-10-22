@@ -1,10 +1,11 @@
 @use './reference-pages';
+.taro-tabbar-badge {color:var(--badge-ink)!important;background:var(--surface)!important;border:1px solid var(--badge-line);box-sizing:border-box;}
 .theme-root, html {
   --page: #f6f7fc; --surface: #ffffff; --ink: #29223b; --muted: #71677e;
   --line: #e4dfed; --input: #fdfcff; --disabled-bg: #e4dfed; --disabled-ink: #655c70;
   --warning-bg: #fff4e7; --warning: #92501b; --partner-bg: #fff0e5;
   --success-bg: #edf6f1; --success: #2c6c58;
-  --primary: #6752a3; --tint: #eeeaf6; --on-primary: #ffffff;
+  --primary: #6752a3; --tint: #eeeaf6; --on-primary: #ffffff; --badge-ink:#925c00; --badge-line:#bd8500;
   min-height: 100vh; background: var(--page); color: var(--ink); color-scheme: light;
 }
 .theme-root { display: flex; flex-direction: column; }
@@ -15,12 +16,12 @@
   --success-bg: #1a332a; --success: #96d8bd;
   color-scheme: dark;
 }
-.accent-iris { --primary: #6752a3; --tint: #eeeaf6; --on-primary: #ffffff; }
-.accent-teal { --primary: #236d63; --tint: #e4f2ee; --on-primary: #ffffff; }
-.accent-apricot { --primary: #99501f; --tint: #fff0e3; --on-primary: #ffffff; }
-.theme-dark.accent-iris { --primary: #c7b5f4; --tint: #322b45; --on-primary: #241b37; }
-.theme-dark.accent-teal { --primary: #8dd7c7; --tint: #1c3934; --on-primary: #102d27; }
-.theme-dark.accent-apricot { --primary: #f4bb8b; --tint: #453023; --on-primary: #382313; }
+.accent-iris { --primary: #6752a3; --tint: #eeeaf6; --on-primary: #ffffff; --badge-ink:#925c00; --badge-line:#bd8500; }
+.accent-teal { --primary: #236d63; --tint: #e4f2ee; --on-primary: #ffffff; --badge-ink:#b13f26; --badge-line:#de6747; }
+.accent-apricot { --primary: #99501f; --tint: #fff0e3; --on-primary: #ffffff; --badge-ink:#2455bd; --badge-line:#3d78f0; }
+.theme-dark.accent-iris { --primary: #c7b5f4; --tint: #322b45; --on-primary: #241b37; --badge-ink:#ffd45b; --badge-line:#ffd45b; }
+.theme-dark.accent-teal { --primary: #8dd7c7; --tint: #1c3934; --on-primary: #102d27; --badge-ink:#ffb19b; --badge-line:#ffb19b; }
+.theme-dark.accent-apricot { --primary: #f4bb8b; --tint: #453023; --on-primary: #382313; --badge-ink:#94bfff; --badge-line:#94bfff; }
 .theme-dark .fabric { opacity: .06; }
 .theme-dark .avatar-frame { opacity: .5; }
 .theme-dark .home-shelf { opacity: .55; }
