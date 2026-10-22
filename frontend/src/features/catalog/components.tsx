@@ -2,10 +2,10 @@ import { Button, Image, Text, View } from '@tarojs/components'
 import { useMedia } from '../../core/media'
 import type { Product, Snapshot } from '../../contracts/commerce'
 
-export function Cover({ fileId, name, large = false }: { fileId: string; name: string; large?: boolean }) {
+export function Cover({ fileId, name, large = false, mode = 'aspectFill' }: { fileId: string; name: string; large?: boolean; mode?: 'aspectFill' | 'aspectFit' }) {
   const media = useMedia(fileId)
   const className = `cover ${large ? 'cover-large' : ''}`
-  if (media.path) return <Image className={className} ariaLabel={`${name}的封面`} src={media.path} mode='aspectFill' onError={media.invalidate} />
+  if (media.path) return <Image className={className} ariaLabel={`${name}的封面`} src={media.path} mode={mode} onError={media.invalidate} />
   return <Button className={`${className} cover-placeholder`} disabled={!media.error} onClick={media.retry}>{media.error ? '图片加载失败，点击重试' : '正在读取封面…'}</Button>
 }
 export function ProductSummary({ product, stock }: { product: Pick<Product, 'name' | 'price' | 'coverId'> | Snapshot; stock?: number }) {

@@ -27,6 +27,18 @@ export async function chooseCover() {
   checkSize(file.size)
   return file.tempFilePath
 }
+export async function chooseProductCover() {
+  const path = await chooseCover()
+  if (process.env.TARO_ENV !== 'weapp') return path
+  const result = await Taro.cropImage({ src: path, cropScale: '1:1' }).catch((error: unknown) => {
+    const message = error && typeof error === 'object' && 'errMsg' in error ? String(error.errMsg) : error instanceof Error ? error.message : ''
+    if (message.includes('cancel')) throw new Error('cropImage:cancel')
+    if (message.includes('开发者工具')) throw new Error('开发者工具暂不支持裁切，请在手机微信中选择封面。')
+    throw new Error('图片裁切失败，请重新选择后重试。')
+  })
+  if (!result.tempFilePath) throw new Error('未获得裁切后的图片，请重试。')
+  return result.tempFilePath
+}
 export const uploadCover = (path: string, token: string, purpose: 'cover' | 'avatar' = 'cover') => Taro.uploadFile({
   url: `${API_BASE}${purpose === 'avatar' ? '/profile/avatar' : '/media'}`, filePath: path, name: 'file', timeout: 30000,
   header: { Authorization: `Bearer ${token}` },

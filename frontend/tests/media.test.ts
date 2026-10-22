@@ -1,7 +1,7 @@
 import { beforeEach, expect, it, vi } from 'vitest'
-const taro = vi.hoisted(() => ({ uploadFile: vi.fn(), downloadFile: vi.fn(), chooseMedia: vi.fn(), getFileInfo: vi.fn() }))
+const taro = vi.hoisted(() => ({ uploadFile: vi.fn(), downloadFile: vi.fn(), chooseMedia: vi.fn(), cropImage: vi.fn(), getFileInfo: vi.fn() }))
 vi.mock('@tarojs/taro', () => ({ default: taro }))
-import { checkUploadSize, chooseCover, downloadCover, uploadCover } from '../src/platform/media'
+import { checkUploadSize, chooseCover, chooseProductCover, downloadCover, uploadCover } from '../src/platform/media'
 beforeEach(() => { vi.resetAllMocks(); vi.stubEnv('TARO_ENV', 'h5'); vi.stubGlobal('API_BASE', 'http://localhost:8080/api/v1') })
 it('private upload and download send Bearer auth without H5 cookie credentials', () => {
   uploadCover('blob:cover', 'session-token'); downloadCover('file-id', 'session-token')
@@ -37,4 +37,25 @@ it('rejects unreadable and empty native files', async () => {
 it('does not use the native file API on H5', async () => {
   await checkUploadSize('blob:cover')
   expect(taro.getFileInfo).not.toHaveBeenCalled()
+})
+it('returns the user-confirmed square crop for native product covers', async () => {
+  vi.stubEnv('TARO_ENV', 'weapp')
+  taro.chooseMedia.mockResolvedValue({ tempFiles: [{ size: 1024, tempFilePath: 'wxfile://long-photo' }] })
+  taro.cropImage.mockResolvedValue({ tempFilePath: 'wxfile://square-cover' })
+  expect(await chooseProductCover()).toBe('wxfile://square-cover')
+  expect(taro.cropImage).toHaveBeenCalledWith({ src: 'wxfile://long-photo', cropScale: '1:1' })
+})
+it('propagates crop cancellation and reports crop failures instead of uploading the original', async () => {
+  vi.stubEnv('TARO_ENV', 'weapp')
+  taro.chooseMedia.mockResolvedValue({ tempFiles: [{ size: 1024, tempFilePath: 'wxfile://photo' }] })
+  taro.cropImage.mockRejectedValueOnce({ errMsg: 'cropImage:fail cancel' }).mockRejectedValueOnce({ errMsg: 'cropImage:fail' }).mockRejectedValueOnce({ errMsg: 'cropImage:fail 开发者工具暂时不支持此 API 调试，请使用真机进行开发' })
+  await expect(chooseProductCover()).rejects.toThrow('cancel')
+  await expect(chooseProductCover()).rejects.toThrow('裁切失败')
+  await expect(chooseProductCover()).rejects.toThrow('手机微信')
+  expect(taro.uploadFile).not.toHaveBeenCalled()
+})
+it('keeps H5 selection available without invoking the native crop API', async () => {
+  taro.chooseMedia.mockResolvedValue({ tempFiles: [{ size: 1024, tempFilePath: 'blob:cover' }] })
+  expect(await chooseProductCover()).toBe('blob:cover')
+  expect(taro.cropImage).not.toHaveBeenCalled()
 })
