@@ -20,7 +20,7 @@ beforeEach(()=>{vi.clearAllMocks();state.hide.clear();state.hideBar.mockResolved
 afterEach(()=>{act(()=>tree?.unmount());tree=undefined})
 it('hiding the shop closes its cart instead of reopening it on return',()=>{
  act(()=>{tree=create(<Shop/>)})
- const open=()=>tree!.root.findAllByType('button').find(b=>b.children.includes('查看购物车'))!.props.onClick()
+ const open=()=>tree!.root.findByProps({id:'shop-cart-dock'}).props.onClick()
  act(open);expect(state.hideBar).toHaveBeenCalledOnce()
  expect(tree!.root.findAllByProps({role:'dialog'})).toHaveLength(1)
  act(()=>{for(const callback of [...state.hide])callback()})
@@ -31,8 +31,18 @@ it('hiding the shop closes its cart instead of reopening it on return',()=>{
 it('tab bar restoration remains safe if navigation already reached a non-tab page',async()=>{
  state.showBar.mockRejectedValue({errMsg:'showTabBar:fail not TabBar page'})
  act(()=>{tree=create(<Shop/>)})
- act(()=>tree!.root.findAllByType('button').find(b=>b.children.includes('查看购物车'))!.props.onClick())
+ act(()=>tree!.root.findByProps({id:'shop-cart-dock'}).props.onClick())
  await act(async()=>{for(const callback of [...state.hide])callback();await Promise.resolve()})
  expect(state.showBar).toHaveBeenCalledOnce()
  expect(tree!.root.findAllByProps({role:'dialog'})).toHaveLength(0)
+})
+it('makes the whole cart banner one accessible button without nested buttons',()=>{
+ act(()=>{tree=create(<Shop/>)})
+ const dock=tree!.root.findByProps({id:'shop-cart-dock'})
+ expect(dock.type).toBe('button')
+ expect(dock.props.ariaLabel).toBe('查看购物车，1 个候选商品')
+ expect(dock.findAllByType('button')).toHaveLength(1)
+ expect(tree!.root.findByProps({className:'shopping-action'}).findAllByType('button')).toHaveLength(1)
+ act(()=>dock.props.onClick())
+ expect(tree!.root.findAllByProps({role:'dialog'})).toHaveLength(1)
 })
