@@ -85,6 +85,8 @@ func (s *Server) Router() *gin.Engine {
 		}
 		c.JSON(200, gin.H{"status": "ready"})
 	})
+	r.GET("/assets/moods/:revision/:scheme/:file", s.moodAsset)
+	r.HEAD("/assets/moods/:revision/:scheme/:file", s.moodAsset)
 	r.POST("/api/v1/login", s.login)
 	a := r.Group("/api/v1", s.authenticate)
 	a.GET("/context", s.readContext)
@@ -104,6 +106,7 @@ func (s *Server) Router() *gin.Engine {
 	a.POST("/rules", s.propose)
 	a.POST("/rules/:id/confirm", s.confirm)
 	a.POST("/checkins", s.checkin)
+	a.GET("/checkins/calendar", s.checkinCalendar)
 	s.commerceRoutes(a)
 	s.taskRoutes(a)
 	s.notificationRoutes(a)
@@ -439,21 +442,6 @@ func (s *Server) confirm(c *gin.Context) {
 		return result, eventbus.Save(ctx, tx, couple.ID, user, "RulesActivated", result, now)
 	})
 }
-func (s *Server) checkin(c *gin.Context) {
-	s.write(c, nil, func(ctx context.Context, tx *sql.Tx, user string, now time.Time) (any, error) {
-		couple, err := identity.LockCouple(ctx, tx, user, true)
-		if err != nil {
-			return nil, err
-		}
-		result, err := checkin.Record(ctx, tx, user, couple, now)
-		if err != nil {
-			return nil, err
-		}
-		s.invalidateReadCache(ctx, couple.ID, "checkins")
-		return result, eventbus.Save(ctx, tx, couple.ID, user, "CheckinRecorded", result, now)
-	})
-}
-
 func (s *Server) read(c *gin.Context, required string, fn func(context.Context, *sql.Tx, identity.Context) (any, error)) {
 	ctx := c.Request.Context()
 	tx, couple, now, err := s.beginRelation(ctx, c.GetString("user"), nil)
@@ -513,12 +501,12 @@ func (s *Server) home(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
-		checked, err := cachedRead(s, ctx, readCacheKey("checkins", state.Couple.ID), state.BusinessDate+":"+state.Me.ID, activityCacheTTL, func() (checkin.Status, error) {
-			return checkin.Read(ctx, tx, state.Me.ID, state.Couple.ID, state.BusinessDate)
-		})
+		day, _ := time.Parse("2006-01-02", state.BusinessDate)
+		rows, err := s.cachedCheckins(ctx, tx, *state.Couple, "day", state.BusinessDate, day.AddDate(0, 0, 1).Format("2006-01-02"), false)
 		if err != nil {
 			return nil, err
 		}
+		checked := checkin.Today(rows, state.Me.ID, state.BusinessDate, state.Couple.CheckinRevision)
 		proposals, err := s.cachedRules(ctx, tx, state.Couple.ID)
 		if err != nil {
 			return nil, err

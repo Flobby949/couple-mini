@@ -1,0 +1,278 @@
+{
+  "version": 1,
+  "revision": "0c77c677fbaa99cb",
+  "width": 336,
+  "height": 336,
+  "totalBytes": 935100,
+  "basePath": "/assets/moods/0c77c677fbaa99cb/",
+  "revisionAlgorithm": "First 16 hex characters of SHA-256 over the files array SHA-256 hex strings joined with LF, without a trailing LF.",
+  "export": {
+    "sharp": "0.34.5",
+    "vips": "8.17.3",
+    "resize": {
+      "width": 336
+    },
+    "png": {
+      "compressionLevel": 9,
+      "adaptiveFiltering": true
+    }
+  },
+  "files": [
+    {
+      "id": "happy",
+      "scheme": "light",
+      "path": "0c77c677fbaa99cb/light/happy.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/light/happy.png",
+      "sha256": "fc932cbcd6ae113aacd7fd23097bacaf9eec82142486a86a6b030c1ccbc19cbc",
+      "bytes": 56838,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/light/happy.png",
+        "sha256": "059274ac1ca52813836cce84b871ceccd5098f3d2334bf870d5f4ad61a386457",
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "happy",
+      "scheme": "dark",
+      "path": "0c77c677fbaa99cb/dark/happy.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/dark/happy.png",
+      "sha256": "b8300d85f31bc869f22d9d616a7454b258bc6be19392e715eb66883ea8374ecb",
+      "bytes": 60005,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/dark/happy.png",
+        "sha256": "6b3f850eee59061aec81a766044895c4bc6291ae851755f6e38aa8d082968c4c",
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "calm",
+      "scheme": "light",
+      "path": "0c77c677fbaa99cb/light/calm.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/light/calm.png",
+      "sha256": "437ab2fca02e022e307dde5b6d524ee837acab3b2654eb36948c8b2077fdb352",
+      "bytes": 58396,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/light/calm.png",
+        "sha256": "f7fefd7aa3821b2513c6eb9e6c002463d6835deadede952091a6303c5f0052fe",
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "calm",
+      "scheme": "dark",
+      "path": "0c77c677fbaa99cb/dark/calm.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/dark/calm.png",
+      "sha256": "c610cefe83c800a21f7a75abde30f8c799e8340c4bb0324a606af928381dc1c1",
+      "bytes": 65494,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/dark/calm.png",
+        "sha256": "d9e205c6ef81e3f788c518040986e3322a613491d59047c80bf15aae54450158",
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "loving",
+      "scheme": "light",
+      "path": "0c77c677fbaa99cb/light/loving.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/light/loving.png",
+      "sha256": "b9c3255efabedc83d5d81aaae5a49a5439471c62309839815562697b81d9f3fc",
+      "bytes": 49747,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/light/loving.png",
+        "sha256": "8743ef919832321ddc8a27bccfdb8be0d7eaf8dd9653e73c97c152a98de418e3",
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "loving",
+      "scheme": "dark",
+      "path": "0c77c677fbaa99cb/dark/loving.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/dark/loving.png",
+      "sha256": "9d42f0093bd91e874f06170055d4214569ad503981eac2e830bbc5e6082eb668",
+      "bytes": 52307,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/dark/loving.png",
+        "sha256": "476d2fc5fab4f4938a60e0fddc9524e9f958376a556f2cd23e932d3c25714de1",
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "missing",
+      "scheme": "light",
+      "path": "0c77c677fbaa99cb/light/missing.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/light/missing.png",
+      "sha256": "f949fea2edf2167d023101d32fb6d1fb6cce70fd399744bcaf14febc3d96b090",
+      "bytes": 60591,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/light/missing.png",
+        "sha256": "19300637269db3e91ebe78f9c28edf55615bc267294e1f98cea25a3970baf3ff",
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "missing",
+      "scheme": "dark",
+      "path": "0c77c677fbaa99cb/dark/missing.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/dark/missing.png",
+      "sha256": "639f6066e7f6da4f8e1a46ad78c46cff6f8a7d6e3369808d0572e49e65dd120d",
+      "bytes": 65780,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/dark/missing.png",
+        "sha256": "0350c986a04ff62485c9f66fb005982551524c24c39334c1bde5ee9b27b63222",
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "tired",
+      "scheme": "light",
+      "path": "0c77c677fbaa99cb/light/tired.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/light/tired.png",
+      "sha256": "e993a14ce8c7fcfb388b5a45d223c9b8160393e70ee8a4730e3d78c9ac2fffeb",
+      "bytes": 50382,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/light/tired.png",
+        "sha256": "afc5dab7bf227e2aac508fdedd5e5431894bf779ce571090afe5a7203212a1c0",
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "tired",
+      "scheme": "dark",
+      "path": "0c77c677fbaa99cb/dark/tired.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/dark/tired.png",
+      "sha256": "00894721a98c1719d8348e7db735973d4bd5568d5d687b1a57c4f9036ffb0d2f",
+      "bytes": 56049,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/dark/tired.png",
+        "sha256": "59ae4be28394967c354cb0db23564661ba6d7a846c27a25daf96d74bc8479818",
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "sad",
+      "scheme": "light",
+      "path": "0c77c677fbaa99cb/light/sad.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/light/sad.png",
+      "sha256": "55f8aafef8fd8e2bf5caf84d3e5ba4e93fec4839c33a356db7adb74885b8485a",
+      "bytes": 51841,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/light/sad.png",
+        "sha256": "3ac2382b425be47d65dcf2eb4b058d509cf5321e4e0281ee5506dbb176bbd092",
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "sad",
+      "scheme": "dark",
+      "path": "0c77c677fbaa99cb/dark/sad.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/dark/sad.png",
+      "sha256": "17036844b7699598503fc747518c3441c6804ecf53e7e2422e6122ee0dd4f986",
+      "bytes": 57856,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/dark/sad.png",
+        "sha256": "829aead785eb5404ce33d698c718628fcfbb34b38dbb86b07fe3cf2582212da6",
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "irritated",
+      "scheme": "light",
+      "path": "0c77c677fbaa99cb/light/irritated.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/light/irritated.png",
+      "sha256": "f581a47cd01071f493a1469142aa22a9d101e50598bcf9138a7d91187039e09d",
+      "bytes": 58732,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/light/irritated.png",
+        "sha256": "de7fa6c6b2e01ef3f344d7ce2f7e63986770b7c4cecd5cd70bcb0aa4be4fc31a",
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "irritated",
+      "scheme": "dark",
+      "path": "0c77c677fbaa99cb/dark/irritated.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/dark/irritated.png",
+      "sha256": "4915e75ee7420126a3c2a1200e5868a6437af042f9a6e6b5db480b18493497a3",
+      "bytes": 66046,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/dark/irritated.png",
+        "sha256": "bef76f6cf36f05a6acb21adebe950988fedeed38685997ddb397e4362053fb34",
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "energetic",
+      "scheme": "light",
+      "path": "0c77c677fbaa99cb/light/energetic.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/light/energetic.png",
+      "sha256": "84f15f9ce495c240c1bc5c74c700322ef1383aede49c4190b93def5519a42488",
+      "bytes": 58371,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/light/energetic.png",
+        "sha256": "d563a2988ccd6e2151906da39e00ddfe111a34f839db341decd610e504177120",
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "energetic",
+      "scheme": "dark",
+      "path": "0c77c677fbaa99cb/dark/energetic.png",
+      "url": "/assets/moods/0c77c677fbaa99cb/dark/energetic.png",
+      "sha256": "ce1be31c4c67d8600f5b2f9df90fd1d05575ae2f1c254d62a96c62e46721dd33",
+      "bytes": 66665,
+      "width": 336,
+      "height": 336,
+      "source": {
+        "path": "assets/ui/moods/v1/dark/energetic.png",
+        "sha256": "eb5d7ef1325363c40bc5d2cb9c8c3b40943ed86d44aac35bdadaf6fd1123a6e4",
+        "width": 1254,
+        "height": 1254
+      }
+    }
+  ]
+}

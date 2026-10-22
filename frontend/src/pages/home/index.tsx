@@ -1,17 +1,23 @@
 import { useArtwork } from '../../ui/use-artwork'
 /* THESIS: 两个人的签到是首页的中心，积分与待办随后。
  * OWN-WORLD: 冷白、鸢尾紫、深紫文字；仅签到区域保留织物感。
- * STORY: 先看双方状态，只为自己签到，再看共同预算与个人额度。
- * FIRST VIEWPORT: 问候、成对签到、主要签到按钮、积分池。
- * FORM: 采用用户已确认的 A「双人签到台」结构与 v2 图稿。
+ * STORY: 未签到看头像，签到后原位展示心情；完整双人日历从底部文字入口进入。
+ * FIRST VIEWPORT: 问候、原布艺双头像/心情、主要签到按钮与紧凑日历入口、积分池。
+ * FORM: 沿用 A「双人签到台」，按已确认 v3 原布艺心情签到图扩展。
  */
 import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Button, Image, Text, View } from '@tarojs/components'
 import { getHome } from '../../features/home/api'
 import { checkIn } from '../../features/checkin/api'
+import { CheckinPortrait } from '../../features/checkin/checkin-portrait'
+import { MoodPicker } from '../../features/checkin/mood-picker'
+import { moodOption } from '../../features/checkin/moods'
+import { useCheckinDay } from '../../features/checkin/use-checkin-day'
 import { useGate } from '../../app/hooks'
 import { keys, queries } from '../../core/query'
+import { session } from '../../core/api'
+import { pending } from '../../core/operations'
 import { getCatalog } from '../../features/catalog/api'
 import type { CheckinResult } from '../../contracts/api'
 import { navigate } from '../../platform'
@@ -20,26 +26,34 @@ import { Page } from '../../app/page'
 import { useReminderAction } from '../../features/notifications/use-reminder-action'
 import { ErrorState, Loading } from '../../ui'
 import { statuses } from '../../features/orders/presentation'
-import { Avatar, BalanceTiles, Icon, PoolCard, Section } from '../../ui/visual'
+import { BalanceTiles, Icon, PoolCard, Section } from '../../ui/visual'
 export default function HomePage() {
  const { checkinPanel: panel } = useArtwork()
   const gate = useGate(), action = useReminderAction(gate.allowed), {scheme,appearance} = useTheme()
   const [receipt, setReceipt] = useState<CheckinResult>()
+  const [picker, setPicker] = useState(false)
   const query = useQuery({ queryKey: keys.home, queryFn: getHome, enabled: gate.allowed, refetchInterval: gate.allowed ? 15000 : false })
-  const data = gate.canShow ? query.data : undefined
+  const data = gate.canShow && query.data?.context.businessDate === gate.data?.businessDate ? query.data : undefined
+  const businessDate = gate.data?.businessDate
+  useCheckinDay(gate.data, gate.visible)
+  useEffect(() => { setPicker(false); setReceipt(undefined) }, [businessDate, gate.data?.me.id])
+  useEffect(() => { if (!receipt) return; const timer = setTimeout(() => setReceipt(undefined), 4000); return () => clearTimeout(timer) }, [receipt])
+  useEffect(() => { if (data?.checkin.me) setPicker(false) }, [data?.checkin.me])
   useEffect(() => {
     if (gate.allowed && query.isSuccess) void queries.prefetchQuery({ queryKey: keys.catalog('partner'), queryFn: () => getCatalog('partner') })
   }, [gate.allowed, query.isSuccess])
   const next = data?.milestones.find(m => m.days > data.context.couple!.doubleDays)
   return <Page messageEntry title='今天，也一起' subtitle='平凡的日子，因为有你而特别。'>
-    <ErrorState error={gate.error || query.error || action.error} retry={() => { void gate.refetch(); void query.refetch() }} />
+    <ErrorState error={gate.error || query.error || (!picker ? action.error : null)} retry={() => { void gate.refetch(); void query.refetch() }} />
     {!data && !query.error && <Loading />}
     {data && <>
-      <View className='checkin-panel'><Image className='fabric' src={panel} mode='scaleToFill' ariaHidden /><View className='pair'>
-        {[{user:data.context.me,checked:data.checkin.me,me:true},{user:data.context.partner!,checked:data.checkin.partner,me:false}].map(item => <View className='person' key={item.user.id}><Avatar user={item.user} partnerId={item.me ? data.context.partner!.id : data.context.me.id} size={112} stitched checked={item.checked} /><View className='person-caption'><Text className='person-name'>{item.user.nickname}</Text><Text className={`checkin-state ${item.checked ? 'checked' : ''}`}>· {item.checked ? '已签到' : '待签到'}</Text></View></View>)}
+      <View className='checkin-panel mood-checkin-panel'><Image className='fabric' src={panel} mode='scaleToFill' ariaHidden /><View className='pair'>
+        {[{user:data.context.me,checked:data.checkin.me,entry:data.checkin.meEntry,me:true},{user:data.context.partner!,checked:data.checkin.partner,entry:data.checkin.partnerEntry,me:false}].map(item => <View className='person' key={item.user.id}><CheckinPortrait user={item.user} partnerId={item.me ? data.context.partner!.id : data.context.me.id} checked={item.checked} entry={item.entry}/><View className='person-caption'><Text className='person-name'>{item.user.nickname}</Text><Text className={`checkin-state ${item.checked ? 'checked' : ''}`}>· {item.checked ? moodOption(item.entry?.mood)?.label || '已签到' : '待签到'}</Text></View></View>)}
         <Image className='pair-connection' src={`/assets/ui-icons/checkin-connection-${appearance.accent}-${scheme}.png`} mode='aspectFit' ariaHidden />
-      </View><Button className='button checkin-button' loading={action.busy} disabled={action.busy || data.checkin.me} onClick={() => void action.run(() => checkIn(),setReceipt)}>{data.checkin.me ? '今日已签到' : '签到入池 +10'}</Button><Text className='checkin-help'>{data.checkin.me && data.checkin.partner ? '今日两人已签到，基础共 30 积分入池' : '两人都签到，再入池 10 积分'}</Text></View>
-      {receipt && <View className='receipt' role='status'><Text className='section-title'>本次共 {receipt.total} 积分入池</Text><Text>签到 {receipt.base}{receipt.doubleBonus > 0 ? ` + 双人奖励 ${receipt.doubleBonus}` : ''}{receipt.milestoneBonus > 0 ? ` + 里程碑奖励 ${receipt.milestoneBonus}` : ''}</Text></View>}
+      </View><Button className={`button checkin-button ${data.checkin.me ? 'checkin-completed' : ''}`} loading={action.busy && !data.checkin.me} disabled={action.busy || !!pending() || data.checkin.me || data.context.businessDate !== businessDate} onClick={() => { action.clearError(); setPicker(true) }}>{data.checkin.me && <Icon name='check' tone='primary' size={20}/>}<Text>{data.checkin.me ? '今日已签到' : '选心情签到 · +10 入池'}</Text></Button>
+        <View className='checkin-footer'><Text className='checkin-help'>{receipt ? `本次共 ${receipt.total} 积分入池${receipt.milestoneBonus > 0 ? `，含里程碑 ${receipt.milestoneBonus} 分` : ''}` : data.checkin.me && data.checkin.partner ? '双人签到完成 · 基础共 30 分入池' : '两人都签到，再入池 10 积分'}</Text><Button className='checkin-calendar-link' onClick={() => void navigate('/packages/account/checkin-calendar/index')}><Icon name='calendar' tone='primary' size={17}/><Text>心情日历</Text><Icon name='chevron' tone='primary' size={12}/></Button></View>
+      </View>
+      {picker && gate.visible && !data.checkin.me && <MoodPicker key={businessDate} busy={action.busy} blocked={!!pending()} error={action.error} close={() => setPicker(false)} confirm={mood => { const actor = data.context.me.id; if (businessDate) void action.run(() => checkIn(mood, businessDate), result => { if (session()?.user.id === actor) { setReceipt(result); setPicker(false) } }) }}/>}
       <PoolCard total={data.points.total} available={data.points.available} reserved={data.points.reserved} />
       <BalanceTiles balance={data.points.balance} earned={data.points.earned} limit={data.points.dailyLimit} remaining={data.points.remaining} />
       <Section title='今日待办'>

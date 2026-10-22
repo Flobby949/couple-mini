@@ -1,0 +1,176 @@
+{
+  "createdAt": "2026-10-22",
+  "mode": "built-in image_gen",
+  "imageProcessing": "none; exact original PNG bytes copied to output",
+  "outputs": [
+    {
+      "id": "sad",
+      "label": "低落",
+      "variant": "light",
+      "prompt": "Use case: precise-object-edit / illustration-story.\nProduce ONE isolated production UI illustration by extracting and cleanly redrawing exactly the requested mochi character from the supplied FloFlo reference board. The first input image is the AUTHORITATIVE user-approved eight-character reference. If a second input is supplied, it is the already-produced happy icon and sets the shared line quality, canvas occupancy and finish, not the requested character's color or face.\nOutput ONE character only on a genuine transparent alpha background, square canvas, preferably 1024×1024. No board, grid, text, label, lettering, shadowed card, circle backdrop, frame, border, checkerboard pixels, floor, scenery or watermark. Do not include any UI from the reference.\nCharacter: the blue 低落 mochi in the selector bottom row, second cell: slightly slumped round body with two tiny tucked side arms, worried raised inner brows, small dark eyes, downturned little mouth and ONE clearly visible bright blue teardrop on its right cheek (viewer right). Keep the tear readable at small size. No envelope or other props.\nMatch the reference EXACTLY in personality: soft hand-drawn organic mochi, simple clean colored outline, tiny expressive face and cheeks, limited very gentle two-tone pastel shading, front-facing flat 2D sticker illustration, no realistic skin, plastic shine, dramatic lighting, 3D depth, grain, wool/fabric, excessive gradients or added detail. The outline must be crisp and continuous for 24px–112px display; face and key prop must remain recognizable at small sizes.\nThis is the LIGHT-SURFACE variant, designed to sit on #ffffff, #f6f7fc and light ivory cloth. Body remains soft cornflower blue, colored outline moderately dark, facial features dark and high contrast, subtle lighter fill near the center as in the approved reference. Do not add an opaque white border or white disk.\nComposition: single centered character, same scale as the other family members, all visible pixels including floating accent comfortably within the central 84–88% of the square, roughly 7–8% clear transparent outer margin, body base near 86% canvas height. Keep the character fully in frame and leave clean truly transparent corners. Keep a simple balanced silhouette, not tiny artwork lost in a huge canvas. No unrelated additions.",
+      "referencePaths": [
+        "/Users/flobby/.codex/generated_images/01a16432-1ecd-7211-a9ed-c1ed0b0dd25b/exec-ccec459f-73e3-4c00-b40f-b9d6bd701688.png",
+        "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/happy.png"
+      ],
+      "sourcePath": "/Users/flobby/.codex/generated_images/01a1644d-5722-7ab0-95b0-b870cd2921ba/exec-20320472-f1ae-4ae9-bf3c-b6b20429ae63.png",
+      "outputPath": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/sad.png",
+      "transparentBackground": true,
+      "dimensions": {
+        "width": 1254,
+        "height": 1254
+      },
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "min": 0,
+        "max": 255
+      },
+      "bytes": 672972,
+      "sha256": "3ac2382b425be47d65dcf2eb4b058d509cf5321e4e0281ee5506dbb176bbd092",
+      "matchesGeneratedOriginal": true
+    },
+    {
+      "id": "sad",
+      "label": "低落",
+      "variant": "dark",
+      "prompt": "Use case: precise-object-edit / identity-preserve.\nCreate the DARK-SURFACE production variant of the supplied single 低落 mochi PNG. Input is the finished LIGHT version and is the exact edit target.\nPreserve the character's identical silhouette, facial expression, pose, limb proportions, tiny prop/accent shapes, element locations, canvas size, transparent margin and pixel placement as closely as possible. This is a color/edge adaptation ONLY, not a new character, redraw, pose, added night theme, or different composition.\nKeep the body in the SAME soft cornflower blue family. Gently reduce the chalky pastel brightness to a comfortable softly luminous mid-light pastel for dark surfaces. Preserve clearly dark facial features with strong contrast on the body. Adjust the colored perimeter and add only a very thin softly tinted light separation edge where needed so the silhouette stays crisp against #17151e, #24212d and #322b45. No thick white sticker border, no neon/glow, no black halo, no white halo, no cast shadow. The accent/prop remains readable without being glaring. Maintain the original flat 2D quality and limited soft shading; no realism or extra gradients.\nOutput exactly ONE same-size square PNG with genuine transparent alpha background. Background stays fully transparent, NOT filled with the dark example color and no checkerboard pixels. No text, label, badge, frame, disk, stars, moon, bedtime accessories, watermark or other additions. The only allowed design changes are small palette and outline adjustments for dark-mode contrast; KEEP THE MOOD AND GEOMETRY IDENTICAL.",
+      "referencePaths": [
+        "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/sad.png"
+      ],
+      "sourcePath": "/Users/flobby/.codex/generated_images/01a1644d-5722-7ab0-95b0-b870cd2921ba/exec-60ed24f2-3a50-4929-844b-10d523fe83d6.png",
+      "outputPath": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/dark/sad.png",
+      "transparentBackground": true,
+      "dimensions": {
+        "width": 1254,
+        "height": 1254
+      },
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "min": 0,
+        "max": 255
+      },
+      "bytes": 711541,
+      "sha256": "829aead785eb5404ce33d698c718628fcfbb34b38dbb86b07fe3cf2582212da6",
+      "matchesGeneratedOriginal": true
+    },
+    {
+      "id": "irritated",
+      "label": "烦躁",
+      "variant": "light",
+      "prompt": "Use case: precise-object-edit / illustration-story.\nProduce ONE isolated production UI illustration by extracting and cleanly redrawing exactly the requested mochi character from the supplied FloFlo reference board. The first input image is the AUTHORITATIVE user-approved eight-character reference. If a second input is supplied, it is the already-produced happy icon and sets the shared line quality, canvas occupancy and finish, not the requested character's color or face.\nOutput ONE character only on a genuine transparent alpha background, square canvas, preferably 1024×1024. No board, grid, text, label, lettering, shadowed card, circle backdrop, frame, border, checkerboard pixels, floor, scenery or watermark. Do not include any UI from the reference.\nCharacter: the apricot 烦躁 mochi in the selector bottom row, third cell: small upright squishy pear-shaped body, inward-slanting scrunched eyebrows, tiny squinting eyes, pouty small downturned mouth, cheeks, two little tense nubs. ONE small three-lobed steam puff at its upper right, close to head. Annoyed but still adorable, not aggressive. No fire, weapons, lettering or extra props.\nMatch the reference EXACTLY in personality: soft hand-drawn organic mochi, simple clean colored outline, tiny expressive face and cheeks, limited very gentle two-tone pastel shading, front-facing flat 2D sticker illustration, no realistic skin, plastic shine, dramatic lighting, 3D depth, grain, wool/fabric, excessive gradients or added detail. The outline must be crisp and continuous for 24px–112px display; face and key prop must remain recognizable at small sizes.\nThis is the LIGHT-SURFACE variant, designed to sit on #ffffff, #f6f7fc and light ivory cloth. Body remains warm apricot orange, colored outline moderately dark, facial features dark and high contrast, subtle lighter fill near the center as in the approved reference. Do not add an opaque white border or white disk.\nComposition: single centered character, same scale as the other family members, all visible pixels including floating accent comfortably within the central 84–88% of the square, roughly 7–8% clear transparent outer margin, body base near 86% canvas height. Keep the character fully in frame and leave clean truly transparent corners. Keep a simple balanced silhouette, not tiny artwork lost in a huge canvas. No unrelated additions.",
+      "referencePaths": [
+        "/Users/flobby/.codex/generated_images/01a16432-1ecd-7211-a9ed-c1ed0b0dd25b/exec-ccec459f-73e3-4c00-b40f-b9d6bd701688.png",
+        "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/happy.png"
+      ],
+      "sourcePath": "/Users/flobby/.codex/generated_images/01a1644d-5722-7ab0-95b0-b870cd2921ba/exec-69d9b9fa-d511-4e80-9db2-05b2d527f190.png",
+      "outputPath": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/irritated.png",
+      "transparentBackground": true,
+      "dimensions": {
+        "width": 1254,
+        "height": 1254
+      },
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "min": 0,
+        "max": 255
+      },
+      "bytes": 708211,
+      "sha256": "de7fa6c6b2e01ef3f344d7ce2f7e63986770b7c4cecd5cd70bcb0aa4be4fc31a",
+      "matchesGeneratedOriginal": true
+    },
+    {
+      "id": "irritated",
+      "label": "烦躁",
+      "variant": "dark",
+      "prompt": "Use case: precise-object-edit / identity-preserve.\nCreate the DARK-SURFACE production variant of the supplied single 烦躁 mochi PNG. Input is the finished LIGHT version and is the exact edit target.\nPreserve the character's identical silhouette, facial expression, pose, limb proportions, tiny prop/accent shapes, element locations, canvas size, transparent margin and pixel placement as closely as possible. This is a color/edge adaptation ONLY, not a new character, redraw, pose, added night theme, or different composition.\nKeep the body in the SAME warm apricot orange family. Gently reduce the chalky pastel brightness to a comfortable softly luminous mid-light pastel for dark surfaces. Preserve clearly dark facial features with strong contrast on the body. Adjust the colored perimeter and add only a very thin softly tinted light separation edge where needed so the silhouette stays crisp against #17151e, #24212d and #322b45. No thick white sticker border, no neon/glow, no black halo, no white halo, no cast shadow. The accent/prop remains readable without being glaring. Maintain the original flat 2D quality and limited soft shading; no realism or extra gradients.\nOutput exactly ONE same-size square PNG with genuine transparent alpha background. Background stays fully transparent, NOT filled with the dark example color and no checkerboard pixels. No text, label, badge, frame, disk, stars, moon, bedtime accessories, watermark or other additions. The only allowed design changes are small palette and outline adjustments for dark-mode contrast; KEEP THE MOOD AND GEOMETRY IDENTICAL.",
+      "referencePaths": [
+        "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/irritated.png"
+      ],
+      "sourcePath": "/Users/flobby/.codex/generated_images/01a1644d-5722-7ab0-95b0-b870cd2921ba/exec-6ba9ad8b-8e79-42fa-8bb5-e2753d263473.png",
+      "outputPath": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/dark/irritated.png",
+      "transparentBackground": true,
+      "dimensions": {
+        "width": 1254,
+        "height": 1254
+      },
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "min": 0,
+        "max": 255
+      },
+      "bytes": 747067,
+      "sha256": "bef76f6cf36f05a6acb21adebe950988fedeed38685997ddb397e4362053fb34",
+      "matchesGeneratedOriginal": true
+    },
+    {
+      "id": "energetic",
+      "label": "元气",
+      "variant": "light",
+      "prompt": "Use case: precise-object-edit / illustration-story.\nProduce ONE isolated production UI illustration by extracting and cleanly redrawing exactly the requested mochi character from the supplied FloFlo reference board. The first input image is the AUTHORITATIVE user-approved eight-character reference. If a second input is supplied, it is the already-produced happy icon and sets the shared line quality, canvas occupancy and finish, not the requested character's color or face.\nOutput ONE character only on a genuine transparent alpha background, square canvas, preferably 1024×1024. No board, grid, text, label, lettering, shadowed card, circle backdrop, frame, border, checkerboard pixels, floor, scenery or watermark. Do not include any UI from the reference.\nCharacter: the yellow 元气 mochi in the selector bottom row, fourth cell and Flora's signed-in circle: lively softly rounded broad body with both short arms raised, happy dark eyes, open joyful mouth with tiny tongue, warm peach cheeks. Two or three small warm orange/gold energetic dashes or small sparkle accents immediately above the head; this is the sunny yellow sibling of happy. No heart, leaf, envelope, tear or steam.\nMatch the reference EXACTLY in personality: soft hand-drawn organic mochi, simple clean colored outline, tiny expressive face and cheeks, limited very gentle two-tone pastel shading, front-facing flat 2D sticker illustration, no realistic skin, plastic shine, dramatic lighting, 3D depth, grain, wool/fabric, excessive gradients or added detail. The outline must be crisp and continuous for 24px–112px display; face and key prop must remain recognizable at small sizes.\nThis is the LIGHT-SURFACE variant, designed to sit on #ffffff, #f6f7fc and light ivory cloth. Body remains soft buttery yellow, colored outline moderately dark, facial features dark and high contrast, subtle lighter fill near the center as in the approved reference. Do not add an opaque white border or white disk.\nComposition: single centered character, same scale as the other family members, all visible pixels including floating accent comfortably within the central 84–88% of the square, roughly 7–8% clear transparent outer margin, body base near 86% canvas height. Keep the character fully in frame and leave clean truly transparent corners. Keep a simple balanced silhouette, not tiny artwork lost in a huge canvas. No unrelated additions.",
+      "referencePaths": [
+        "/Users/flobby/.codex/generated_images/01a16432-1ecd-7211-a9ed-c1ed0b0dd25b/exec-ccec459f-73e3-4c00-b40f-b9d6bd701688.png",
+        "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/happy.png"
+      ],
+      "sourcePath": "/Users/flobby/.codex/generated_images/01a1644d-5722-7ab0-95b0-b870cd2921ba/exec-67b512fb-123e-44bc-a5e3-77d11daa44c4.png",
+      "outputPath": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/energetic.png",
+      "transparentBackground": true,
+      "dimensions": {
+        "width": 1254,
+        "height": 1254
+      },
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "min": 0,
+        "max": 255
+      },
+      "bytes": 679597,
+      "sha256": "d563a2988ccd6e2151906da39e00ddfe111a34f839db341decd610e504177120",
+      "matchesGeneratedOriginal": true
+    },
+    {
+      "id": "energetic",
+      "label": "元气",
+      "variant": "dark",
+      "prompt": "Use case: precise-object-edit / identity-preserve.\nCreate the DARK-SURFACE production variant of the supplied single 元气 mochi PNG. Input is the finished LIGHT version and is the exact edit target.\nPreserve the character's identical silhouette, facial expression, pose, limb proportions, tiny prop/accent shapes, element locations, canvas size, transparent margin and pixel placement as closely as possible. This is a color/edge adaptation ONLY, not a new character, redraw, pose, added night theme, or different composition.\nKeep the body in the SAME soft buttery yellow family. Gently reduce the chalky pastel brightness to a comfortable softly luminous mid-light pastel for dark surfaces. Preserve clearly dark facial features with strong contrast on the body. Adjust the colored perimeter and add only a very thin softly tinted light separation edge where needed so the silhouette stays crisp against #17151e, #24212d and #322b45. No thick white sticker border, no neon/glow, no black halo, no white halo, no cast shadow. The accent/prop remains readable without being glaring. Maintain the original flat 2D quality and limited soft shading; no realism or extra gradients.\nOutput exactly ONE same-size square PNG with genuine transparent alpha background. Background stays fully transparent, NOT filled with the dark example color and no checkerboard pixels. No text, label, badge, frame, disk, stars, moon, bedtime accessories, watermark or other additions. The only allowed design changes are small palette and outline adjustments for dark-mode contrast; KEEP THE MOOD AND GEOMETRY IDENTICAL.",
+      "referencePaths": [
+        "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/energetic.png"
+      ],
+      "sourcePath": "/Users/flobby/.codex/generated_images/01a1644d-5722-7ab0-95b0-b870cd2921ba/exec-3699e7b3-0261-4f3b-ba9b-93b0eac8a817.png",
+      "outputPath": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/dark/energetic.png",
+      "transparentBackground": true,
+      "dimensions": {
+        "width": 1254,
+        "height": 1254
+      },
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "min": 0,
+        "max": 255
+      },
+      "bytes": 730618,
+      "sha256": "eb5d7ef1325363c40bc5d2cb9c8c3b40943ed86d44aac35bdadaf6fd1123a6e4",
+      "matchesGeneratedOriginal": true
+    }
+  ],
+  "visualReview": {
+    "inspectedEachOutput": true,
+    "sad": "Single blue dumpling with worried face and one readable viewer-right blue tear; dark version keeps pose and expression.",
+    "irritated": "Single apricot dumpling with scrunched eyes, frown and one three-lobed steam puff; dark version keeps geometry.",
+    "energetic": "Single yellow joyful dumpling with raised arms, warm cheeks and short golden dashes; dark version keeps geometry.",
+    "notes": [
+      "Energetic follows the happy anchor with four golden dashes instead of the template's two or three.",
+      "Generated originals may contain small antialiased edge flecks visible at full resolution; no pixel processing applied."
+    ]
+  }
+}

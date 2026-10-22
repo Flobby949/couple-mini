@@ -1,0 +1,76 @@
+FloFlo avatar-to-mood check-in — 2026-10-22
+Generation: built-in image_gen.
+Output: images/v3/checkin-avatar-to-mood.png
+Reference: images/v3/checkin-mood-dual-calendar.png and frontend avatar-man.png / avatar-woman.png.
+User requirement: preserve the existing large paired avatar area; before check-in show each person's avatar, after check-in show their selected mood instead, independently.
+Design proposal: remove separate home week preview, retain clearly labeled calendar entry; the existing full calendar design continues to show both people's moods vertically.
+Status: static design review board, not implemented behavior. Names, account values and records are illustrative.
+
+Use case: ui-mockup / identity-preserve / layout edit.
+Create an updated FloFlo UI design board based on the supplied existing concept and two real project avatar assets.
+Input roles:
+Image 1 is the previous three-screen FloFlo design board: use its iris-purple UI, paired stitched fabric check-in panel, mochi mood sticker designs, typography, and existing homepage as the design source.
+Image 2 is the actual male-style avatar artwork from the project: use this portrait for Flobby BEFORE check-in, preserving its identity and artwork.
+Image 3 is the actual female-style avatar artwork from the project: use this portrait for Flora BEFORE check-in, preserving its identity and artwork.
+These names and roles are illustrative UI sample data.
+
+USER'S EXACT NEW REQUIREMENT:
+Keep the existing LARGE PAIRED AVATAR AREA. Before a person checks in, their big circle displays their AVATAR. After that person checks in, the SAME big circle displays their selected MOOD CHARACTER INSTEAD of their avatar. Each person's display changes independently. Do not shrink the circles into tiny status rows. Do not replace pre-check-in avatars with empty placeholders or generic smiley faces.
+
+ALSO PRESERVE THE PRIOR GOAL OF REDUCING HOMEPAGE HEIGHT:
+Remove the separate weekly calendar from the homepage entirely. Keep only a clear "心情日历 ›" entry inside the check-in panel heading. The full calendar is a separate screen, already designed with both people's mood icons stacked vertically. Do not draw a calendar or weekday strip anywhere on these homepages. Do not draw the mood-picker sheet here; tapping one's check-in CTA opens the already-designed eight-mood picker.
+
+BOARD:
+A premium sharp landscape three-screen comparison showing THE SAME HOME PAGE in THREE CONSECUTIVE STATES, not three alternative designs.
+Prefer 2304×1728 or a landscape aspect near 4:3, high resolution and readable Chinese. Three equal-width front-facing mobile screens around 390×820 logical pixels, identical scale and alignment, thin rounded frames, no hardware or perspective. If original image aspect must be retained, prioritize readable UI over excessive board headings.
+Top board heading "FloFlo · 头像变心情"
+Top-right small "UI 概念稿 · 人物与数据均为示例"
+Screen captions above:
+"01  两人未签到"
+"02  Flora 已签到"
+"03  两人已签到"
+Bottom board explanation, outside screens, one simple sentence:
+"谁签到，谁的头像就变成心情；名字、位置与绣边始终保留。"
+
+VISUAL:
+Inherit the same light cool lavender, white, iris purple, dark plum Chinese sans serif style. Keep the cloth check-in panel's delicate stitched outline and tiny connecting embroidered bow/heart thread. Avoid giant decorative empty areas, dark backgrounds, dominant pink, or new illustrations.
+Two large circles inside the check-in panel around 105–112 logical px in diameter, clearly the main feature. Flobby always LEFT, Flora always RIGHT. Each circular frame has thin lavender stitch edging and softly tinted interior. They should retain the pleasant presence of the original large avatar area, with a small fine thread bow between them. The portraits occupy the circles generously with head and shoulders, not a tiny emoji/avatar floating inside. Mood characters after check-in should similarly occupy 70–85% of the circle, making them big and expressive. Do not overlay a mood as a small badge on the original portrait: the portrait must be REPLACED by the mood character.
+A person's name is always directly BELOW their circle and a clear short status/mood label below the name. Do not show duplicate tiny avatars above or below the circles.
+Same circle size and positions across all three screens. State change must be instantly obvious.
+Use purple happy mochi "开心" for Flobby after check-in, yellow energetic mochi "元气" for Flora after check-in, matching the existing custom mochi family from image 1, NOT Unicode emojis.
+
+SHARED HOME STRUCTURE, SAME IN ALL THREE:
+Header small "FloFlo" brand and outline bell, main title "今天，也一起", subtitle "Flobby 和 Flora 的小小日常".
+Check-in panel immediately below:
+- Compact title row "今天的心情" left, "心情日历 ›" right.
+- Large paired framed avatar/mood circles described above.
+- Each name/status under its own circle.
+- One bottom action/status row. No full week preview, no separate calendar card.
+The entire panel should be about 255–275 logical px, retaining avatars and reducing redundant labels/decorative whitespace. Do not print pixel sizes on the board.
+Then the existing common points pool card, small lilac jar, "共同积分池", "260 积分", "可用 200 · 已预留 60", chevron.
+Then two compact personal tiles: "我的积分 68 积分" and "今日已得 35 / 100".
+Then "今日待办" / "2 项", two simple illustrative rows "一起散步 30 分钟" with "待我确认", and "抱抱五分钟" with "待兑现". Tiny matching task/order icons. If viewport space is limited, first-viewport cropping is acceptable at the content boundary ABOVE the tab bar; do not make text microscopic or hide behind navigation. No invented extra features.
+Bottom consistent four-tab navigation 首页(active), 任务, 购物, 我的, identical neat outline icons and safe area.
+Avoid adding a giant empty white gap between cards; compact but comfortable spacing. The lower points and tasks should be substantially more visible than in the previous avatar+week combination. No separate fake status bars or WeChat capsules.
+
+STATE 1:
+Left large circle = actual portrait from image 2. Under: "Flobby" and "待签到".
+Right large circle = actual portrait from image 3. Under: "Flora" and "待签到".
+One full-width iris-purple button at panel bottom "选个心情，签到".
+Small hint "签到 +10 积分入共同池" beneath or integrated neatly.
+No mood stickers inside either circle yet.
+
+STATE 2:
+Left large circle = SAME actual Flobby portrait. Under "Flobby" / "待签到".
+Right circle = large YELLOW ENERGETIC MOCHI replacing Flora portrait entirely. Under "Flora" / "元气 · 已签到".
+Same purple own-check-in button "选个心情，签到" and same base reward hint.
+This is independent per-person transformation. Do not change the left avatar early.
+
+STATE 3:
+Left circle = large PURPLE HAPPY MOCHI replacing Flobby portrait entirely. Under "Flobby" / "开心 · 已签到".
+Right circle = same YELLOW ENERGETIC MOCHI. Under "Flora" / "元气 · 已签到".
+Replace active button with a quiet non-interactive pale lavender confirmation of comparable row height, check icon and text "今日已签到".
+Small hint "今日双人签到完成" underneath. Do not offer repeat check-in, change mood, edit history, or another primary button.
+Keep names visible so users can identify who each mood belongs to. No little portraits added back.
+
+Quality: polished high-fidelity UI, excellent Chinese text, consistent same-size paired circles, warm expressive portraits and adorable mochi, clear transformation across the three screens. No calendar on homepage; only labeled calendar link. No extra new features or design-option labels A/B/C. This board is one user-directed design with three states.

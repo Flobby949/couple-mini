@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FloFlo · 心情素材 v1</title>
+<!-- THESIS: 让同一个心情的亮暗版本与项目真实背景直接对照。
+OWN-WORLD: 沿用 FloFlo 冷白、紫灰与系统中文字体；表面色只承担验收背景。
+STORY: 浏览八种心情，切换尺寸，打开原始 PNG，检查表情与透明边缘。
+FIRST VIEWPORT: 标题和尺寸控件在上，两列版本按心情逐行对应。
+FORM: 明确要求的素材对照表；局部验收工具，不建立新的产品视觉系统。 -->
+<style>
+:root { color-scheme: light; --ink:#29223b; --muted:#71677e; --line:#e4dfed; --primary:#6752a3; --asset-size:112px; }
+* { box-sizing:border-box; }
+body { margin:0; background:#f6f7fc; color:var(--ink); font:15px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; }
+main { max-width:1300px; margin:auto; padding:40px 32px 56px; }
+h1 { margin:0 0 8px; font-size:30px; line-height:1.3; }
+.intro { max-width:75ch; margin:0; color:var(--muted); }
+.toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin:24px 0; }
+.sizes { display:flex; gap:4px; }
+button { min-height:44px; padding:7px 16px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); font:inherit; cursor:pointer; }
+button[aria-pressed="true"] { border-color:var(--primary); background:var(--primary); color:#fff; }
+button:hover { border-color:var(--primary); }
+button:focus-visible,a:focus-visible { outline:3px solid #9986c7; outline-offset:3px; }
+a { color:var(--primary); text-underline-offset:3px; }
+.meta-links { margin-left:auto; display:flex; gap:20px; }
+.mood { border-top:1px solid var(--line); padding:24px 0; display:grid; grid-template-columns:100px minmax(0,2fr) minmax(0,3fr); gap:24px; }
+.mood h2 { margin:0; font-size:20px; line-height:1.4; }
+.id { display:block; margin-top:4px; color:var(--muted); font-size:13px; }
+.variant { min-width:0; }
+.variant-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; font-size:14px; }
+.variant-head strong { font-weight:600; }
+.variant-head a { font-size:13px; }
+.surfaces { display:grid; gap:8px; grid-template-columns:repeat(var(--columns),minmax(0,1fr)); }
+.surface { margin:0; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:164px; padding:10px 4px; border-radius:8px; background:var(--background); color:var(--foreground); }
+.stage { display:grid; place-items:center; height:120px; width:100%; }
+img { display:block; width:var(--asset-size); height:var(--asset-size); object-fit:contain; }
+figcaption { margin-top:6px; font-size:12px; }
+.footer { padding-top:24px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; max-width:75ch; }
+@media (max-width:1050px) { .mood { grid-template-columns:minmax(0,2fr) minmax(0,3fr); gap:16px; } .mood-label { grid-column:1/-1; display:flex; align-items:baseline; gap:12px; } .id { margin:0; } }
+@media (max-width:740px) { main { padding:24px 16px 40px; } h1 { font-size:26px; } .mood { grid-template-columns:1fr; gap:18px; } .mood-label { grid-column:auto; } .meta-links { margin-left:0; width:100%; } .surface { min-height:154px; } .stage { height:112px; } img { max-width:100%; height:auto; aspect-ratio:1; } }
+@media (max-width:460px) { .surfaces { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>FloFlo 心情素材</h1>
+<p class="intro">8 种心情 · 亮暗各一版 · 透明 PNG。这里直接显示原图，用项目的实际背景检查表情、轮廓与小尺寸可读性。</p>
+<div class="toolbar">
+<span id="size-label">显示尺寸</span>
+<div class="sizes" role="group" aria-labelledby="size-label">
+<button type="button" data-size="112" aria-pressed="true">112 px</button>
+<button type="button" data-size="48" aria-pressed="false">48 px</button>
+<button type="button" data-size="24" aria-pressed="false">24 px</button>
+</div>
+<span id="size-status" role="status" class="id">当前 112 × 112 px</span>
+<div class="meta-links"><a href="README.md">使用说明</a><a href="manifest.json">文件清单</a></div>
+</div>
+</header>
+<div id="moods"></div>
+<noscript>请开启 JavaScript 查看素材对照，或直接打开 light/ 与 dark/ 目录中的 PNG。</noscript>
+<p class="footer">原始生成素材，仅由浏览器等比缩放显示；没有改色、裁图或合成背景。尚未制作小程序包体导出文件，也未接入业务。背景色来自 frontend/src/styles/app.scss。</p>
+</main>
+<script>
+const moods = [{"id":"happy","label":"开心"},{"id":"calm","label":"平静"},{"id":"loving","label":"心动"},{"id":"missing","label":"想你"},{"id":"tired","label":"疲惫"},{"id":"sad","label":"低落"},{"id":"irritated","label":"烦躁"},{"id":"energetic","label":"元气"}];
+const variants = [
+  {id:"light",label:"浅色版",foreground:"#71677e",backgrounds:["#ffffff","#f6f7fc"]},
+  {id:"dark",label:"深色版",foreground:"#bbb2ca",backgrounds:["#17151e","#24212d","#322b45"]}
+];
+document.querySelector("#moods").innerHTML = moods.map(mood => `
+<section class="mood" aria-labelledby="mood-${mood.id}">
+  <div class="mood-label"><h2 id="mood-${mood.id}">${mood.label}</h2><span class="id">${mood.id}</span></div>
+  ${variants.map(variant => `
+  <div class="variant">
+    <div class="variant-head"><strong>${variant.label}</strong><a href="${variant.id}/${mood.id}.png" target="_blank" rel="noopener">查看原图 ↗</a></div>
+    <div class="surfaces" style="--columns:${variant.backgrounds.length}">
+    ${variant.backgrounds.map(background => `
+      <figure class="surface" style="--background:${background};--foreground:${variant.foreground}">
+        <div class="stage"><img src="${variant.id}/${mood.id}.png" alt="${mood.label} · ${variant.label}" width="112" height="112"></div>
+        <figcaption>${background}</figcaption>
+      </figure>`).join("")}
+    </div>
+  </div>`).join("")}
+</section>`).join("");
+document.querySelectorAll("[data-size]").forEach(button => {
+  button.addEventListener("click", () => {
+    const size = button.dataset.size;
+    document.documentElement.style.setProperty("--asset-size", size + "px");
+    document.querySelectorAll("[data-size]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+    document.querySelector("#size-status").textContent = `当前 ${size} × ${size} px`;
+  });
+});
+</script>
+</body>
+</html>

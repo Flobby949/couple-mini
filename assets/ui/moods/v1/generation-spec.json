@@ -1,0 +1,79 @@
+{
+  "createdAt": "2026-10-22",
+  "mode": "built-in image_gen",
+  "reference": "/Users/flobby/.codex/generated_images/01a16432-1ecd-7211-a9ed-c1ed0b0dd25b/exec-ccec459f-73e3-4c00-b40f-b9d6bd701688.png",
+  "outputRoot": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1",
+  "anchor": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/happy.png",
+  "backgrounds": {
+    "light": [
+      "#ffffff",
+      "#f6f7fc"
+    ],
+    "dark": [
+      "#17151e",
+      "#24212d",
+      "#322b45"
+    ]
+  },
+  "moods": [
+    {
+      "id": "happy",
+      "label": "开心",
+      "color": "lavender purple",
+      "detail": "the purple 开心 mochi: softly rounded squishy body with two small raised arms, two tiny rounded feet at its broad base, happy curved eyes, an open smiling mouth with a tiny pink tongue, pink cheeks, and just three short warm-yellow excitement dashes above. Match the large happy preview in the middle of the reference"
+    },
+    {
+      "id": "calm",
+      "label": "平静",
+      "color": "soft mint green",
+      "detail": "the mint 平静 mochi in the selector top row, second cell: compact rounded gently pear-shaped body, a tiny two-leaf sprout on its head, peacefully closed curved eyes, a very small content smile and pale peach cheeks. No raised arms, tears, hearts or sparkles"
+    },
+    {
+      "id": "loving",
+      "label": "心动",
+      "color": "soft peach coral pink",
+      "detail": "the coral 心动 mochi in the selector top row, third cell: round soft plump body with small side nubs, joyful tiny dark eyes and little open smile, rosy cheeks, ONE small coral heart floating immediately at its upper right. No leaf, letter, stars or extra hearts"
+    },
+    {
+      "id": "missing",
+      "label": "想你",
+      "color": "soft periwinkle blue",
+      "detail": "the blue 想你 mochi in the selector top row, fourth cell: rounded teardrop-like blue body, sweet small dark eyes and gentle smile with pink cheeks, two tiny arms hugging ONE small pale envelope horizontally across its lower belly. The envelope has a simple coral V-shaped flap mark. This is affectionate yearning, not sadness. No tear, leaf, heart cloud or floating decorations"
+    },
+    {
+      "id": "tired",
+      "label": "疲惫",
+      "color": "warm beige peach",
+      "detail": "the beige 疲惫 mochi in the selector bottom row, first cell: a slumped soft pear-shaped dumpling with its little chin/belly resting between two short drooping arms, closed weary eyes, small downturned mouth, faint warm cheeks. Calm tiredness, not crying. No text or Z symbols, no tear, stars, letter or leaf"
+    },
+    {
+      "id": "sad",
+      "label": "低落",
+      "color": "soft cornflower blue",
+      "detail": "the blue 低落 mochi in the selector bottom row, second cell: slightly slumped round body with two tiny tucked side arms, worried raised inner brows, small dark eyes, downturned little mouth and ONE clearly visible bright blue teardrop on its right cheek (viewer right). Keep the tear readable at small size. No envelope or other props"
+    },
+    {
+      "id": "irritated",
+      "label": "烦躁",
+      "color": "warm apricot orange",
+      "detail": "the apricot 烦躁 mochi in the selector bottom row, third cell: small upright squishy pear-shaped body, inward-slanting scrunched eyebrows, tiny squinting eyes, pouty small downturned mouth, cheeks, two little tense nubs. ONE small three-lobed steam puff at its upper right, close to head. Annoyed but still adorable, not aggressive. No fire, weapons, lettering or extra props"
+    },
+    {
+      "id": "energetic",
+      "label": "元气",
+      "color": "soft buttery yellow",
+      "detail": "the yellow 元气 mochi in the selector bottom row, fourth cell and Flora's signed-in circle: lively softly rounded broad body with both short arms raised, happy dark eyes, open joyful mouth with tiny tongue, warm peach cheeks. Two or three small warm orange/gold energetic dashes or small sparkle accents immediately above the head; this is the sunny yellow sibling of happy. No heart, leaf, envelope, tear or steam"
+    }
+  ],
+  "lightPromptTemplate": "Use case: precise-object-edit / illustration-story.\nProduce ONE isolated production UI illustration by extracting and cleanly redrawing exactly the requested mochi character from the supplied FloFlo reference board. The first input image is the AUTHORITATIVE user-approved eight-character reference. If a second input is supplied, it is the already-produced happy icon and sets the shared line quality, canvas occupancy and finish, not the requested character's color or face.\nOutput ONE character only on a genuine transparent alpha background, square canvas, preferably 1024×1024. No board, grid, text, label, lettering, shadowed card, circle backdrop, frame, border, checkerboard pixels, floor, scenery or watermark. Do not include any UI from the reference.\nCharacter: {{DETAIL}}.\nMatch the reference EXACTLY in personality: soft hand-drawn organic mochi, simple clean colored outline, tiny expressive face and cheeks, limited very gentle two-tone pastel shading, front-facing flat 2D sticker illustration, no realistic skin, plastic shine, dramatic lighting, 3D depth, grain, wool/fabric, excessive gradients or added detail. The outline must be crisp and continuous for 24px–112px display; face and key prop must remain recognizable at small sizes.\nThis is the LIGHT-SURFACE variant, designed to sit on #ffffff, #f6f7fc and light ivory cloth. Body remains {{COLOR}}, colored outline moderately dark, facial features dark and high contrast, subtle lighter fill near the center as in the approved reference. Do not add an opaque white border or white disk.\nComposition: single centered character, same scale as the other family members, all visible pixels including floating accent comfortably within the central 84–88% of the square, roughly 7–8% clear transparent outer margin, body base near 86% canvas height. Keep the character fully in frame and leave clean truly transparent corners. Keep a simple balanced silhouette, not tiny artwork lost in a huge canvas. No unrelated additions.",
+  "darkPromptTemplate": "Use case: precise-object-edit / identity-preserve.\nCreate the DARK-SURFACE production variant of the supplied single {{LABEL}} mochi PNG. Input is the finished LIGHT version and is the exact edit target.\nPreserve the character's identical silhouette, facial expression, pose, limb proportions, tiny prop/accent shapes, element locations, canvas size, transparent margin and pixel placement as closely as possible. This is a color/edge adaptation ONLY, not a new character, redraw, pose, added night theme, or different composition.\nKeep the body in the SAME {{COLOR}} family. Gently reduce the chalky pastel brightness to a comfortable softly luminous mid-light pastel for dark surfaces. Preserve clearly dark facial features with strong contrast on the body. Adjust the colored perimeter and add only a very thin softly tinted light separation edge where needed so the silhouette stays crisp against #17151e, #24212d and #322b45. No thick white sticker border, no neon/glow, no black halo, no white halo, no cast shadow. The accent/prop remains readable without being glaring. Maintain the original flat 2D quality and limited soft shading; no realism or extra gradients.\nOutput exactly ONE same-size square PNG with genuine transparent alpha background. Background stays fully transparent, NOT filled with the dark example color and no checkerboard pixels. No text, label, badge, frame, disk, stars, moon, bedtime accessories, watermark or other additions. The only allowed design changes are small palette and outline adjustments for dark-mode contrast; KEEP THE MOOD AND GEOMETRY IDENTICAL.",
+  "node": "/Users/flobby/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+  "sharpModule": "/Users/flobby/vibe_coding/couple-mini/frontend/node_modules/sharp",
+  "rules": [
+    "One built-in image_gen call per individual asset/variant; no sprite sheets or programmatic recoloring.",
+    "All final outputs genuine transparent PNG, kept in light/<id>.png and dark/<id>.png. Preserve original generated PNG bytes.",
+    "Dark variant edits its own light variant, keeping geometry and expression. Original board is visual authority.",
+    "View reference and anchor before generation. Inspect every result. Do not modify app code or unrelated files.",
+    "Per-agent record stores prompt, source path, final path, actual dimensions/alpha stats. No shared file writes outside assigned outputs."
+  ]
+}

@@ -1,0 +1,67 @@
+FloFlo compact home check-in options — 2026-10-22
+Generation: built-in image_gen.
+Reference: images/v3/checkin-mood-dual-calendar.png
+Output: images/v3/checkin-home-compact-options.png
+Status: three static alternatives for review, not approved implementation. All displayed records are synthetic.
+A: combined weekly calendar and check-in. B: today's two-person status rows with full calendar entry. C: collapse after own successful check-in; partner status remains visible. The C illustration shows both people checked in, while A/B show Flobby pending.
+
+INITIAL PROMPT
+Use case: ui-mockup / layout redesign.
+Rework the supplied FloFlo concept board into a NEW THREE-OPTION COMPARISON BOARD of compact HOME PAGE check-in designs. The user likes the mochi mood stickers and requires both people shown vertically in calendars, but says the large home check-in panel + separate weekly calendar take too much screen height. Show three materially DIFFERENT solutions, all in the SAME existing visual language.
+
+Output a crisp landscape presentation board, ideally 2304x1536 or higher available resolution, with THREE equal-size front-facing mobile homepage mockups around 390×780 logical px placed side by side. All screens same scale, top aligned, same background and same consistent content outside the check-in component. NO device hardware, no perspective. Board heading "FloFlo · 首页签到精简方案", small top-right "UI 概念稿 · 所有内容均为示例". Above each screen clear labels:
+"A  周历即签到" and small purple text "推荐"
+"B  双人状态条"
+"C  签到后收起"
+Below each screen concise OUTSIDE-app explanatory captions:
+A: "合并签到与周历，保留最近 7 天"
+B: "首页只看今天，完整日历点开看"
+C: "待签到时展开，完成后收起操作区"
+Do not render exact pixel-height or percent-reduction claims.
+
+INHERIT AND PRESERVE VISUAL IDENTITY:
+Cool white-lavender backgrounds, iris purple primary #7661BF, dark plum Chinese sans-serif text, white surfaces, restrained apricot accents, very delicate single stitched border only around check-in where appropriate. Reference image's adorable round pastel mochi sticker characters are the SAME family everywhere: purple 开心, mint 平静, coral 心动, periwinkle 想你 holding tiny letter, beige 疲惫, blue 低落 with tiny tear, apricot 烦躁, yellow 元气 with little arms/sparkles. Exact same shapes and emotional expressions as supplied image. Tiny avatar illustrations for Flobby and Flora may be kept but never large avatars or decorative empty circles dominating space.
+No large fabric hero, no giant bow, no oversized mood illustration in homepage. The full-size 8-icon mood selector remains in the existing bottom sheet after user taps a check-in action; DO NOT show selector grid on any of these homepages.
+Full monthly calendar remains a second screen linked by clearly visible "心情日历 ›"; it always shows both people's moods stacked vertically. DO NOT recreate monthly calendar in this board; board compares HOME pages only.
+
+SHARED HOME UI IN ALL THREE SCREENS:
+At top small "FloFlo" brand and outline bell, main heading "今天，也一起", subtitle "Flobby 和 Flora 的小小日常". Match the reference header with good legibility, not an overly tall greeting.
+Immediately below is the option-specific check-in component described below.
+Below that SAME sequence of other existing homepage content, immediately after each component without artificially lining up pool cards across options:
+1. Compact white common-pool card with small lilac jar illustration left, label "共同积分池", number "260 积分", secondary "可用 200 · 已预留 60", chevron right. Keep jar around 42px, not giant.
+2. Two small side-by-side score cards "我的积分" / "68 积分" and "今日已得" / "35 / 100" with small ring icon, not a dashboard chart.
+3. "今日待办" with small "2 项". White list with two simple rows, each small drawn icon, title and right action/status: "一起散步 30 分钟" + "待我确认"; "抱抱五分钟" + "待兑现". These are illustrative existing task/order types; avoid product photos, giant task cards, extra invented features.
+4. Small milestone line with gift outline "下一站 30 天 · +100 入池", thin purple progress, "12 / 30".
+Keep four tabs fixed at bottom: 首页 active purple, 任务, 购物, 我的. Use identical neat outline icons and safe area. No tab badges.
+Where a compact option leaves blank space before bottom navigation, let the page breathe naturally. Do NOT stretch every other component or add extra content to fill it. Do not add marketing copy, intimacy scores, AI summaries, streaks, toasts, floating buttons, or unrelated widgets.
+
+OPTION A — WEEK STRIP IS THE CHECK-IN SURFACE; RECOMMENDED:
+This is ONE medium-compact card around 210–230 logical px tall, replacing BOTH the original huge check-in hero and separate calendar. No duplicate today-avatar area.
+Header row "心情签到" left, small "心情日历 ›" right.
+Second small legend "上排 Flobby · 下排 Flora".
+A clean 7-column WEEK STRIP, headings 一 二 三 四 五 六 日, small dates 19 20 21 22 23 24 25. Under each date two tiny mochi icons vertically, ALWAYS Flobby upper and Flora lower. Columns evenly spaced, icons around 22–25px, enough space to distinguish the two.
+Data: Oct19 upper mint calm lower coral heart; Oct20 upper coral heart lower purple happy; Oct21 upper blue sad lower mint calm; Oct22 TODAY upper outlined empty/dashed circle (Flobby not signed), lower yellow energetic mochi (Flora signed). Today whole column subtly tinted lavender. Future 23–25 have only muted date numbers with blank space underneath; no future status circles.
+Below week strip one clear primary button "选个心情，签到" approximately 40–44px tall. Tiny reward text may be integrated beside the title or below button only if there is space; don't make card tall.
+The card should feel compact, affectionate, simple, and legible. The week itself carries both today's status and history; do NOT add separate large avatar circles. Both people simultaneous, no tabs.
+
+OPTION B — TODAY ONLY, TWO COMPACT STATUS ROWS:
+This is ONE compact card around 135–150 logical px tall, visibly shorter than A. It contains no week strip and no large full-width button.
+Header "今日心情" left, "心情日历 ›" right.
+First row: tiny Flobby avatar, name "Flobby", small outlined mood placeholder and label "待签到", small purple button at right "选心情" with comfortable tap size.
+Second row: tiny Flora avatar, name "Flora", yellow energetic mochi + label "元气", muted right-hand checked label "已签到".
+No repeated avatar / mood circles, no decorative bow. Names, mood, and action align clearly. This option routes to the full calendar through the persistent labeled link. This screenshot represents before Flobby signs in, same data as option A.
+
+OPTION C — PROGRESSIVE COLLAPSE AFTER SELF CHECK-IN:
+Show the AFTER-check-in homepage state and explicitly label it "已签到状态" in a small OUTSIDE-app caption near the option title. This is not the before-state shown in A/B.
+One very compact successful check-in summary around 95–110 logical px tall.
+Header "今日心情" left, small check + "两人已签到" in muted purple in middle, persistent "心情日历 ›" at right.
+Second line contains two clearly labeled compact summaries, left "Flobby" purple happy mochi "开心", right "Flora" yellow energetic mochi "元气". Icons about 28–30px, no button. Both readable, never icon-only.
+A tiny text disclosure "展开记录⌄" can be included in the header only if needed, but do NOT imply editing submitted mood or duplicate check-in. Prefer only persistent calendar entry.
+Outside the phone, in C explanatory caption, include the behavior succinctly: "自己签到前：显示双人状态与签到按钮" / "自己签到后：收起按钮，保留双方心情". Clarify this is based on own check-in, not requiring waiting for both people. The shown example happens to have both signed. The implementation implication: after success feedback completes, collapse gently, no abrupt shift during tap.
+If Flobby is checked and Flora is not, the same compact strip would retain Flora 待签到; no need to draw extra states on this board.
+
+HIGH PRIORITIES:
+A/B/C must be structurally different and their check-in components visibly differ in height. All THREE are actual full HOME screenshots with points and daily tasks brought into the first viewport. Preserve daily status visibility and explicit calendar access in all options. Any calendar strip, only option A, must show the two people VERTICALLY as user requested, never side by side in date cells. Do not squeeze type or click targets to save space; remove duplicated information and large decorations. Use correct Chinese and a polished, balanced, warm yet functional visual result.
+
+TARGETED CORRECTION
+Edit only one tiny detail in this FloFlo three-option comparison board. In option A, the week preview's FUTURE dates 23, 24, 25 currently show six empty dashed placeholder circles, two vertically under each date. Remove ONLY those six circles and leave those future date cells blank below the numbers. Keep dates 23,24,25, weekdays, columns, and pale backgrounds. Keep the dashed placeholder under TODAY 22 and its yellow Flora mochi unchanged. Preserve absolutely every other pixel, text, component, face, color, caption, and all three complete phone mockups. The result must be the same full three-option board, with only the six future-day circles removed.

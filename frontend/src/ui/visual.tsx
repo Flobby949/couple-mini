@@ -46,5 +46,5 @@ export function BudgetCard({children}:{children:React.ReactNode}){const { points
 export function ConnectedPair({me,partner}:{me:User;partner?:User}) {
  const {scheme,appearance}=useTheme()
  // This illustration is only used by account subpackage pages.
- return <View className='connected-pair'><View><Avatar user={me} partnerId={partner?.id||'~'} size={106} stitched/><Text>{me.nickname}</Text></View><Image className='connected-thread' src={`/packages/account/assets/ui-icons/checkin-connection-${appearance.accent}-${scheme}.png`} mode='aspectFit' ariaHidden/><View>{partner?<Avatar user={partner} partnerId={me.id} size={106} stitched/>:<View className='unknown-portrait'><Icon name='user' tone='muted' size={48}/></View>}<Text>{partner?.nickname||'等待另一半'}</Text></View></View>
+ return <View className='connected-pair'><View><Avatar user={me} partnerId={partner?.id||'~'} size={106} stitched/><Text>{me.nickname}</Text></View><Image className='connected-thread' src={`/assets/ui-icons/checkin-connection-${appearance.accent}-${scheme}.png`} mode='aspectFit' ariaHidden/><View>{partner?<Avatar user={partner} partnerId={me.id} size={106} stitched/>:<View className='unknown-portrait'><Icon name='user' tone='muted' size={48}/></View>}<Text>{partner?.nickname||'等待另一半'}</Text></View></View>
 }

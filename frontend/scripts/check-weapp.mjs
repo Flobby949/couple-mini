@@ -29,8 +29,8 @@ const icons=JSON.parse(await readFile(new URL('../src/ui/icon-paths.json',import
 for(const name of Object.keys(icons))for(const scheme of ['light','dark'])for(const tone of ['ink','muted','iris','teal','apricot'])await stat(path.join(root,`assets/ui-icons/${name}-${tone}-${scheme}.png`))
 for(const scheme of ['light','dark'])for(const accent of ['iris','teal','apricot']){
  const file=`assets/ui-icons/checkin-connection-${accent}-${scheme}.png`
- await stat(path.join(root,'packages/account',file))
- await assert.rejects(stat(path.join(root,file)),{code:'ENOENT'},`Account artwork leaked into main: ${file}`)
+ await stat(path.join(root,file))
+ await assert.rejects(stat(path.join(root,'packages/account',file)),{code:'ENOENT'},`Shared heart should not be duplicated in account package: ${file}`)
 }
 let main=0,total=0,inlineImages=0
 const packages=new Map(subpackages.map(p=>[p.root,0]))

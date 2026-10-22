@@ -16,7 +16,7 @@ it('uses saved avatars in the shared portrait, paired users and person rows', ()
   const portraits = tree!.root.findAllByType('image').filter(node => node.props.mode === 'aspectFill')
   expect(portraits).toHaveLength(3)
   for (const node of portraits) expect(node.props.src).toBe('wxfile://downloaded-avatar')
-  expect(tree!.root.findByProps({ className: 'connected-thread' }).props.src).toBe('/packages/account/assets/ui-icons/checkin-connection-iris-light.png')
+  expect(tree!.root.findByProps({ className: 'connected-thread' }).props.src).toBe('/assets/ui-icons/checkin-connection-iris-light.png')
 })
 it('keeps the default illustration when no avatar is set', () => {
   act(() => { tree = create(<Avatar user={{ id: 'alice', nickname: '微信用户' }} partnerId='bob'/>) })

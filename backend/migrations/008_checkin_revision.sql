@@ -1,0 +1,2 @@
+ALTER TABLE couples
+  ADD COLUMN checkin_revision BIGINT UNSIGNED NOT NULL DEFAULT 0;

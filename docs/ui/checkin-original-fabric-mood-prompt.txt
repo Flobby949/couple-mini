@@ -1,0 +1,72 @@
+FloFlo original-fabric mood check-in — 2026-10-22
+Generation: built-in image_gen.
+Output: images/v3/checkin-original-fabric-mood.png
+References: actual frontend/tmp/ui-review/home.png; frontend/src/assets/checkin-fabric-panel.png; avatar-stitch-frame.png; ui-icons/checkin-connection-iris-light.png; prior images/v3/checkin-avatar-to-mood.png concept.
+User direction: refine the current check-in region, preserving its existing background and motifs. Retain large avatars before check-in and replace each independently with the selected mood after check-in.
+Design: original woven cloth silhouette, botanical corners, peach running stitches, purple/blue circle frames, central embroidered heart; single-line name/status captions, existing CTA footprint, compact calendar entry in reward footer. Full calendar remains separate and shows two people's moods vertically. This revision follows the existing screenshot's left/right portrait artwork; sample names are illustrative, not an account or gender mapping.
+Status: static design concept, not production implementation. All displayed records and numeric values are examples.
+
+Use case: ui-mockup / precise-object-edit / identity-preserve.
+Design the new mood-check-in behavior INSIDE THE ACTUAL EXISTING FloFlo check-in artwork. The user explicitly wants the CURRENT BACKGROUND and decorative patterns preserved, and approved avatar-before / mood-after behavior. This is a local refinement, NOT a new visual identity or a generic rounded card.
+
+INPUT IMAGES AND PRIORITY:
+1. Actual current application screenshot (home.png): the authoritative layout, scale, cloth panel silhouette, purple-left / blue-right large embroidered circles, thin heart-shaped stitched connection, single-line name/status captions, bottom CTA, and relation to page header / points card.
+2. Actual checkin-fabric-panel.png: AUTHORITATIVE background artwork. Reuse its recognizable light ivory woven cloth, irregular soft waisted/wavy outline including the shallow concave top edge, peach running-stitch seam, purple-gray outer fabric edge, leafy botanical spray at BOTTOM LEFT (olive leaves + small lavender and apricot flowers), and small matching leafy floral spray at TOP RIGHT. Preserve the exact character and positions of these decorations. Do not replace with a plain rounded rectangle, thick card outline, or newly invented flowers.
+3. Actual avatar-stitch-frame.png: AUTHORITATIVE large layered satin/lavender embroidered circular ring with visible thick stitch dashes. Preserve ring material and weight. Left is lavender, right is blue as seen in screenshot 1.
+4. Actual checkin-connection-iris-light.png: AUTHORITATIVE connecting thread. It is a SMALL INTERLACED HEART, with dashed curved tails descending outward behind the two portraits. Preserve this HEART, NOT a bow, NOT an infinity sign, NOT a plain font heart. Thin purple embroidery on the same original paths and visual scale.
+5. Latest approved avatar-to-mood concept board: reference ONLY for the agreed changing avatar content, Flobby and Flora sample names, portraits, and original purple happy / yellow energetic mochi characters. Its rectangular fabric card, bow, giant inside heading, and repeated status rows are NOT authoritative and must NOT be copied.
+
+REQUIRED NEW BEHAVIOR:
+Each person keeps the SAME large 105–112px circular embroidered frame and position. Before check-in, display their portrait inside. After that person checks in, completely replace the portrait inside with their selected large mood mochi. The other person's circle changes only when THEY check in. Names stay visible. The decorative circle frame, botanicals, cloth background, heart connection, and overall spacing remain stable.
+Left = Flobby, right = Flora for these synthetic examples. Use the previously approved portrait illustrations from image 5 as sample faces, with left lavender frame and right BLUE frame. Portraits should fill the inside frame without spilling beyond it.
+After: Flobby uses purple HAPPY mochi "开心"; Flora uses yellow ENERGETIC mochi "元气", same adorable flat round character silhouettes, tiny cheek blush and expressive little arms as image 5. Mochi fill about 80% of inner circle. No tiny avatar inset or small mood badge on top of portrait; it is a full content swap.
+Keep small check status marker at lower right edge of signed-in frame, as in actual screenshot, but tasteful and non-dominant. Unchecked marker is an empty pale ring.
+Caption is ONE compact line under each circle (as current code), e.g. "Flobby · 待签到", "Flora · 元气". Don't add separate large heading "今天的心情" inside the cloth; it consumes height and isn't in current region.
+
+FOCUS / COMPOSITION:
+Produce a clean, high-resolution landscape DESIGN DETAIL BOARD, not three whole phone screens again. 3 equal columns side by side, each shows a generously scaled crop of the homepage from the existing heading through the check-in panel and the top compact points pool card. We want to inspect the retained fabric/flowers/stitched heart in detail. Board around 2304×1280 or similar wide ratio with ample legibility. No phone hardware, no invented status bars.
+Top board title "FloFlo · 保留原来的布艺签到台"
+Small top-right "UI 概念稿 · 人物与数据均为示例".
+Clear labels OUTSIDE the UI above each crop:
+"01  签到前"
+"02  对方已签到"
+"03  两人已签到".
+The three columns show ONE solution in three states, identical frame sizes and identical background decoration locations.
+Each crop uses the actual pale cool lavender page background and current page heading "今天，也一起", subtitle "平凡的日子，因为有你而特别。", small outline notification bell. No oversized FloFlo brand repeated inside all crops; brand already on board.
+The check-in panel directly follows header with nearly the CURRENT dimensions and padding. No separate row of titles inserted above avatars. Make the cloth contour and florals clearly visible but subtle, never bright saturated or occupying extra space. Respect the current breathing room: avatar tops sit near the cloth upper edge, while flowers frame the opposite corners.
+
+STATE 1:
+Both large frames contain original portrait illustrations. Captions "Flobby · 待签到" and "Flora · 待签到".
+At panel bottom, existing full-width iris purple primary action, same footprint as screenshot: "选心情签到 · +10 入池".
+Immediately BELOW panel, one compact inline footer row occupying about 28–32 logical px total: left small muted hint "两人都签到，再入池 10 积分"; right clearly labeled text link "心情日历 ›" with a tiny simple calendar outline if space. This entry is not a separate card or full-width button. The two texts fit comfortably in one line across ~350px; use hint around11px and link12px at logical screen scale. No microtype. The full clickable target may extend in padding without changing visible text.
+Do not add a homepage week strip.
+
+STATE 2:
+Left remains Flobby portrait and "Flobby · 待签到".
+Right is the yellow energetic mochi inside the unchanged blue stitched frame, small checked marker. Caption "Flora · 元气".
+Same own-sign-in purple CTA and same small footer calendar link as state1.
+The central HEART and background remain exactly the same as state1.
+
+STATE 3:
+Left purple happy mochi in original lavender ring, right yellow energetic mochi in original BLUE ring. Small checked marker on each. Captions "Flobby · 开心" and "Flora · 元气".
+Same-footprint bottom row becomes a quiet soft-lavender noninteractive success surface "今日已签到" with small check, not an active repeat button.
+Footer left reads "双人签到完成 · 基础共 30 积分入池", right same "心情日历 ›". Allow small text wrap only if essential, but preserve compact height and never overlap.
+Circle sizes, positions, frames, botanicals and connecting heart remain identical across the three.
+
+BELOW EACH CROP'S CHECK-IN REGION:
+Show the same small top portion or whole common-pool card from current application: lilac-tinted flat surface with white thin border, small jar illustration, label "共同积分池", number "260 积分", subtext "可用 200 · 已预留 60". These are synthetic UI placeholders consistent across snapshots; no fabricated cumulative accounting narrative. Other homepage sections need not be drawn because this board focuses only on the refined check-in area.
+No task lists, navigation tabs, mood selector, month calendar, or new features on this detail board.
+
+OPTIONAL SINGLE LINE UNDER THE BOARD, outside UI:
+"保留布纹、花草、绣边与爱心连线；只让头像原位变成心情。"
+No arrows pointing over faces, no floating annotations inside product UI, no spec measurements.
+
+ABSOLUTE PRESERVATION PRIORITIES:
+- Irregular original cloth silhouette, not generic roundrect.
+- Same original bottom-left and top-right botanicals and peach stitching, not removed.
+- Thick existing embroidered circle rings in PURPLE LEFT and BLUE RIGHT.
+- HEART-shaped central embroidery with dashed tails, never a bow.
+- Large portrait/mood area retained, not miniaturized.
+- Compact existing footprint; calendar is only a footer entry, NO weekly calendar on homepage.
+- Correct legible Simplified Chinese, delightful original mochi family, actual existing app visual identity.
+Return a polished detailed concept board that clearly looks like the current app's own artwork with a new behavior, not an unrelated redesign.

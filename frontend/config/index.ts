@@ -28,7 +28,7 @@ export default defineConfig<'vite'>({
       { from: path.resolve(__dirname, '../src/assets/tab-icons'), to: 'assets/tab-icons' },
       ...readdirSync(path.resolve(__dirname, '../src/assets/ui-icons')).map(file => ({
         from: path.resolve(__dirname, '../src/assets/ui-icons', file),
-        to: `${file.startsWith('checkin-connection-') ? 'packages/account/' : ''}assets/ui-icons/${file}`,
+        to: `assets/ui-icons/${file}`,
       })),
     ],
     options: {},

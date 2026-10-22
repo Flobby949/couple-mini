@@ -1,0 +1,48 @@
+FloFlo mood check-in concept — 2026-10-22
+Generation: built-in image_gen (imagegen skill).
+Status: first static UI concept for review; not an implemented screenshot.
+Output: images/v3/checkin-mood-concept.png
+Scope: home entry, preset mood selection sheet, monthly calendar and selected-day details. All people, points, and records shown are illustrative.
+
+Use case: ui-mockup.
+Create one extremely polished high-fidelity Chinese mobile UI design presentation board for the existing couples WeChat mini-app "FloFlo". This is a first design concept for a mood check-in redesign, showing one coherent interaction flow across THREE phone-width screens arranged horizontally, not three unrelated styles. Large sharp landscape image, ideally 2304x1536 or similar, enough resolution for highly legible Simplified Chinese. Flat front-facing app screenshots with elegant very thin rounded frames, no perspective, no fake device hardware. Board background very pale cool lavender. Small board heading top left "FloFlo · 心情签到", small top right "UI 概念稿 · 人物与记录均为示例". Below three screens captioned "01  今日签到", "02  选择心情", "03  心情日历". Screen proportions around 390:800. The UI itself uses natural PingFang-style Chinese sans serif typography, precise spacing, readable dark plum text, calm white surfaces, low-saturation iris purple as primary (#7661BF), cool white lavender background (#F6F5FB), tiny apricot companion accents. High-quality 2026 mobile app design, airy yet useful, restrained adorable details, sophisticated custom illustrations.
+
+Brand inheritance: Existing homepage is "今天，也一起", with paired stitched avatar circles linked by a fine purple thread bow, a textile-like check-in panel, and the bottom four tabs 首页 / 任务 / 购物 / 我的. Preserve that paired textile memory only in the primary check-in area; other panels are crisp flat surfaces. NO large pink backgrounds, no heavy gradients, no glossy 3D, no cluttered heart patterns, no stock emojis. Tiny illustrated people avatars can be used for Flobby and Flora, they are fictional examples.
+
+Signature icon family: Eight ORIGINAL adorable tiny round soft mochi characters, each distinct but all one consistent flat illustrated sticker family, soft organic silhouettes, charcoal/plum simple expressive faces, two small cheeks, subtle outline and paper-cut white edge. They must feel like carefully designed collectible mood stickers rather than operating-system emoji. Eight names EXACTLY: 开心, 平静, 心动, 想你, 疲惫, 低落, 烦躁, 元气.
+- 开心: lilac smiling mochi, eyes happy crescents, little raised arms.
+- 平静: mint mochi, relaxed closed eyes, tiny leaf on head.
+- 心动: peach-coral mochi, shy smile, tiny heart floating immediately next to cheek.
+- 想你: periwinkle mochi hugging a tiny letter.
+- 疲惫: warm beige mochi slumped with sleepy eyes.
+- 低落: pale blue mochi, downturned mouth and a single tiny tear.
+- 烦躁: apricot mochi, scrunched brows, small steam puff.
+- 元气: buttery yellow mochi, excited arms and tiny sparkle.
+Use these SAME exact characters consistently in selector, homepage, weekly strip, month grid, and day detail. Illustrations are the emotional focus, UI is functional.
+
+SCREEN 1, homepage before user's check-in:
+Top compact brand "FloFlo", main heading "今天，也一起", subtitle "Flobby 和 Flora 的小小日常", small outlined bell at right.
+Main fabric panel with rounded stitched border, heading "今天的心情" and small date "10月22日 · 周四". Two equal columns: left small avatar/name "Flobby", large dashed circular sticker placeholder with a delicate smile outline, status "等你贴上心情"; right small avatar/name "Flora", large yellow 元气 mochi sticker, status "元气 · 已签到". Fine stitched purple bow linking the two circles, understated. At bottom a full-width iris-purple pill-ish button "选个心情，签到" with small separate reward hint below "签到 +10 积分入共同池".
+Below a compact mood calendar preview heading "心情日历", action text "查看整月 ›". Seven-day strip labeled 一 二 三 四 五 六 日 with date numbers 19 20 21 22 23 24 25. Place historical little mood stickers only below 19,20,21. Today 22 has outlined empty lavender circle, 23–25 neutral blank. Small label "把每一天的心情，都好好收起来".
+Then compact existing common pool card, small lilac jar illustration left, label "共同积分池", number "260 积分", secondary "可用 200 · 已预留 60". Existing personal score and quota appear as one subdued slim line or two small modules "我的积分 68" and "今日已得 35 / 100". Bottom 4-tab navigation 首页(active purple), 任务, 购物, 我的, neat consistent outline icons. No new primary navigation items.
+
+SCREEN 2, interactive mood picker bottom sheet:
+Show the SAME homepage dimmed behind a large beautifully spaced WHITE bottom sheet with rounded top corners, sheet occupying lower ~80% of screen, top grip, close X.
+Sheet heading "今天，是什么心情？"; subtitle "挑一个小表情，记录此刻的你".
+Centered preview: big lilac happy mochi (~72px) sitting within a very subtle lavender circular field, beneath text "开心" and supportive subline "普通的一天，也有小小的快乐".
+Then precisely arranged 4 columns × 2 rows of selectable mood cells. Each cell has an original cute mochi icon centered above its exact Chinese label. Row one 开心 平静 心动 想你. Row two 疲惫 低落 烦躁 元气. Comfortable spacing, icons around 44px. Selected 开心 cell has lavender tinted background, clear purple outline and small corner tick; others stay white with no heavy card chrome.
+At bottom a full-width iris primary button "用这个心情签到" and subdued hint "签到后，心情会留在日历里".
+Do NOT add diary input, photo upload, sharing, AI analysis, progress gamification, or any unrelated features.
+
+SCREEN 3, mood calendar after check-in:
+Secondary-page top back chevron and title "心情日历", small subtitle "每一枚小表情，都是我们的一天".
+Two-person segmented selection "Flobby" (selected iris lavender) / "Flora" (unselected), tiny avatar dots. This monthly grid shows ONLY selected person's mood, avoiding two tiny icons per day. Selected date detail below shows BOTH people's mood.
+Month bar left chevron, center "2026年10月", right chevron, small "今天" text button.
+Large clean seven-column monthly calendar with headers 一 二 三 四 五 六 日. Correct October 2026 placement is essential: first row [blank blank blank 1 2 3 4]; second [5 6 7 8 9 10 11]; third [12 13 14 15 16 17 18]; fourth [19 20 21 22 23 24 25]; fifth [26 27 28 29 30 31 blank]. Date numbers small but clearly legible at top of each cell, each past day may have one 23–28px matching mochi sticker under its number. Missing days 4,11,18 are empty or tiny hollow circles, never colored as a mood. Future dates 23–31 are muted numbers with NO sticker. Today 22 selected with pale lavender rounded vertical background and thin purple outline, contains same lilac 开心 mochi. Show a varied balanced assortment of same eight stickers on other days before 22. Grid spacing precise, no calendar row collisions.
+A small legend "有心情贴纸 = 已签到" and "空白 = 未签到" (no mood-colour-only encoding).
+Below hairline separator, heading "10月22日 · 星期四", small text "两个人都留下了心情".
+Two horizontal detail rows: avatar + "Flobby" left, lilac happy mochi + "开心" right; avatar + "Flora" left, yellow energetic mochi + "元气" right.
+Subtle inline lavender success line with check icon "今日双人签到已完成".
+This is a secondary screen, use a simple bottom safe space without the primary tab bar.
+
+Overall: Render premium consistent functional interface, charming distinctive mochi stickers, accurate Chinese text and month layout, realistic tap targets, balanced spacing. This is a proposed static design, not a real app screenshot. Avoid extra marketing headers, charts, badges, streak claims, invented rewards, or fake UX notes inside app. The board's focus is how a cute selected mood becomes a day on the calendar.

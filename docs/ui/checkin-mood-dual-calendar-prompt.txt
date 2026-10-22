@@ -1,0 +1,34 @@
+FloFlo mood check-in concept revision — 2026-10-22
+Generation: built-in image_gen edit.
+Input: images/v3/checkin-mood-concept.png
+Output: images/v3/checkin-mood-dual-calendar.png
+User correction: calendar must show both people's moods simultaneously, vertically stacked.
+Status: static UI concept; all people and records are illustrative.
+
+Use case: precise-object-edit / ui-mockup.
+Edit the provided FloFlo three-screen mood check-in concept board. User correction: BOTH people's mood stickers must be visible SIMULTANEOUSLY in every day of the calendar, stacked VERTICALLY (one above the other). Preserve the established lovely iris-purple visual style and the original mochi sticker character designs.
+
+Preserve: the overall three-screen board, its headings, the entire center mood-picker screen, all original eight mochi icons and their labels, main homepage check-in fabric panel, bottom navigation, typography, color palette, and overall visual polish. Make only the following calendar-related changes, with local spacing adjustments as needed:
+
+1. RIGHT SCREEN — monthly calendar:
+Remove the person-switching segmented control completely. Replace it with a compact NON-INTERACTIVE legend with tiny avatars and explicit text "上排 Flobby" and "下排 Flora". No selected-user state or tabs. Each day cell always has three vertically aligned positions: small date number at top; Flobby mood icon immediately below; Flora mood icon below Flobby. The two people's icons must be visibly separated vertically, never side-by-side, never merged. Use consistent upper/lower order for every date.
+Increase calendar row height enough to keep BOTH icons around 22–26px at 390px screen width; compress top blank spacing and details beneath the calendar as needed. The monthly calendar is the main content. Preserve the correct October 2026 seven-column layout: weekdays 一 二 三 四 五 六 日; row1 [blank blank blank 1 2 3 4]; row2 [5 6 7 8 9 10 11]; row3 [12 13 14 15 16 17 18]; row4 [19 20 21 22 23 24 25]; row5 [26 27 28 29 30 31 blank]. No other dates or extra cells.
+For most past days 1–21, show two original mochi stickers, with varied contrasting moods to make it obvious the two rows belong to different people. Use the SAME eight mochi character designs as the center picker.
+Specific cells:
+- Oct 4: upper small hollow circle (Flobby not checked in), lower beige sleepy mochi (Flora checked in).
+- Oct 11: upper purple happy mochi, lower hollow circle.
+- Oct 18: two subtle hollow circles vertically (neither checked in).
+- Oct 19: upper mint calm mochi, lower coral heart mochi.
+- Oct 20: upper coral heart mochi, lower purple happy mochi.
+- Oct 21: upper blue sad mochi, lower mint calm mochi.
+- Oct 22 today selected: small number 22 at top, PURPLE HAPPY mochi above, YELLOW ENERGETIC mochi below, all within one tall lavender selection rectangle with thin iris border. This is the focal example proving that both moods are shown simultaneously.
+- Future dates Oct 23–31: muted date numbers ONLY, with completely blank space underneath; no hollow circles for future dates.
+Under the calendar add small legend "○ 未签到" and "上下分别记录两个人的心情" if space permits.
+Keep a compact selected-date detail section titled "10月22日 · 星期四", showing Flobby 开心 and Flora 元气 in TWO separate slim horizontal rows, with small corresponding avatars/mood stickers. Keep the subtle final success line "今日双人签到已完成" if room permits. Do not sacrifice calendar icon size to preserve oversized detail cards; make detail rows compact.
+
+2. LEFT SCREEN — homepage weekly preview:
+Update this preview consistently to show TWO mood stickers per date VERTICALLY. Date on top, Flobby upper sticker, Flora lower sticker. Replace the subtitle beneath "心情日历" with the explicit legend "上排 Flobby · 下排 Flora". Keep the week 一 二 三 四 五 六 日 and dates 19 20 21 22 23 24 25.
+Past records should match the right calendar: Oct19 mint above coral; Oct20 coral above purple; Oct21 blue sad above mint. Today Oct22: upper hollow dashed circle because this homepage represents BEFORE Flobby checks in; lower yellow energetic mochi because Flora has checked in. Future23–25 have date numbers only and blank space below. Add a little height to the preview if needed; keep home pool card and personal score line compact enough that bottom nav stays visible.
+The first and third screen deliberately represent before and after Flobby's check-in, respectively.
+
+Maintain highly legible Simplified Chinese, exact names Flobby and Flora, tidy aligned seven-column grid, high-fidelity functional mobile UI, generous clarity, cute custom illustrated pastel mochi. Return the full updated three-screen board at high resolution, not a cropped fragment.

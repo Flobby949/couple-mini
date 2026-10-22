@@ -11,5 +11,5 @@ export function useAction() {
     catch (e) { setError(e instanceof Error ? e : new Error('操作暂未完成，请重试')); await refresh() }
     finally { setBusy(false) }
   }
-  return { busy, error, run }
+  return { busy, error, run, clearError: () => setError(null) }
 }

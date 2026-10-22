@@ -1,0 +1,34 @@
+[
+  {
+    "id": "calm",
+    "theme": "dark",
+    "file": "dark/calm.png",
+    "source": "/Users/flobby/.codex/generated_images/01a1644d-ef9a-7be3-84d7-657ee5677b12/exec-3e4c807c-5d88-4363-8e38-d31560ea566f.png",
+    "editTarget": "light/calm.png",
+    "mode": "built-in image_gen",
+    "transparentBackground": true,
+    "prompt": "Use case: precise-object-edit / identity-preserve.\nCreate the DARK-SURFACE production variant of the supplied single 平静 mochi PNG. Input is the finished LIGHT version and is the exact edit target.\nPreserve the character's identical silhouette, facial expression, pose, limb proportions, tiny prop/accent shapes, element locations, canvas size, transparent margin and pixel placement as closely as possible. This is a color/edge adaptation ONLY, not a new character, redraw, pose, added night theme, or different composition.\nKeep the body in the SAME soft mint green family. Gently reduce the chalky pastel brightness to a comfortable softly luminous mid-light pastel for dark surfaces. Preserve clearly dark facial features with strong contrast on the body. Adjust the colored perimeter and add only a very thin softly tinted light separation edge where needed so the silhouette stays crisp against #17151e, #24212d and #322b45. No thick white sticker border, no neon/glow, no black halo, no white halo, no cast shadow. The accent/prop remains readable without being glaring. Maintain the original flat 2D quality and limited soft shading; no realism or extra gradients.\nOutput exactly ONE same-size square PNG with genuine transparent alpha background. Background stays fully transparent, NOT filled with the dark example color and no checkerboard pixels. No text, label, badge, frame, disk, stars, moon, bedtime accessories, watermark or other additions. The only allowed design changes are small palette and outline adjustments for dark-mode contrast; KEEP THE MOOD AND GEOMETRY IDENTICAL.",
+    "stats": {
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": true,
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 981382,
+      "transparentRatio": 0.624083952086974,
+      "partialAlphaPixels": 590152,
+      "visibleBounds": {
+        "left": 0,
+        "top": 19,
+        "right": 1235,
+        "bottom": 1253,
+        "width": 1236,
+        "height": 1235
+      },
+      "bytes": 764385,
+      "sha256": "d9e205c6ef81e3f788c518040986e3322a613491d59047c80bf15aae54450158"
+    },
+    "sourceBytesPreserved": true
+  }
+]

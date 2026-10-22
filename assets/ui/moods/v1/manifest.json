@@ -1,0 +1,882 @@
+{
+  "version": 1,
+  "createdAt": "2026-10-22",
+  "mode": "built-in image_gen",
+  "assetType": "original generated transparent PNG",
+  "appIntegrated": false,
+  "miniProgramOptimizedExport": false,
+  "expectedAssetCount": 16,
+  "actualAssetCount": 16,
+  "totalBytes": 11156983,
+  "displaySizesPx": [
+    112,
+    48,
+    24
+  ],
+  "backgrounds": {
+    "light": [
+      "#ffffff",
+      "#f6f7fc"
+    ],
+    "dark": [
+      "#17151e",
+      "#24212d",
+      "#322b45"
+    ]
+  },
+  "backgroundSource": "frontend/src/styles/app.scss",
+  "generationSpec": "generation-spec.json",
+  "promptRecords": [
+    "generation-initial.json",
+    "generation-calm-dark.json",
+    "generation-loving-missing-tired.json",
+    "generation-sad-irritated-energetic.json"
+  ],
+  "measurement": {
+    "method": "Read-only sharp decode plus SHA-256; original PNG bytes are not modified.",
+    "alphaRange": "0 transparent through 255 opaque",
+    "bounds": "Zero-based pixel coordinates; right/bottom are inclusive.",
+    "visibleBoundsThreshold": "alpha > 8 excludes negligible generated alpha=1 speckles; this is measurement only, not image cleanup.",
+    "geometryComparison": "Thresholded alpha-mask overlap checks silhouette location only; it is not a guarantee of identical RGB pixels or facial details."
+  },
+  "notes": [
+    "All files preserve the original built-in tool output bytes.",
+    "Sparse alpha=1 pixels may extend outside the visible silhouette. Corners are checked separately.",
+    "Most body pixels have alpha 253/254; the original generated alpha is preserved.",
+    "Energetic retains four golden dashes from the happy anchor rather than the template wording of two or three."
+  ],
+  "assets": [
+    {
+      "id": "happy",
+      "label": "开心",
+      "theme": "light",
+      "file": "light/happy.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 691280,
+      "sha256": "059274ac1ca52813836cce84b871ceccd5098f3d2334bf870d5f4ad61a386457",
+      "source": "/Users/flobby/.codex/generated_images/01a16432-1ecd-7211-a9ed-c1ed0b0dd25b/exec-f488bbde-3260-4093-8747-1f8b5f26be55.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-initial.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 1031897,
+        "transparentRatio": 0.6562076315916658,
+        "alphaOnePixels": 3734,
+        "partialAlphaPixels": 538951,
+        "opaquePixels": 1668,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 25,
+        "top": 27,
+        "right": 1193,
+        "bottom": 1230,
+        "width": 1169,
+        "height": 1204
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 133,
+        "top": 235,
+        "right": 1123,
+        "bottom": 1038,
+        "width": 991,
+        "height": 804
+      }
+    },
+    {
+      "id": "happy",
+      "label": "开心",
+      "theme": "dark",
+      "file": "dark/happy.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 693873,
+      "sha256": "6b3f850eee59061aec81a766044895c4bc6291ae851755f6e38aa8d082968c4c",
+      "source": "/Users/flobby/.codex/generated_images/01a16432-1ecd-7211-a9ed-c1ed0b0dd25b/exec-85affb1a-8569-4976-b301-7e4085284ec3.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-initial.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 1025523,
+        "transparentRatio": 0.652154254710286,
+        "alphaOnePixels": 3423,
+        "partialAlphaPixels": 545249,
+        "opaquePixels": 1744,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 45,
+        "top": 110,
+        "right": 1207,
+        "bottom": 1253,
+        "width": 1163,
+        "height": 1144
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 131,
+        "top": 235,
+        "right": 1126,
+        "bottom": 1040,
+        "width": 996,
+        "height": 806
+      }
+    },
+    {
+      "id": "calm",
+      "label": "平静",
+      "theme": "light",
+      "file": "light/calm.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 720726,
+      "sha256": "f7fefd7aa3821b2513c6eb9e6c002463d6835deadede952091a6303c5f0052fe",
+      "source": "/Users/flobby/.codex/generated_images/01a16432-1ecd-7211-a9ed-c1ed0b0dd25b/exec-234edb4c-d41a-4aed-ad44-8acc30d9fe85.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-initial.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 987104,
+        "transparentRatio": 0.6277227067959881,
+        "alphaOnePixels": 10716,
+        "partialAlphaPixels": 584404,
+        "opaquePixels": 1008,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 0,
+        "top": 47,
+        "right": 1244,
+        "bottom": 1237,
+        "width": 1245,
+        "height": 1191
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 180,
+        "top": 230,
+        "right": 1076,
+        "bottom": 1121,
+        "width": 897,
+        "height": 892
+      }
+    },
+    {
+      "id": "calm",
+      "label": "平静",
+      "theme": "dark",
+      "file": "dark/calm.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 764385,
+      "sha256": "d9e205c6ef81e3f788c518040986e3322a613491d59047c80bf15aae54450158",
+      "source": "/Users/flobby/.codex/generated_images/01a1644d-ef9a-7be3-84d7-657ee5677b12/exec-3e4c807c-5d88-4363-8e38-d31560ea566f.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-calm-dark.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 981382,
+        "transparentRatio": 0.624083952086974,
+        "alphaOnePixels": 11223,
+        "partialAlphaPixels": 590152,
+        "opaquePixels": 982,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 0,
+        "top": 19,
+        "right": 1235,
+        "bottom": 1253,
+        "width": 1236,
+        "height": 1235
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 177,
+        "top": 227,
+        "right": 1080,
+        "bottom": 1123,
+        "width": 904,
+        "height": 897
+      }
+    },
+    {
+      "id": "loving",
+      "label": "心动",
+      "theme": "light",
+      "file": "light/loving.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 621943,
+      "sha256": "8743ef919832321ddc8a27bccfdb8be0d7eaf8dd9653e73c97c152a98de418e3",
+      "source": "/Users/flobby/.codex/generated_images/01a1644d-2b0d-73d2-aa1e-283a4de01919/exec-b4cbfbca-0380-4cfc-8811-b92b2aba1b65.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-loving-missing-tired.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 1086919,
+        "transparentRatio": 0.6911974186590152,
+        "alphaOnePixels": 4107,
+        "partialAlphaPixels": 484159,
+        "opaquePixels": 1438,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 113,
+        "top": 145,
+        "right": 1185,
+        "bottom": 1253,
+        "width": 1073,
+        "height": 1109
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 191,
+        "top": 265,
+        "right": 1143,
+        "bottom": 1023,
+        "width": 953,
+        "height": 759
+      }
+    },
+    {
+      "id": "loving",
+      "label": "心动",
+      "theme": "dark",
+      "file": "dark/loving.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 618934,
+      "sha256": "476d2fc5fab4f4938a60e0fddc9524e9f958376a556f2cd23e932d3c25714de1",
+      "source": "/Users/flobby/.codex/generated_images/01a1644d-2b0d-73d2-aa1e-283a4de01919/exec-1adcc665-0f49-497b-8b28-ccdfee935201.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-loving-missing-tired.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 1074125,
+        "transparentRatio": 0.683061412411702,
+        "alphaOnePixels": 9397,
+        "partialAlphaPixels": 497501,
+        "opaquePixels": 890,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 33,
+        "top": 64,
+        "right": 1231,
+        "bottom": 1253,
+        "width": 1199,
+        "height": 1190
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 189,
+        "top": 260,
+        "right": 1146,
+        "bottom": 1024,
+        "width": 958,
+        "height": 765
+      }
+    },
+    {
+      "id": "missing",
+      "label": "想你",
+      "theme": "light",
+      "file": "light/missing.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 772248,
+      "sha256": "19300637269db3e91ebe78f9c28edf55615bc267294e1f98cea25a3970baf3ff",
+      "source": "/Users/flobby/.codex/generated_images/01a1644d-2b0d-73d2-aa1e-283a4de01919/exec-c32967fa-a142-4653-88bc-e5924f3c1d50.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-loving-missing-tired.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 968574,
+        "transparentRatio": 0.6159390429095793,
+        "alphaOnePixels": 3002,
+        "partialAlphaPixels": 603043,
+        "opaquePixels": 899,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 0,
+        "top": 38,
+        "right": 1225,
+        "bottom": 1253,
+        "width": 1226,
+        "height": 1216
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 170,
+        "top": 220,
+        "right": 1093,
+        "bottom": 1058,
+        "width": 924,
+        "height": 839
+      }
+    },
+    {
+      "id": "missing",
+      "label": "想你",
+      "theme": "dark",
+      "file": "dark/missing.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 755457,
+      "sha256": "0350c986a04ff62485c9f66fb005982551524c24c39334c1bde5ee9b27b63222",
+      "source": "/Users/flobby/.codex/generated_images/01a1644d-2b0d-73d2-aa1e-283a4de01919/exec-e468e69c-01eb-4a4b-b968-2c96b0e93aa6.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-loving-missing-tired.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 947624,
+        "transparentRatio": 0.6026164439662299,
+        "alphaOnePixels": 12342,
+        "partialAlphaPixels": 624351,
+        "opaquePixels": 541,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 0,
+        "top": 56,
+        "right": 1213,
+        "bottom": 1253,
+        "width": 1214,
+        "height": 1198
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 166,
+        "top": 213,
+        "right": 1098,
+        "bottom": 1062,
+        "width": 933,
+        "height": 850
+      }
+    },
+    {
+      "id": "tired",
+      "label": "疲惫",
+      "theme": "light",
+      "file": "light/tired.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 604876,
+      "sha256": "afc5dab7bf227e2aac508fdedd5e5431894bf779ce571090afe5a7203212a1c0",
+      "source": "/Users/flobby/.codex/generated_images/01a1644d-2b0d-73d2-aa1e-283a4de01919/exec-30b7c55e-3dd5-456d-8834-0459929b5f5f.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-loving-missing-tired.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 1049283,
+        "transparentRatio": 0.6672637989057028,
+        "alphaOnePixels": 5591,
+        "partialAlphaPixels": 522220,
+        "opaquePixels": 1013,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 0,
+        "top": 161,
+        "right": 1217,
+        "bottom": 1157,
+        "width": 1218,
+        "height": 997
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 156,
+        "top": 290,
+        "right": 1094,
+        "bottom": 1025,
+        "width": 939,
+        "height": 736
+      }
+    },
+    {
+      "id": "tired",
+      "label": "疲惫",
+      "theme": "dark",
+      "file": "dark/tired.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 663255,
+      "sha256": "59ae4be28394967c354cb0db23564661ba6d7a846c27a25daf96d74bc8479818",
+      "source": "/Users/flobby/.codex/generated_images/01a1644d-2b0d-73d2-aa1e-283a4de01919/exec-081f114f-3e51-4af6-b439-990b110b2d00.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-loving-missing-tired.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 1037336,
+        "transparentRatio": 0.6596664199283186,
+        "alphaOnePixels": 11610,
+        "partialAlphaPixels": 535021,
+        "opaquePixels": 159,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 0,
+        "top": 31,
+        "right": 1239,
+        "bottom": 1205,
+        "width": 1240,
+        "height": 1175
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 153,
+        "top": 286,
+        "right": 1096,
+        "bottom": 1028,
+        "width": 944,
+        "height": 743
+      }
+    },
+    {
+      "id": "sad",
+      "label": "低落",
+      "theme": "light",
+      "file": "light/sad.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 672972,
+      "sha256": "3ac2382b425be47d65dcf2eb4b058d509cf5321e4e0281ee5506dbb176bbd092",
+      "source": "/Users/flobby/.codex/generated_images/01a1644d-5722-7ab0-95b0-b870cd2921ba/exec-20320472-f1ae-4ae9-bf3c-b6b20429ae63.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-sad-irritated-energetic.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 1049159,
+        "transparentRatio": 0.667184944382124,
+        "alphaOnePixels": 7437,
+        "partialAlphaPixels": 522404,
+        "opaquePixels": 953,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 0,
+        "top": 95,
+        "right": 1169,
+        "bottom": 1215,
+        "width": 1170,
+        "height": 1121
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 203,
+        "top": 257,
+        "right": 1051,
+        "bottom": 1019,
+        "width": 849,
+        "height": 763
+      }
+    },
+    {
+      "id": "sad",
+      "label": "低落",
+      "theme": "dark",
+      "file": "dark/sad.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 711541,
+      "sha256": "829aead785eb5404ce33d698c718628fcfbb34b38dbb86b07fe3cf2582212da6",
+      "source": "/Users/flobby/.codex/generated_images/01a1644d-5722-7ab0-95b0-b870cd2921ba/exec-60ed24f2-3a50-4929-844b-10d523fe83d6.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-sad-irritated-energetic.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 1025295,
+        "transparentRatio": 0.6520092641346733,
+        "alphaOnePixels": 21013,
+        "partialAlphaPixels": 546478,
+        "opaquePixels": 743,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 0,
+        "top": 47,
+        "right": 1187,
+        "bottom": 1213,
+        "width": 1188,
+        "height": 1167
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 199,
+        "top": 252,
+        "right": 1055,
+        "bottom": 1024,
+        "width": 857,
+        "height": 773
+      }
+    },
+    {
+      "id": "irritated",
+      "label": "烦躁",
+      "theme": "light",
+      "file": "light/irritated.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 708211,
+      "sha256": "de7fa6c6b2e01ef3f344d7ce2f7e63986770b7c4cecd5cd70bcb0aa4be4fc31a",
+      "source": "/Users/flobby/.codex/generated_images/01a1644d-5722-7ab0-95b0-b870cd2921ba/exec-69d9b9fa-d511-4e80-9db2-05b2d527f190.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-sad-irritated-energetic.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 960118,
+        "transparentRatio": 0.6105616731403687,
+        "alphaOnePixels": 33132,
+        "partialAlphaPixels": 611136,
+        "opaquePixels": 1262,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 47,
+        "top": 23,
+        "right": 1233,
+        "bottom": 1253,
+        "width": 1187,
+        "height": 1231
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 142,
+        "top": 190,
+        "right": 1136,
+        "bottom": 1076,
+        "width": 995,
+        "height": 887
+      }
+    },
+    {
+      "id": "irritated",
+      "label": "烦躁",
+      "theme": "dark",
+      "file": "dark/irritated.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 747067,
+      "sha256": "bef76f6cf36f05a6acb21adebe950988fedeed38685997ddb397e4362053fb34",
+      "source": "/Users/flobby/.codex/generated_images/01a1644d-5722-7ab0-95b0-b870cd2921ba/exec-6ba9ad8b-8e79-42fa-8bb5-e2753d263473.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-sad-irritated-energetic.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 973013,
+        "transparentRatio": 0.618761907668984,
+        "alphaOnePixels": 11185,
+        "partialAlphaPixels": 598225,
+        "opaquePixels": 1278,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 0,
+        "top": 39,
+        "right": 1231,
+        "bottom": 1253,
+        "width": 1232,
+        "height": 1215
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 138,
+        "top": 186,
+        "right": 1140,
+        "bottom": 1078,
+        "width": 1003,
+        "height": 893
+      }
+    },
+    {
+      "id": "energetic",
+      "label": "元气",
+      "theme": "light",
+      "file": "light/energetic.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 679597,
+      "sha256": "d563a2988ccd6e2151906da39e00ddfe111a34f839db341decd610e504177120",
+      "source": "/Users/flobby/.codex/generated_images/01a1644d-5722-7ab0-95b0-b870cd2921ba/exec-67b512fb-123e-44bc-a5e3-77d11daa44c4.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-sad-irritated-energetic.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 1021761,
+        "transparentRatio": 0.6497619102126783,
+        "alphaOnePixels": 2601,
+        "partialAlphaPixels": 549241,
+        "opaquePixels": 1514,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 0,
+        "top": 121,
+        "right": 1163,
+        "bottom": 1253,
+        "width": 1164,
+        "height": 1133
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 125,
+        "top": 251,
+        "right": 1131,
+        "bottom": 1054,
+        "width": 1007,
+        "height": 804
+      }
+    },
+    {
+      "id": "energetic",
+      "label": "元气",
+      "theme": "dark",
+      "file": "dark/energetic.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true,
+      "bytes": 730618,
+      "sha256": "eb5d7ef1325363c40bc5d2cb9c8c3b40943ed86d44aac35bdadaf6fd1123a6e4",
+      "source": "/Users/flobby/.codex/generated_images/01a1644d-5722-7ab0-95b0-b870cd2921ba/exec-3699e7b3-0261-4f3b-ba9b-93b0eac8a817.png",
+      "originalBytesPreserved": true,
+      "promptRecord": "generation-sad-irritated-energetic.json",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 1008357,
+        "transparentRatio": 0.6412379905832437,
+        "alphaOnePixels": 5268,
+        "partialAlphaPixels": 563404,
+        "opaquePixels": 755,
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "nonZeroAlphaBounds": {
+        "left": 105,
+        "top": 33,
+        "right": 1221,
+        "bottom": 1253,
+        "width": 1117,
+        "height": 1221
+      },
+      "visibleBoundsAlphaAbove8": {
+        "left": 119,
+        "top": 248,
+        "right": 1133,
+        "bottom": 1056,
+        "width": 1015,
+        "height": 809
+      }
+    }
+  ],
+  "themePairs": [
+    {
+      "id": "happy",
+      "label": "开心",
+      "sameDimensions": true,
+      "alphaMaskThreshold": 8,
+      "alphaMaskIntersectionOverUnion": 0.9876331278676368
+    },
+    {
+      "id": "calm",
+      "label": "平静",
+      "sameDimensions": true,
+      "alphaMaskThreshold": 8,
+      "alphaMaskIntersectionOverUnion": 0.9910484869290225
+    },
+    {
+      "id": "loving",
+      "label": "心动",
+      "sameDimensions": true,
+      "alphaMaskThreshold": 8,
+      "alphaMaskIntersectionOverUnion": 0.9854522884550351
+    },
+    {
+      "id": "missing",
+      "label": "想你",
+      "sameDimensions": true,
+      "alphaMaskThreshold": 8,
+      "alphaMaskIntersectionOverUnion": 0.9814969142384682
+    },
+    {
+      "id": "tired",
+      "label": "疲惫",
+      "sameDimensions": true,
+      "alphaMaskThreshold": 8,
+      "alphaMaskIntersectionOverUnion": 0.989438290759225
+    },
+    {
+      "id": "sad",
+      "label": "低落",
+      "sameDimensions": true,
+      "alphaMaskThreshold": 8,
+      "alphaMaskIntersectionOverUnion": 0.9810774114587317
+    },
+    {
+      "id": "irritated",
+      "label": "烦躁",
+      "sameDimensions": true,
+      "alphaMaskThreshold": 8,
+      "alphaMaskIntersectionOverUnion": 0.9846139109402876
+    },
+    {
+      "id": "energetic",
+      "label": "元气",
+      "sameDimensions": true,
+      "alphaMaskThreshold": 8,
+      "alphaMaskIntersectionOverUnion": 0.981630705566349
+    }
+  ],
+  "browserValidation": {
+    "date": "2026-10-22",
+    "surface": "local static preview.html",
+    "imageInstances": 40,
+    "loadedImageInstances": 40,
+    "displaySizesVerifiedPx": [
+      112,
+      48,
+      24
+    ],
+    "narrowViewport": {
+      "width": 390,
+      "height": 844,
+      "horizontalOverflow": false,
+      "actualImageWidthAt112Setting": 112
+    },
+    "visualNotes": [
+      "112px and 48px preserve major expressions and props on all listed backgrounds.",
+      "At 24px, subtle eyebrows and the sad tear are reduced; pair compact icons with a text label."
+    ],
+    "appRuntimeTested": false
+  }
+}

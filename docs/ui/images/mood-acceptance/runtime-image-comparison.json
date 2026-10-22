@@ -1,0 +1,385 @@
+{
+  "method": "Visible-union RGB mean absolute error after alpha compositing, divided by 255 for normalized MAE; panels displayed at 370x250 CSS px with opacity .92 light/.12 dark, threads at 156x80 CSS px with opacity 1; compare at DPR1 and DPR2.",
+  "boards": [
+    {
+      "accent": "iris",
+      "file": "checkin-fabric-panel.png",
+      "displayWidth": 370,
+      "displayHeight": 250,
+      "comparisons": [
+        {
+          "scheme": "light",
+          "dpr": 1,
+          "background": "#f6f7fc",
+          "opacity": 0.92,
+          "visibleChannelSamples": 214791,
+          "meanAbsoluteError": 0.930746632773254,
+          "normalizedMAE": 0.0036499867951892313,
+          "rootMeanSquareError": 1.4193202175770294,
+          "normalizedRMSE": 0.005565961637556978,
+          "p95": 2,
+          "maximum": 24
+        },
+        {
+          "scheme": "light",
+          "dpr": 2,
+          "background": "#f6f7fc",
+          "opacity": 0.92,
+          "visibleChannelSamples": 863817,
+          "meanAbsoluteError": 1.1477199453124909,
+          "normalizedMAE": 0.0045008625306372195,
+          "rootMeanSquareError": 1.9187457715348655,
+          "normalizedRMSE": 0.007524493221705355,
+          "p95": 3,
+          "maximum": 40
+        },
+        {
+          "scheme": "dark",
+          "dpr": 1,
+          "background": "#17151e",
+          "opacity": 0.12,
+          "visibleChannelSamples": 214791,
+          "meanAbsoluteError": 0.07531041803427518,
+          "normalizedMAE": 0.0002953349726834321,
+          "rootMeanSquareError": 0.27910388902660554,
+          "normalizedRMSE": 0.0010945250550062962,
+          "p95": 1,
+          "maximum": 4
+        },
+        {
+          "scheme": "dark",
+          "dpr": 2,
+          "background": "#17151e",
+          "opacity": 0.12,
+          "visibleChannelSamples": 863817,
+          "meanAbsoluteError": 0.12948923209429775,
+          "normalizedMAE": 0.0005078009101737167,
+          "rootMeanSquareError": 0.4047017826187077,
+          "normalizedRMSE": 0.0015870658141910105,
+          "p95": 1,
+          "maximum": 6
+        }
+      ]
+    },
+    {
+      "accent": "teal",
+      "file": "artwork/teal/checkin-fabric-panel.png",
+      "displayWidth": 370,
+      "displayHeight": 250,
+      "comparisons": [
+        {
+          "scheme": "light",
+          "dpr": 1,
+          "background": "#f6f7fc",
+          "opacity": 0.92,
+          "visibleChannelSamples": 204501,
+          "meanAbsoluteError": 1.1417254683351181,
+          "normalizedMAE": 0.004477354777784777,
+          "rootMeanSquareError": 1.6032019149702885,
+          "normalizedRMSE": 0.006287066333216818,
+          "p95": 3,
+          "maximum": 20
+        },
+        {
+          "scheme": "light",
+          "dpr": 2,
+          "background": "#f6f7fc",
+          "opacity": 0.92,
+          "visibleChannelSamples": 813513,
+          "meanAbsoluteError": 1.331357950026613,
+          "normalizedMAE": 0.005221011568731816,
+          "rootMeanSquareError": 2.1125960458865882,
+          "normalizedRMSE": 0.008284690376025836,
+          "p95": 4,
+          "maximum": 41
+        },
+        {
+          "scheme": "dark",
+          "dpr": 1,
+          "background": "#17151e",
+          "opacity": 0.12,
+          "visibleChannelSamples": 204501,
+          "meanAbsoluteError": 0.10787722309426359,
+          "normalizedMAE": 0.0004230479337029945,
+          "rootMeanSquareError": 0.3313076280840476,
+          "normalizedRMSE": 0.0012992456003295986,
+          "p95": 1,
+          "maximum": 3
+        },
+        {
+          "scheme": "dark",
+          "dpr": 2,
+          "background": "#17151e",
+          "opacity": 0.12,
+          "visibleChannelSamples": 813513,
+          "meanAbsoluteError": 0.13766467161557344,
+          "normalizedMAE": 0.0005398614573159742,
+          "rootMeanSquareError": 0.3856938704148629,
+          "normalizedRMSE": 0.0015125249820190703,
+          "p95": 1,
+          "maximum": 5
+        }
+      ]
+    },
+    {
+      "accent": "apricot",
+      "file": "artwork/apricot/checkin-fabric-panel.png",
+      "displayWidth": 370,
+      "displayHeight": 250,
+      "comparisons": [
+        {
+          "scheme": "light",
+          "dpr": 1,
+          "background": "#f6f7fc",
+          "opacity": 0.92,
+          "visibleChannelSamples": 208674,
+          "meanAbsoluteError": 1.2571475123877436,
+          "normalizedMAE": 0.004929990244657818,
+          "rootMeanSquareError": 1.731854356674596,
+          "normalizedRMSE": 0.0067915857124493965,
+          "p95": 3,
+          "maximum": 24
+        },
+        {
+          "scheme": "light",
+          "dpr": 2,
+          "background": "#f6f7fc",
+          "opacity": 0.92,
+          "visibleChannelSamples": 832470,
+          "meanAbsoluteError": 1.4060819008492798,
+          "normalizedMAE": 0.005514046669997176,
+          "rootMeanSquareError": 2.253042063896986,
+          "normalizedRMSE": 0.008835459074105828,
+          "p95": 4,
+          "maximum": 41
+        },
+        {
+          "scheme": "dark",
+          "dpr": 1,
+          "background": "#17151e",
+          "opacity": 0.12,
+          "visibleChannelSamples": 208674,
+          "meanAbsoluteError": 0.09439125142566875,
+          "normalizedMAE": 0.00037016177029674017,
+          "rootMeanSquareError": 0.3121523148025666,
+          "normalizedRMSE": 0.0012241267247159475,
+          "p95": 1,
+          "maximum": 3
+        },
+        {
+          "scheme": "dark",
+          "dpr": 2,
+          "background": "#17151e",
+          "opacity": 0.12,
+          "visibleChannelSamples": 832470,
+          "meanAbsoluteError": 0.1179237690247096,
+          "normalizedMAE": 0.0004624461530380768,
+          "rootMeanSquareError": 0.364634810533326,
+          "normalizedRMSE": 0.0014299404334640236,
+          "p95": 1,
+          "maximum": 5
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "file": "ui-icons/checkin-connection-iris-light.png",
+      "displayWidth": 156,
+      "displayHeight": 80,
+      "comparisons": [
+        {
+          "scheme": "light",
+          "dpr": 1,
+          "background": "#ffffff",
+          "opacity": 1,
+          "visibleChannelSamples": 5844,
+          "meanAbsoluteError": 0.13415468856947296,
+          "normalizedMAE": 0.0005260968179195019,
+          "rootMeanSquareError": 0.38583757793961443,
+          "normalizedRMSE": 0.0015130885409396645,
+          "p95": 1,
+          "maximum": 3
+        },
+        {
+          "scheme": "light",
+          "dpr": 2,
+          "background": "#ffffff",
+          "opacity": 1,
+          "visibleChannelSamples": 18774,
+          "meanAbsoluteError": 0.1891445616277831,
+          "normalizedMAE": 0.0007417433789324827,
+          "rootMeanSquareError": 0.45990860644374437,
+          "normalizedRMSE": 0.0018035631625244878,
+          "p95": 1,
+          "maximum": 3
+        }
+      ]
+    },
+    {
+      "file": "ui-icons/checkin-connection-iris-dark.png",
+      "displayWidth": 156,
+      "displayHeight": 80,
+      "comparisons": [
+        {
+          "scheme": "dark",
+          "dpr": 1,
+          "background": "#24212d",
+          "opacity": 1,
+          "visibleChannelSamples": 5841,
+          "meanAbsoluteError": 0.08115048793014895,
+          "normalizedMAE": 0.00031823720756921157,
+          "rootMeanSquareError": 0.2943280514718894,
+          "normalizedRMSE": 0.001154227652830939,
+          "p95": 1,
+          "maximum": 2
+        },
+        {
+          "scheme": "dark",
+          "dpr": 2,
+          "background": "#24212d",
+          "opacity": 1,
+          "visibleChannelSamples": 18774,
+          "meanAbsoluteError": 0.11483967188665176,
+          "normalizedMAE": 0.0004503516544574579,
+          "rootMeanSquareError": 0.3530445583930306,
+          "normalizedRMSE": 0.0013844884642863946,
+          "p95": 1,
+          "maximum": 2
+        }
+      ]
+    },
+    {
+      "file": "ui-icons/checkin-connection-teal-light.png",
+      "displayWidth": 156,
+      "displayHeight": 80,
+      "comparisons": [
+        {
+          "scheme": "light",
+          "dpr": 1,
+          "background": "#ffffff",
+          "opacity": 1,
+          "visibleChannelSamples": 5841,
+          "meanAbsoluteError": 0.1544256120527307,
+          "normalizedMAE": 0.0006055906355009046,
+          "rootMeanSquareError": 0.421149485612052,
+          "normalizedRMSE": 0.0016515666102433412,
+          "p95": 1,
+          "maximum": 3
+        },
+        {
+          "scheme": "light",
+          "dpr": 2,
+          "background": "#ffffff",
+          "opacity": 1,
+          "visibleChannelSamples": 18777,
+          "meanAbsoluteError": 0.20615646801938542,
+          "normalizedMAE": 0.0008084567373309232,
+          "rootMeanSquareError": 0.47759627851471487,
+          "normalizedRMSE": 0.0018729265824106466,
+          "p95": 1,
+          "maximum": 3
+        }
+      ]
+    },
+    {
+      "file": "ui-icons/checkin-connection-teal-dark.png",
+      "displayWidth": 156,
+      "displayHeight": 80,
+      "comparisons": [
+        {
+          "scheme": "dark",
+          "dpr": 1,
+          "background": "#24212d",
+          "opacity": 1,
+          "visibleChannelSamples": 5844,
+          "meanAbsoluteError": 0.08555783709787816,
+          "normalizedMAE": 0.00033552092979560066,
+          "rootMeanSquareError": 0.30677943348221043,
+          "normalizedRMSE": 0.0012030566018910213,
+          "p95": 1,
+          "maximum": 2
+        },
+        {
+          "scheme": "dark",
+          "dpr": 2,
+          "background": "#24212d",
+          "opacity": 1,
+          "visibleChannelSamples": 18774,
+          "meanAbsoluteError": 0.11691701289016725,
+          "normalizedMAE": 0.00045849808976536176,
+          "rootMeanSquareError": 0.35327079651839166,
+          "normalizedRMSE": 0.0013853756726211438,
+          "p95": 1,
+          "maximum": 2
+        }
+      ]
+    },
+    {
+      "file": "ui-icons/checkin-connection-apricot-light.png",
+      "displayWidth": 156,
+      "displayHeight": 80,
+      "comparisons": [
+        {
+          "scheme": "light",
+          "dpr": 1,
+          "background": "#ffffff",
+          "opacity": 1,
+          "visibleChannelSamples": 5847,
+          "meanAbsoluteError": 0.14280827774927313,
+          "normalizedMAE": 0.0005600324617618554,
+          "rootMeanSquareError": 0.3960209132203556,
+          "normalizedRMSE": 0.0015530231890994338,
+          "p95": 1,
+          "maximum": 2
+        },
+        {
+          "scheme": "light",
+          "dpr": 2,
+          "background": "#ffffff",
+          "opacity": 1,
+          "visibleChannelSamples": 18771,
+          "meanAbsoluteError": 0.21181609930211495,
+          "normalizedMAE": 0.0008306513698122155,
+          "rootMeanSquareError": 0.4840429595633974,
+          "normalizedRMSE": 0.0018982076845623426,
+          "p95": 1,
+          "maximum": 3
+        }
+      ]
+    },
+    {
+      "file": "ui-icons/checkin-connection-apricot-dark.png",
+      "displayWidth": 156,
+      "displayHeight": 80,
+      "comparisons": [
+        {
+          "scheme": "dark",
+          "dpr": 1,
+          "background": "#24212d",
+          "opacity": 1,
+          "visibleChannelSamples": 5841,
+          "meanAbsoluteError": 0.08491696627289848,
+          "normalizedMAE": 0.00033300771087411166,
+          "rootMeanSquareError": 0.3034922006186146,
+          "normalizedRMSE": 0.001190165492622018,
+          "p95": 1,
+          "maximum": 2
+        },
+        {
+          "scheme": "dark",
+          "dpr": 2,
+          "background": "#24212d",
+          "opacity": 1,
+          "visibleChannelSamples": 18774,
+          "meanAbsoluteError": 0.1287418770640247,
+          "normalizedMAE": 0.0005048701061334302,
+          "rootMeanSquareError": 0.37520634570010586,
+          "normalizedRMSE": 0.0014713974341180622,
+          "p95": 1,
+          "maximum": 3
+        }
+      ]
+    }
+  ]
+}

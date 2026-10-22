@@ -1,0 +1,285 @@
+{
+  "createdAt": "2026-10-22",
+  "mode": "built-in image_gen",
+  "reference": "/Users/flobby/.codex/generated_images/01a16432-1ecd-7211-a9ed-c1ed0b0dd25b/exec-ccec459f-73e3-4c00-b40f-b9d6bd701688.png",
+  "anchor": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/happy.png",
+  "outputRoot": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1",
+  "generatedAssets": [
+    {
+      "id": "loving",
+      "label": "心动",
+      "variant": "light",
+      "mode": "built-in image_gen",
+      "transparent_background": true,
+      "prompt": "Use case: precise-object-edit / illustration-story.\nProduce ONE isolated production UI illustration by extracting and cleanly redrawing exactly the requested mochi character from the supplied FloFlo reference board. The first input image is the AUTHORITATIVE user-approved eight-character reference. If a second input is supplied, it is the already-produced happy icon and sets the shared line quality, canvas occupancy and finish, not the requested character's color or face.\nOutput ONE character only on a genuine transparent alpha background, square canvas, preferably 1024×1024. No board, grid, text, label, lettering, shadowed card, circle backdrop, frame, border, checkerboard pixels, floor, scenery or watermark. Do not include any UI from the reference.\nCharacter: the coral 心动 mochi in the selector top row, third cell: round soft plump body with small side nubs, joyful tiny dark eyes and little open smile, rosy cheeks, ONE small coral heart floating immediately at its upper right. No leaf, letter, stars or extra hearts.\nMatch the reference EXACTLY in personality: soft hand-drawn organic mochi, simple clean colored outline, tiny expressive face and cheeks, limited very gentle two-tone pastel shading, front-facing flat 2D sticker illustration, no realistic skin, plastic shine, dramatic lighting, 3D depth, grain, wool/fabric, excessive gradients or added detail. The outline must be crisp and continuous for 24px–112px display; face and key prop must remain recognizable at small sizes.\nThis is the LIGHT-SURFACE variant, designed to sit on #ffffff, #f6f7fc and light ivory cloth. Body remains soft peach coral pink, colored outline moderately dark, facial features dark and high contrast, subtle lighter fill near the center as in the approved reference. Do not add an opaque white border or white disk.\nComposition: single centered character, same scale as the other family members, all visible pixels including floating accent comfortably within the central 84–88% of the square, roughly 7–8% clear transparent outer margin, body base near 86% canvas height. Keep the character fully in frame and leave clean truly transparent corners. Keep a simple balanced silhouette, not tiny artwork lost in a huge canvas. No unrelated additions.\nCRITICAL CHARACTER DISTINCTION: Do NOT copy the happy character's raised arms or curved closed eyes. The loving character must use two SMALL DARK DOT EYES, a small open smile, and two tiny low side nubs attached near its belly. It is a simple round plump soft mochi with a single small heart at upper right, NOT a coral recolor of the happy icon. Keep the reference-board loving silhouette and expression. No detached flecks or accidental colored pixels.",
+      "referencedImagePaths": [
+        "/Users/flobby/.codex/generated_images/01a16432-1ecd-7211-a9ed-c1ed0b0dd25b/exec-ccec459f-73e3-4c00-b40f-b9d6bd701688.png",
+        "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/happy.png"
+      ],
+      "generatedSource": "/Users/flobby/.codex/generated_images/01a1644d-2b0d-73d2-aa1e-283a4de01919/exec-b4cbfbca-0380-4cfc-8811-b92b2aba1b65.png",
+      "outputPath": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/loving.png",
+      "visualInspection": {
+        "singleCharacter": true,
+        "noText": true,
+        "noBackgroundCircle": true,
+        "matchingMood": true,
+        "darkGeometry": null
+      },
+      "verification": {
+        "width": 1254,
+        "height": 1254,
+        "format": "png",
+        "hasAlpha": true,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 255,
+          "fullyTransparentPixels": 1086919,
+          "opaquePixels": 1438,
+          "partialPixels": 484159,
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "sourceBytesPreserved": true,
+        "sha256": "8743ef919832321ddc8a27bccfdb8be0d7eaf8dd9653e73c97c152a98de418e3"
+      }
+    },
+    {
+      "id": "loving",
+      "label": "心动",
+      "variant": "dark",
+      "mode": "built-in image_gen",
+      "transparent_background": true,
+      "prompt": "Use case: precise-object-edit / identity-preserve.\nCreate the DARK-SURFACE production variant of the supplied single 心动 mochi PNG. Input is the finished LIGHT version and is the exact edit target.\nPreserve the character's identical silhouette, facial expression, pose, limb proportions, tiny prop/accent shapes, element locations, canvas size, transparent margin and pixel placement as closely as possible. This is a color/edge adaptation ONLY, not a new character, redraw, pose, added night theme, or different composition.\nKeep the body in the SAME soft peach coral pink family. Gently reduce the chalky pastel brightness to a comfortable softly luminous mid-light pastel for dark surfaces. Preserve clearly dark facial features with strong contrast on the body. Adjust the colored perimeter and add only a very thin softly tinted light separation edge where needed so the silhouette stays crisp against #17151e, #24212d and #322b45. No thick white sticker border, no neon/glow, no black halo, no white halo, no cast shadow. The accent/prop remains readable without being glaring. Maintain the original flat 2D quality and limited soft shading; no realism or extra gradients.\nOutput exactly ONE same-size square PNG with genuine transparent alpha background. Background stays fully transparent, NOT filled with the dark example color and no checkerboard pixels. No text, label, badge, frame, disk, stars, moon, bedtime accessories, watermark or other additions. The only allowed design changes are small palette and outline adjustments for dark-mode contrast; KEEP THE MOOD AND GEOMETRY IDENTICAL.",
+      "referencedImagePaths": [
+        "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/loving.png"
+      ],
+      "generatedSource": "/Users/flobby/.codex/generated_images/01a1644d-2b0d-73d2-aa1e-283a4de01919/exec-1adcc665-0f49-497b-8b28-ccdfee935201.png",
+      "outputPath": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/dark/loving.png",
+      "visualInspection": {
+        "singleCharacter": true,
+        "noText": true,
+        "noBackgroundCircle": true,
+        "matchingMood": true,
+        "darkGeometry": "Visually preserved expression, pose, proportions and prop positions; this is a generative color/outline edit, not a deterministic pixel recolor."
+      },
+      "verification": {
+        "width": 1254,
+        "height": 1254,
+        "format": "png",
+        "hasAlpha": true,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 255,
+          "fullyTransparentPixels": 1074125,
+          "opaquePixels": 890,
+          "partialPixels": 497501,
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "sourceBytesPreserved": true,
+        "sha256": "476d2fc5fab4f4938a60e0fddc9524e9f958376a556f2cd23e932d3c25714de1"
+      }
+    },
+    {
+      "id": "missing",
+      "label": "想你",
+      "variant": "light",
+      "mode": "built-in image_gen",
+      "transparent_background": true,
+      "prompt": "Use case: precise-object-edit / illustration-story.\nProduce ONE isolated production UI illustration by extracting and cleanly redrawing exactly the requested mochi character from the supplied FloFlo reference board. The first input image is the AUTHORITATIVE user-approved eight-character reference. If a second input is supplied, it is the already-produced happy icon and sets the shared line quality, canvas occupancy and finish, not the requested character's color or face.\nOutput ONE character only on a genuine transparent alpha background, square canvas, preferably 1024×1024. No board, grid, text, label, lettering, shadowed card, circle backdrop, frame, border, checkerboard pixels, floor, scenery or watermark. Do not include any UI from the reference.\nCharacter: the blue 想你 mochi in the selector top row, fourth cell: rounded teardrop-like blue body, sweet small dark eyes and gentle smile with pink cheeks, two tiny arms hugging ONE small pale envelope horizontally across its lower belly. The envelope has a simple coral V-shaped flap mark. This is affectionate yearning, not sadness. No tear, leaf, heart cloud or floating decorations.\nMatch the reference EXACTLY in personality: soft hand-drawn organic mochi, simple clean colored outline, tiny expressive face and cheeks, limited very gentle two-tone pastel shading, front-facing flat 2D sticker illustration, no realistic skin, plastic shine, dramatic lighting, 3D depth, grain, wool/fabric, excessive gradients or added detail. The outline must be crisp and continuous for 24px–112px display; face and key prop must remain recognizable at small sizes.\nThis is the LIGHT-SURFACE variant, designed to sit on #ffffff, #f6f7fc and light ivory cloth. Body remains soft periwinkle blue, colored outline moderately dark, facial features dark and high contrast, subtle lighter fill near the center as in the approved reference. Do not add an opaque white border or white disk.\nComposition: single centered character, same scale as the other family members, all visible pixels including floating accent comfortably within the central 84–88% of the square, roughly 7–8% clear transparent outer margin, body base near 86% canvas height. Keep the character fully in frame and leave clean truly transparent corners. Keep a simple balanced silhouette, not tiny artwork lost in a huge canvas. No unrelated additions.",
+      "referencedImagePaths": [
+        "/Users/flobby/.codex/generated_images/01a16432-1ecd-7211-a9ed-c1ed0b0dd25b/exec-ccec459f-73e3-4c00-b40f-b9d6bd701688.png",
+        "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/happy.png"
+      ],
+      "generatedSource": "/Users/flobby/.codex/generated_images/01a1644d-2b0d-73d2-aa1e-283a4de01919/exec-c32967fa-a142-4653-88bc-e5924f3c1d50.png",
+      "outputPath": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/missing.png",
+      "visualInspection": {
+        "singleCharacter": true,
+        "noText": true,
+        "noBackgroundCircle": true,
+        "matchingMood": true,
+        "darkGeometry": null
+      },
+      "verification": {
+        "width": 1254,
+        "height": 1254,
+        "format": "png",
+        "hasAlpha": true,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 255,
+          "fullyTransparentPixels": 968574,
+          "opaquePixels": 899,
+          "partialPixels": 603043,
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "sourceBytesPreserved": true,
+        "sha256": "19300637269db3e91ebe78f9c28edf55615bc267294e1f98cea25a3970baf3ff"
+      }
+    },
+    {
+      "id": "missing",
+      "label": "想你",
+      "variant": "dark",
+      "mode": "built-in image_gen",
+      "transparent_background": true,
+      "prompt": "Use case: precise-object-edit / identity-preserve.\nCreate the DARK-SURFACE production variant of the supplied single 想你 mochi PNG. Input is the finished LIGHT version and is the exact edit target.\nPreserve the character's identical silhouette, facial expression, pose, limb proportions, tiny prop/accent shapes, element locations, canvas size, transparent margin and pixel placement as closely as possible. This is a color/edge adaptation ONLY, not a new character, redraw, pose, added night theme, or different composition.\nKeep the body in the SAME soft periwinkle blue family. Gently reduce the chalky pastel brightness to a comfortable softly luminous mid-light pastel for dark surfaces. Preserve clearly dark facial features with strong contrast on the body. Adjust the colored perimeter and add only a very thin softly tinted light separation edge where needed so the silhouette stays crisp against #17151e, #24212d and #322b45. No thick white sticker border, no neon/glow, no black halo, no white halo, no cast shadow. The accent/prop remains readable without being glaring. Maintain the original flat 2D quality and limited soft shading; no realism or extra gradients.\nOutput exactly ONE same-size square PNG with genuine transparent alpha background. Background stays fully transparent, NOT filled with the dark example color and no checkerboard pixels. No text, label, badge, frame, disk, stars, moon, bedtime accessories, watermark or other additions. The only allowed design changes are small palette and outline adjustments for dark-mode contrast; KEEP THE MOOD AND GEOMETRY IDENTICAL.",
+      "referencedImagePaths": [
+        "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/missing.png"
+      ],
+      "generatedSource": "/Users/flobby/.codex/generated_images/01a1644d-2b0d-73d2-aa1e-283a4de01919/exec-e468e69c-01eb-4a4b-b968-2c96b0e93aa6.png",
+      "outputPath": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/dark/missing.png",
+      "visualInspection": {
+        "singleCharacter": true,
+        "noText": true,
+        "noBackgroundCircle": true,
+        "matchingMood": true,
+        "darkGeometry": "Visually preserved expression, pose, proportions and prop positions; this is a generative color/outline edit, not a deterministic pixel recolor."
+      },
+      "verification": {
+        "width": 1254,
+        "height": 1254,
+        "format": "png",
+        "hasAlpha": true,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 255,
+          "fullyTransparentPixels": 947624,
+          "opaquePixels": 541,
+          "partialPixels": 624351,
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "sourceBytesPreserved": true,
+        "sha256": "0350c986a04ff62485c9f66fb005982551524c24c39334c1bde5ee9b27b63222"
+      }
+    },
+    {
+      "id": "tired",
+      "label": "疲惫",
+      "variant": "light",
+      "mode": "built-in image_gen",
+      "transparent_background": true,
+      "prompt": "Use case: precise-object-edit / illustration-story.\nProduce ONE isolated production UI illustration by extracting and cleanly redrawing exactly the requested mochi character from the supplied FloFlo reference board. The first input image is the AUTHORITATIVE user-approved eight-character reference. If a second input is supplied, it is the already-produced happy icon and sets the shared line quality, canvas occupancy and finish, not the requested character's color or face.\nOutput ONE character only on a genuine transparent alpha background, square canvas, preferably 1024×1024. No board, grid, text, label, lettering, shadowed card, circle backdrop, frame, border, checkerboard pixels, floor, scenery or watermark. Do not include any UI from the reference.\nCharacter: the beige 疲惫 mochi in the selector bottom row, first cell: a slumped soft pear-shaped dumpling with its little chin/belly resting between two short drooping arms, closed weary eyes, small downturned mouth, faint warm cheeks. Calm tiredness, not crying. No text or Z symbols, no tear, stars, letter or leaf.\nMatch the reference EXACTLY in personality: soft hand-drawn organic mochi, simple clean colored outline, tiny expressive face and cheeks, limited very gentle two-tone pastel shading, front-facing flat 2D sticker illustration, no realistic skin, plastic shine, dramatic lighting, 3D depth, grain, wool/fabric, excessive gradients or added detail. The outline must be crisp and continuous for 24px–112px display; face and key prop must remain recognizable at small sizes.\nThis is the LIGHT-SURFACE variant, designed to sit on #ffffff, #f6f7fc and light ivory cloth. Body remains warm beige peach, colored outline moderately dark, facial features dark and high contrast, subtle lighter fill near the center as in the approved reference. Do not add an opaque white border or white disk.\nComposition: single centered character, same scale as the other family members, all visible pixels including floating accent comfortably within the central 84–88% of the square, roughly 7–8% clear transparent outer margin, body base near 86% canvas height. Keep the character fully in frame and leave clean truly transparent corners. Keep a simple balanced silhouette, not tiny artwork lost in a huge canvas. No unrelated additions.",
+      "referencedImagePaths": [
+        "/Users/flobby/.codex/generated_images/01a16432-1ecd-7211-a9ed-c1ed0b0dd25b/exec-ccec459f-73e3-4c00-b40f-b9d6bd701688.png",
+        "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/happy.png"
+      ],
+      "generatedSource": "/Users/flobby/.codex/generated_images/01a1644d-2b0d-73d2-aa1e-283a4de01919/exec-30b7c55e-3dd5-456d-8834-0459929b5f5f.png",
+      "outputPath": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/tired.png",
+      "visualInspection": {
+        "singleCharacter": true,
+        "noText": true,
+        "noBackgroundCircle": true,
+        "matchingMood": true,
+        "darkGeometry": null
+      },
+      "verification": {
+        "width": 1254,
+        "height": 1254,
+        "format": "png",
+        "hasAlpha": true,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 255,
+          "fullyTransparentPixels": 1049283,
+          "opaquePixels": 1013,
+          "partialPixels": 522220,
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "sourceBytesPreserved": true,
+        "sha256": "afc5dab7bf227e2aac508fdedd5e5431894bf779ce571090afe5a7203212a1c0"
+      }
+    },
+    {
+      "id": "tired",
+      "label": "疲惫",
+      "variant": "dark",
+      "mode": "built-in image_gen",
+      "transparent_background": true,
+      "prompt": "Use case: precise-object-edit / identity-preserve.\nCreate the DARK-SURFACE production variant of the supplied single 疲惫 mochi PNG. Input is the finished LIGHT version and is the exact edit target.\nPreserve the character's identical silhouette, facial expression, pose, limb proportions, tiny prop/accent shapes, element locations, canvas size, transparent margin and pixel placement as closely as possible. This is a color/edge adaptation ONLY, not a new character, redraw, pose, added night theme, or different composition.\nKeep the body in the SAME warm beige peach family. Gently reduce the chalky pastel brightness to a comfortable softly luminous mid-light pastel for dark surfaces. Preserve clearly dark facial features with strong contrast on the body. Adjust the colored perimeter and add only a very thin softly tinted light separation edge where needed so the silhouette stays crisp against #17151e, #24212d and #322b45. No thick white sticker border, no neon/glow, no black halo, no white halo, no cast shadow. The accent/prop remains readable without being glaring. Maintain the original flat 2D quality and limited soft shading; no realism or extra gradients.\nOutput exactly ONE same-size square PNG with genuine transparent alpha background. Background stays fully transparent, NOT filled with the dark example color and no checkerboard pixels. No text, label, badge, frame, disk, stars, moon, bedtime accessories, watermark or other additions. The only allowed design changes are small palette and outline adjustments for dark-mode contrast; KEEP THE MOOD AND GEOMETRY IDENTICAL.",
+      "referencedImagePaths": [
+        "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/tired.png"
+      ],
+      "generatedSource": "/Users/flobby/.codex/generated_images/01a1644d-2b0d-73d2-aa1e-283a4de01919/exec-081f114f-3e51-4af6-b439-990b110b2d00.png",
+      "outputPath": "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/dark/tired.png",
+      "visualInspection": {
+        "singleCharacter": true,
+        "noText": true,
+        "noBackgroundCircle": true,
+        "matchingMood": true,
+        "darkGeometry": "Visually preserved expression, pose, proportions and prop positions; this is a generative color/outline edit, not a deterministic pixel recolor."
+      },
+      "verification": {
+        "width": 1254,
+        "height": 1254,
+        "format": "png",
+        "hasAlpha": true,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 255,
+          "fullyTransparentPixels": 1037336,
+          "opaquePixels": 159,
+          "partialPixels": 535021,
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "sourceBytesPreserved": true,
+        "sha256": "59ae4be28394967c354cb0db23564661ba6d7a846c27a25daf96d74bc8479818"
+      }
+    }
+  ],
+  "discardedAttempts": [
+    {
+      "id": "loving",
+      "variant": "light",
+      "mode": "built-in image_gen",
+      "transparent_background": true,
+      "referencedImagePaths": [
+        "/Users/flobby/.codex/generated_images/01a16432-1ecd-7211-a9ed-c1ed0b0dd25b/exec-ccec459f-73e3-4c00-b40f-b9d6bd701688.png",
+        "/Users/flobby/vibe_coding/couple-mini/assets/ui/moods/v1/light/happy.png"
+      ],
+      "source": "/Users/flobby/.codex/generated_images/01a1644d-2b0d-73d2-aa1e-283a4de01919/exec-70a7f076-735f-436d-b363-13d6a8548dda.png",
+      "prompt": "Use case: precise-object-edit / illustration-story.\nProduce ONE isolated production UI illustration by extracting and cleanly redrawing exactly the requested mochi character from the supplied FloFlo reference board. The first input image is the AUTHORITATIVE user-approved eight-character reference. If a second input is supplied, it is the already-produced happy icon and sets the shared line quality, canvas occupancy and finish, not the requested character's color or face.\nOutput ONE character only on a genuine transparent alpha background, square canvas, preferably 1024×1024. No board, grid, text, label, lettering, shadowed card, circle backdrop, frame, border, checkerboard pixels, floor, scenery or watermark. Do not include any UI from the reference.\nCharacter: the coral 心动 mochi in the selector top row, third cell: round soft plump body with small side nubs, joyful tiny dark eyes and little open smile, rosy cheeks, ONE small coral heart floating immediately at its upper right. No leaf, letter, stars or extra hearts.\nMatch the reference EXACTLY in personality: soft hand-drawn organic mochi, simple clean colored outline, tiny expressive face and cheeks, limited very gentle two-tone pastel shading, front-facing flat 2D sticker illustration, no realistic skin, plastic shine, dramatic lighting, 3D depth, grain, wool/fabric, excessive gradients or added detail. The outline must be crisp and continuous for 24px–112px display; face and key prop must remain recognizable at small sizes.\nThis is the LIGHT-SURFACE variant, designed to sit on #ffffff, #f6f7fc and light ivory cloth. Body remains soft peach coral pink, colored outline moderately dark, facial features dark and high contrast, subtle lighter fill near the center as in the approved reference. Do not add an opaque white border or white disk.\nComposition: single centered character, same scale as the other family members, all visible pixels including floating accent comfortably within the central 84–88% of the square, roughly 7–8% clear transparent outer margin, body base near 86% canvas height. Keep the character fully in frame and leave clean truly transparent corners. Keep a simple balanced silhouette, not tiny artwork lost in a huge canvas. No unrelated additions.",
+      "reason": "Happy-like raised arms and curved eyes instead of the reference loving small side nubs and tiny dot eyes."
+    }
+  ],
+  "notes": [
+    "All final PNG bytes were copied directly from built-in image_gen output; no resizing, cropping, recoloring, compositing, or pixel modification was performed.",
+    "Each final asset was visually inspected. A loving light retry corrected the first attempt's happy-like raised arms and curved eyes.",
+    "At full source resolution some very low-opacity colored pixels appear along the antialiased perimeter. They were preserved with the original output. The alpha report is read-only.",
+    "Actual tool output dimensions are retained even though the prompt prefers 1024x1024."
+  ]
+}

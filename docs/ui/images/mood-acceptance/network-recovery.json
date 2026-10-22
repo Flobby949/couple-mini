@@ -1,0 +1,11 @@
+{
+  "test": "network recovery and new-account isolation",
+  "businessDate": "2026-10-23",
+  "pool": 110,
+  "personalBalance": 0,
+  "revision": 1,
+  "me": true,
+  "partner": false,
+  "mood": "missing",
+  "monthRecords": 1
+}

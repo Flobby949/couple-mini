@@ -16,7 +16,8 @@
 | POST `/rules` | `{dailyLimit: "103.5"}` → 固定内容提议；积分输入采用十进制字符串 | 已绑定 |
 | POST `/rules/:id/confirm` | `{}` → `{proposalId, dailyLimit, activatedAt}` | 同一关系的另一方；仅待确认提议 |
 | GET `/home` | 一次一致性读取 `{context, points, checkin, todos, milestones}` | 首次规则生效 |
-| POST `/checkins` | `{}` → `{date, base, doubleBonus, milestoneBonus, total, doubleDays}` | 首次规则生效 |
+| POST `/checkins` | `{mood, expectedDate}` → `{date, mood, checkedAt, revision, base, doubleBonus, milestoneBonus, total, doubleDays}`；兼容旧空请求 | 首次规则生效 |
+| GET `/checkins/calendar?month=2026-10` | `{month, firstMonth, businessDate, serverTime, revision, days}`，一次读取本关系双方整月记录 | 首次规则生效 |
 | GET `/history` | `{entries}`；最近 100 笔共享池流水，按时间/ID 降序 | 首次规则生效 |
 | GET `/operations/:key` | `{status, httpStatus?, response?}` | 仅原操作人，无首次规则门禁 |
 | POST `/operations/:key/close` | `{}` → 同上；无需再传幂等键 | 仅原操作人，无首次规则门禁 |
@@ -26,6 +27,16 @@
 操作状态：`succeeded` 为原成功回执；`rejected` 为确定未生效；`closed` 为未执行且已关闭；`absent` 为暂无已提交记录，**不能据此判断原请求不会执行**。本实现同步事务处理，尚未提交的事务对结果查询不可见，查询可能返回 `absent`。关闭与执行共用关系锁（已绑定）及操作人行锁：执行先提交则关闭返回原回执；关闭先提交则迟到原请求返回 `OPERATION_CLOSED`。没有自动过期、客户端离线写队列或自动重提未知请求。
 
 不同请求键的重复签到返回 `ALREADY_CHECKED_IN`；原键重复调用始终返回原回执，不是当前首页状态。写成功后刷新读取失败仍保留已完成的写结果，当前状态另读。
+
+### 心情签到与月历
+
+`mood` 为 `happy / calm / loving / missing / tired / sad / irritated / energetic`；新请求还须提供最新 context 的 `businessDate` 作为 `expectedDate`。服务端在取得关系锁后的统一时间决定实际日期，日期不一致返回 `CHECKIN_DATE_CHANGED`，不是补签入口。非法心情返回 `INVALID_MOOD`，缺失或格式错误的日期返回 `INVALID_CHECKIN_DATE`。仅旧版空 body 或 `{}` 保留无心情签到；部分字段、null、拼错字段均不降级为旧请求。参数校验在幂等仲裁后进行，旧成功回执可以跨日原样重放。
+
+首页 `checkin` 保留 `me / partner` 布尔值，增加 `meEntry / partnerEntry / revision`。Entry 为 `{mood: string|null, checkedAt: RFC3339}`；无签到是 Entry=null，已签到但未记录心情是非空 Entry 且 mood=null。两种情况不可混同。`context.couple.checkinRevision` 在每次真实新增签到时随事务递增，重放与失败不增加；心情、积分、双签/里程碑、版本、Outbox 与回执共同提交。
+
+月历缺省读取服务端当前月，参数须为规范 YYYY-MM，范围为关系创建月至当前月，否则分别返回 `INVALID_MONTH / MONTH_OUT_OF_RANGE`。`days` 按日期升序包含当月每一天，每项为 `{date, me: Entry|null, partner: Entry|null}`；未来日期的 null 由 businessDate 区分。月份切换不逐日查询，点日期详情复用本月数据。关系从登录身份解析，不接受传入其他用户或关系来扩大查询范围。
+
+公共心情 PNG 使用 API 前缀之外的 `GET/HEAD /assets/moods/{revision}/{scheme}/{mood}.png`（部署地址带 `/couple-mini/`）。仅白名单心情、light/dark 和已打包版本可读，无需会话。响应有 PNG MIME、内容 ETag、`public,max-age=31536000,immutable`，条件请求支持304；私有业务接口继续no-store。当前16文件清单见 [运行素材](../backend/assets/moods/manifest.json)。
 
 积分字段先校验非负十进制文本，再四舍五入，最多六位小数，取整后范围 0–1000000000；拒绝空、负数、科学计数法和越界输入。JSON 请求体上限 16 KiB。
 

@@ -19,9 +19,11 @@ type User struct {
 	AvatarID string `json:"avatarId"`
 }
 type Couple struct {
-	ID         string `json:"id"`
-	DailyLimit *int64 `json:"dailyLimit"`
-	DoubleDays int    `json:"doubleDays"`
+	ID              string    `json:"id"`
+	DailyLimit      *int64    `json:"dailyLimit"`
+	DoubleDays      int       `json:"doubleDays"`
+	CheckinRevision uint64    `json:"checkinRevision"`
+	CreatedAt       time.Time `json:"-"`
 }
 type Context struct {
 	Me           User      `json:"me"`
@@ -94,7 +96,7 @@ func ReadContext(ctx context.Context, tx *sql.Tx, user string, now time.Time) (C
 		return out, err
 	}
 	var c Couple
-	err := tx.QueryRowContext(ctx, "SELECT c.id,c.daily_limit,c.double_days FROM members m JOIN couples c ON c.id=m.couple_id WHERE m.user_id=?", user).Scan(&c.ID, &c.DailyLimit, &c.DoubleDays)
+	err := tx.QueryRowContext(ctx, "SELECT c.id,c.daily_limit,c.double_days,c.checkin_revision,c.created_at FROM members m JOIN couples c ON c.id=m.couple_id WHERE m.user_id=?", user).Scan(&c.ID, &c.DailyLimit, &c.DoubleDays, &c.CheckinRevision, &c.CreatedAt)
 	if err == sql.ErrNoRows {
 		return out, nil
 	}
@@ -117,7 +119,7 @@ func ReadContext(ctx context.Context, tx *sql.Tx, user string, now time.Time) (C
 
 func LockCouple(ctx context.Context, tx *sql.Tx, user string, ready bool) (Couple, error) {
 	var c Couple
-	err := tx.QueryRowContext(ctx, "SELECT c.id,c.daily_limit,c.double_days FROM members m JOIN couples c ON c.id=m.couple_id WHERE m.user_id=? FOR UPDATE", user).Scan(&c.ID, &c.DailyLimit, &c.DoubleDays)
+	err := tx.QueryRowContext(ctx, "SELECT c.id,c.daily_limit,c.double_days,c.checkin_revision,c.created_at FROM members m JOIN couples c ON c.id=m.couple_id WHERE m.user_id=? FOR UPDATE", user).Scan(&c.ID, &c.DailyLimit, &c.DoubleDays, &c.CheckinRevision, &c.CreatedAt)
 	if err == sql.ErrNoRows {
 		return c, platform.Fail(403, "BINDING_REQUIRED", "请先绑定伴侣")
 	}
@@ -131,7 +133,7 @@ func LockCouple(ctx context.Context, tx *sql.Tx, user string, ready bool) (Coupl
 }
 func LockCoupleID(ctx context.Context, tx *sql.Tx, id string) (Couple, error) {
 	var c Couple
-	err := tx.QueryRowContext(ctx, "SELECT id,daily_limit,double_days FROM couples WHERE id=? FOR UPDATE", id).Scan(&c.ID, &c.DailyLimit, &c.DoubleDays)
+	err := tx.QueryRowContext(ctx, "SELECT id,daily_limit,double_days,checkin_revision,created_at FROM couples WHERE id=? FOR UPDATE", id).Scan(&c.ID, &c.DailyLimit, &c.DoubleDays, &c.CheckinRevision, &c.CreatedAt)
 	return c, err
 }
 

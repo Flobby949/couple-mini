@@ -19,5 +19,6 @@ export const keys = {
   openTasks: ['tasks', 'open'] as const,
   task: (id: string) => ['task', id] as const, giftPreview: ['gift-preview'] as const,
   gifts: ['gifts'] as const, gift: (id: string) => ['gift', id] as const, reservations: ['reservations'] as const,
+  checkinMonth: (actor: string, couple: string, month: string) => ['checkins', 'month', actor, couple, month] as const,
 }
 export function refresh() { return queries.invalidateQueries() }

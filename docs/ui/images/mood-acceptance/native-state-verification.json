@@ -1,0 +1,41 @@
+{
+  "single": {
+    "date": "2026-10-23",
+    "revision": 41,
+    "day": {
+      "date": "2026-10-23",
+      "me": {
+        "mood": "happy",
+        "checkedAt": "2026-10-22T23:44:04.536282Z"
+      },
+      "partner": null
+    }
+  },
+  "both": {
+    "date": "2026-10-23",
+    "partnerReceipt": {
+      "date": "2026-10-23",
+      "mood": "energetic",
+      "checkedAt": "2026-10-22T23:45:00.408176Z",
+      "revision": 42,
+      "base": 10,
+      "doubleBonus": 10,
+      "milestoneBonus": 0,
+      "total": 20,
+      "doubleDays": 20
+    },
+    "day": {
+      "date": "2026-10-23",
+      "me": {
+        "mood": "happy",
+        "checkedAt": "2026-10-22T23:44:04.536282Z"
+      },
+      "partner": {
+        "mood": "energetic",
+        "checkedAt": "2026-10-22T23:45:00.408176Z"
+      }
+    },
+    "revision": 42,
+    "poolTotal": 750
+  }
+}

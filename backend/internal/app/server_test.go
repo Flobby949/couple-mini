@@ -137,7 +137,7 @@ func TestIntegration(t *testing.T) {
 				if table == "users" {
 					f.server.invalidateReadCache(context.Background(), id, "membership", "media", "preferences")
 				} else {
-					f.server.invalidateReadCache(context.Background(), id, "context", "rules", "checkins", "tasks", "orders", "gifts", "gift-details")
+					f.server.invalidateReadCache(context.Background(), id, "context", "rules", "checkins", "checkin-history", "tasks", "orders", "gifts", "gift-details")
 					f.server.invalidateCatalog(context.Background(), id)
 				}
 			}
@@ -336,6 +336,10 @@ func TestIntegration(t *testing.T) {
 	t.Run("read-caches", func(t *testing.T) {
 		f.t = t
 		testReadCaches(f, login("CacheAlice"), login("CacheBob"), login("CacheOutsider"), login("CacheOtherPartner"))
+	})
+	t.Run("mood-checkins", func(t *testing.T) {
+		f.t = t
+		testMoodCheckins(f, login("MoodAlice"), login("MoodBob"), login("MoodOutsider"), login("MoodOtherPartner"))
 	})
 	f.t = t
 	f.server.Config.DevLogin = false

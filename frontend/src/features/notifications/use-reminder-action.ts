@@ -30,5 +30,5 @@ export function useReminderAction(enabled: boolean) {
     try { await subscriptions.withAction(groups,() => action.run(fn,done)) }
     finally { lock.current = false }
   }
-  return {busy: action.busy || subscriptions.busy,error: action.error || (subscriptions.error ? new Error(`微信提醒补充未完成：${subscriptions.error.message}。业务结果以当前状态为准。`) : null),run}
+  return {busy: action.busy || subscriptions.busy,error: action.error || (subscriptions.error ? new Error(`微信提醒补充未完成：${subscriptions.error.message}。业务结果以当前状态为准。`) : null),run,clearError: action.clearError}
 }

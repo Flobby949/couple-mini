@@ -42,7 +42,13 @@ const tint = (hex, amount) => '#' + hex.slice(1).match(/../g).map(part => Math.r
 for (const [accent,palette] of Object.entries(colors)) for (const [index,scheme] of ['light','dark'].entries()) {
   const color=palette[index]
   const svg=connection.replaceAll('#6752a3',color).replaceAll('#b7a6db',tint(color,.5)).replaceAll('#e4dcf3',tint(color,.78))
-  await sharp(Buffer.from(svg)).resize(468,240).png().toFile(`${output}/ui-icons/checkin-connection-${accent}-${scheme}.png`)
+  await sharp(Buffer.from(svg)).resize(468,240).png({ palette: true, quality: 100, dither: 0, compressionLevel: 9, effort: 10 }).toFile(`${output}/ui-icons/checkin-connection-${accent}-${scheme}.png`)
 }
 
 await import('./theme-assets.mjs')
+
+// Preserve the existing 700px theme alignment before reducing only the runtime panels.
+for (const file of ['checkin-fabric-panel.png', 'artwork/teal/checkin-fabric-panel.png', 'artwork/apricot/checkin-fabric-panel.png']) {
+  const panel = await readFile(`${output}/${file}`)
+  await sharp(panel).resize({ width: 600 }).png({ palette: true, quality: 85, dither: 0, compressionLevel: 9, effort: 10 }).toFile(`${output}/${file}`)
+}

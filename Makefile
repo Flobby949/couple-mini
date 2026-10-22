@@ -14,4 +14,4 @@ integration:
 	cd backend && INTEGRATION=1 go test -race ./...
 
 assets:
-	cd frontend && node scripts/assets.mjs
+	cd frontend && node scripts/assets.mjs && node scripts/mood-assets.mjs

@@ -1,4 +1,5 @@
 @use './reference-pages';
+@use './checkin';
 .taro-tabbar-badge {color:var(--badge-ink)!important;background:var(--surface)!important;border:1px solid var(--badge-line);box-sizing:border-box;}
 .theme-root, html {
   --page: #f6f7fc; --surface: #ffffff; --ink: #29223b; --muted: #71677e;
