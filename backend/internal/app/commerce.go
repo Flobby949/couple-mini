@@ -57,7 +57,7 @@ func (s *Server) listProducts(c *gin.Context) {
 		} else if c.Query("view") != "" && c.Query("view") != "partner" {
 			return nil, platform.Fail(422, "INVALID_FILTER", "小店视角无效")
 		}
-		products, err := catalog.List(ctx, tx, owner)
+		products, err := s.cachedProducts(ctx, tx, state.Couple.ID, owner)
 		if err != nil {
 			return nil, err
 		}
@@ -90,7 +90,11 @@ func (s *Server) saveProduct(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
-		return catalog.Save(ctx, tx, user, c.Param("id"), couple.ID, body, price, now)
+		product, err := catalog.Save(ctx, tx, user, c.Param("id"), couple.ID, body, price, now)
+		if err == nil {
+			s.invalidateCatalog(ctx, couple.ID)
+		}
+		return product, err
 	})
 }
 func (s *Server) cart(c *gin.Context) {
@@ -133,7 +137,11 @@ func (s *Server) placeOrder(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
-		return orders.Place(ctx, tx, couple.ID, user, body.ProductID, price, now)
+		receipt, err := orders.Place(ctx, tx, couple.ID, user, body.ProductID, price, now)
+		if err == nil {
+			s.invalidateCatalog(ctx, couple.ID)
+		}
+		return receipt, err
 	})
 }
 func (s *Server) listOrders(c *gin.Context) {
@@ -169,7 +177,11 @@ func (s *Server) orderAction(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
-		return orders.Apply(ctx, tx, couple.ID, user, c.Param("id"), body.Action, now)
+		receipt, err := orders.Apply(ctx, tx, couple.ID, user, c.Param("id"), body.Action, now)
+		if err == nil && (body.Action == "cancel" || body.Action == "reject" || body.Action == "approve_cancel") {
+			s.invalidateCatalog(ctx, couple.ID)
+		}
+		return receipt, err
 	})
 }
 func (s *Server) accountHistory(c *gin.Context) {

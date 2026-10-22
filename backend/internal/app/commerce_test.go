@@ -96,8 +96,25 @@ func testCommerce(f *fixture, buyer, seller, outsider, couple string) {
 	f.error(f.call(buyer, "POST", "/products", platform.ID(), productBody("越权封面", "1", 1, cover)), 422, "INVALID_COVER")
 	f.error(f.call(seller, "POST", "/products", platform.ID(), productBody("负数", "-0.1", 1, cover)), 422, "INVALID_POINTS")
 	f.error(f.call(seller, "POST", "/products", platform.ID(), productBody("库存", "0", -1, cover)), 422, "INVALID_STOCK")
+	if len(f.must(buyer, "GET", "/catalog", nil)["products"].([]any)) != 0 {
+		t.Fatal("new store is not empty")
+	}
 	p := f.must(seller, "POST", "/products", productBody("一份心意", "21", 2, cover))
 	id := p["id"].(string)
+	testCatalogCache(f, buyer, seller, outsider, couple, partner, id)
+	assertCatalog := func(name string, stock int, balance int64) {
+		t.Helper()
+		listed := f.must(buyer, "GET", "/catalog", nil)
+		products := listed["products"].([]any)
+		if len(products) != 1 {
+			t.Fatal("unexpected catalog", listed)
+		}
+		product := products[0].(map[string]any)
+		if product["name"] != name || product["stock"] != float64(stock) || listed["balance"] != float64(balance) {
+			t.Fatal("stale catalog or balance", listed)
+		}
+	}
+	assertCatalog("一份心意", 2, 100)
 	if len(f.must(outsider, "GET", "/context", nil)) == 0 {
 		t.Fatal("outsider context unavailable")
 	}
@@ -126,11 +143,13 @@ func testCommerce(f *fixture, buyer, seller, outsider, couple string) {
 	if placed.body["buyerBalance"] != float64(79) {
 		t.Fatal(placed.raw)
 	}
+	assertCatalog("一份心意", 1, 79)
 	if len(f.must(buyer, "GET", "/cart", nil)["items"].([]any)) != 0 {
 		t.Fatal("ordered candidate not removed")
 	}
 	f.error(f.call(buyer, "POST", "/orders/"+orderID+"/actions", platform.ID(), map[string]string{"action": "accept"}), 403, "FORBIDDEN")
 	f.must(seller, "POST", "/products/"+id, productBody("后来改名", "100", 1, newCover))
+	assertCatalog("后来改名", 1, 79)
 	snapshot := detail(buyer, orderID)["snapshot"].(map[string]any)
 	if snapshot["name"] != "一份心意" || snapshot["price"] != float64(21) || snapshot["coverId"] != cover || f.image(buyer, cover) != 200 {
 		t.Fatalf("historical snapshot changed: %v", snapshot)
@@ -143,6 +162,7 @@ func testCommerce(f *fixture, buyer, seller, outsider, couple string) {
 	if cancelled["refunded"] != float64(21) || cancelled["penalty"] != float64(11) || cancelled["sellerBalance"] != float64(-6) || cancelled["buyerBalance"] != float64(100) {
 		t.Fatal(cancelled)
 	}
+	assertCatalog("后来改名", 2, 100)
 	var poolAfter int64
 	db.QueryRow("SELECT available FROM pools WHERE couple_id=?", couple).Scan(&poolAfter)
 	if poolAfter != poolBefore+11 {
