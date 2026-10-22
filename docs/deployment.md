@@ -2,6 +2,8 @@
 
 目标为 `https://www.flobby.top/couple-mini/api/v1`。复用已有 Nginx 和 HTTPS，代理至 `127.0.0.1:18081`。MySQL、Redis 不发布宿主机端口，三个持久卷独立于服务器已有项目。
 
+2026-10-22，`v0.1.0` 已通过 [GitHub Actions 首次发布](https://github.com/Flobby949/couple-mini/actions/runs/39709129312)。API、MySQL、Redis 三个容器均健康，公网 readiness/liveness 返回 200，未登录读取返回 401，开发身份登录返回 403。目标服务器初始空载实测 API/MySQL/Redis 约 15/162/8 MiB；生产数据恢复演练和异地备份仍待完成。
+
 ## 发布流程
 
 参考 [knowledge 的 Actions](https://github.com/Flobby949/knowledge/blob/main/.github/workflows/deploy.yml)，推送新的 `vMAJOR.MINOR.PATCH` 标签发布；标签须指向 `main` 上的提交。
@@ -25,6 +27,8 @@
 - `deploy-key.pub`，本项目专用 SSH 公钥。私钥保留给本仓库 Actions，不上传到服务器。
 
 确认文件后在该目录执行 `bash bootstrap.sh`。脚本创建 `/opt/couple-mini`，增加 Nginx 路径、验证并 reload Nginx，为专用公钥设置 forced command。该密钥只能调用本项目部署脚本，不允许交互 shell、PTY 或端口转发。现有 SSH 登录方式保持可用。
+
+本机 Nginx 由已有进程运行，使用 `nginx -s reload`。部署入口和 Compose 文件由管理员首次安装并持有；后续修改这些文件时需通过管理连接更新服务器副本，Actions 的受限密钥仅更新本项目镜像版本。
 
 GitHub 私有仓库 `Flobby949/couple-mini` 的 Actions Secrets：
 

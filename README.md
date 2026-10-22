@@ -102,4 +102,4 @@ T01“新任务待接受”已通过真实订阅授权、接口直发、手机�
 
 ## 后端发布
 
-GitHub Actions、Docker Compose、现有 Nginx 路径转发和首次安装步骤见[部署说明](docs/deployment.md)。发布采用与 knowledge 项目一致的版本标签触发方式，服务器运行独立 MySQL/Redis，API 目标地址为 `https://www.flobby.top/couple-mini/api/v1`。服务器首次安装与专用部署密钥授权完成后再推送首个发布标签。
+GitHub Actions、Docker Compose、现有 Nginx 路径转发和首次安装步骤见[部署说明](docs/deployment.md)。发布采用与 knowledge 项目一致的版本标签触发方式，服务器运行独立 MySQL/Redis，API 目标地址为 `https://www.flobby.top/couple-mini/api/v1`。服务器首次安装和专用部署密钥授权已完成，`v0.1.0` 已通过完整 Actions 发布。公网 `https://www.flobby.top/couple-mini/health/ready` 返回 ready。之后推送新的版本标签发布；小程序接入前还需使用上述 HTTPS API 地址重新构建，并在微信后台配置该域名。

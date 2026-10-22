@@ -30,7 +30,7 @@ compose=(docker compose --env-file .env -f compose.yaml)
 "${compose[@]}" pull api
 "${compose[@]}" up -d --wait --wait-timeout 300 mysql redis
 
-old_api=$("${compose[@]}" ps -q api)
+old_api=$("${compose[@]}" ps --all -q api)
 if [[ -n "$old_api" ]]; then
     backup="backups/$(date -u +%Y%m%dT%H%M%SZ)"
     mkdir -p "$backup.partial"
