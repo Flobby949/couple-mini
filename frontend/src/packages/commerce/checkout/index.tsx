@@ -20,8 +20,8 @@ export default function Checkout() {
   const gate = useGate(), id = useRouter().params.id || '', action = useReminderAction(gate.allowed)
   const [originalPrice, setOriginalPrice] = useState<number | undefined>(() => checkoutPrice(id))
   const query = useQuery({ queryKey: keys.product(id), queryFn: () => getProduct(id), enabled: gate.allowed && !!id, refetchInterval: gate.allowed ? 30000 : false, staleTime: 0 })
-  const data = gate.allowed ? query.data : undefined
-  useEffect(() => { if (data && originalPrice === undefined) setOriginalPrice(data.product.price) }, [data, originalPrice])
+  const data = gate.canShow ? query.data : undefined
+  useEffect(() => { if (gate.allowed && data && originalPrice === undefined) setOriginalPrice(data.product.price) }, [gate.allowed, data, originalPrice])
   useEffect(() => () => clearCheckoutPrice(id), [id])
   const changed = data && originalPrice !== undefined && data.product.price !== originalPrice
   const blocked = data ? data.product.ownerId === gate.data?.me.id ? '只能在伴侣的小店下单' : purchaseBlock(data.balance, data.product.stock, data.product.price) : ''

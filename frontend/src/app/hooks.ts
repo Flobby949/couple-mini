@@ -26,5 +26,7 @@ export function useGate(minimum: 'bound' | 'ready' = 'ready') {
       void routeContext(query.data)
     }
   }, [visible, query.data?.stage, minimum])
-  return { ...query, visible, allowed: visible && !!query.data && (minimum === 'bound' ? query.data.stage !== 'binding' : query.data.stage === 'ready') }
+  const canShow = !!query.data && (minimum === 'bound' ? query.data.stage !== 'binding' : query.data.stage === 'ready')
+  // Hidden pages retain their content while requests and polling stay paused.
+  return { ...query, visible, canShow, allowed: visible && canShow }
 }

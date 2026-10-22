@@ -22,9 +22,9 @@ export default function RulesPage() {
   const normalized = parsePoints(limit)
   useEffect(() => { if (gate.allowed && selected && query.data?.proposals.some(p => p.id === selected) && marked.current !== selected && !pending()) { marked.current = selected; void action.run(() => readRuleMessage(selected)) } }, [gate.allowed, selected, query.data])
   return <Page title='两个人，共同约定' subtitle='由一方提出，另一方确认后生效。'>
-    {!gate.allowed && !gate.error && <Loading />}
+    {!gate.canShow && !gate.error && <Loading />}
     <ErrorState error={gate.error || query.error || action.error} retry={() => { void gate.refetch(); void query.refetch() }} />
-    {gate.allowed && <>
+    {gate.canShow && <>
       {confirmation && <Notice>{confirmation}</Notice>}
       {query.data?.dailyLimit == null && <><View className='onboarding-heading'><Text className='page-title'>先约定，再一起开始</Text><Text className='muted'>由一方提出，另一方确认后生效</Text></View><ConnectedPair me={gate.data!.me} partner={gate.data!.partner!}/><Button className='text-button' onClick={() => void navigate('/packages/account/profile/index')}>设置我的头像和昵称</Button></>}
       {query.data?.dailyLimit != null && <BudgetCard><Text className='section-title'>当前每日获得上限</Text><Text><Text className='number'>{query.data.dailyLimit}</Text> 积分 / 人 / 天</Text><Text className='muted'>任务奖励与伴侣赠送共用额度</Text></BudgetCard>}

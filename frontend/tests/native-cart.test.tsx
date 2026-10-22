@@ -8,7 +8,7 @@ vi.mock('@tarojs/taro',async()=>{
 vi.mock('@tarojs/components',()=>({View:'view',Text:'text',Button:'button',Image:'image',Radio:'radio'}))
 vi.mock('@tanstack/react-query',async()=>({...await vi.importActual('@tanstack/react-query'),useQuery:({queryKey}:{queryKey:string[]})=>({data:queryKey[0]==='cart'?{items:[{id:'product',name:'拥抱',price:0,stock:1}],balance:0}:{products:[],balance:0},refetch:vi.fn()})}))
 vi.mock('../src/app/page',()=>({Page:({children}:{children:React.ReactNode})=><>{children}</>}))
-vi.mock('../src/app/hooks',()=>({useGate:()=>({allowed:true,data:{me:{id:'alice',nickname:'我'},partner:{id:'bob',nickname:'伴侣'}}})}))
+vi.mock('../src/app/hooks',()=>({useGate:()=>({allowed:true,canShow:true,data:{me:{id:'alice',nickname:'我'},partner:{id:'bob',nickname:'伴侣'}}})}))
 vi.mock('../src/app/theme',()=>({useTheme:()=>({scheme:'light',appearance:{accent:'iris'}})}))
 vi.mock('../src/core/use-action',()=>({useAction:()=>({busy:false,error:null})}))
 vi.mock('../src/features/catalog/components',()=>({ProductSummary:()=>null,Cover:()=>null}))

@@ -3,7 +3,7 @@ import { act, create, type ReactTestRenderer } from 'react-test-renderer'
 const fixture = vi.hoisted(() => ({ remaining: 3 }))
 vi.mock('@tarojs/components', () => ({ Button: 'button', Input: 'input', Text: 'text', View: 'view' }))
 vi.mock('@tanstack/react-query', () => ({ useQuery: ({ queryKey }: { queryKey: string[] }) => ({ data: queryKey[0] === 'gift-preview' ? { singleMax: 20, sendsRemaining: fixture.remaining, receiverRemaining: 100 } : { items: [] } }) }))
-vi.mock('../src/app/hooks', () => ({ useGate: () => ({ allowed: true, data: { me: { id: 'buyer' }, partner: { id: 'seller', nickname: '伴侣' } } }) }))
+vi.mock('../src/app/hooks', () => ({ useGate: () => ({ allowed: true, canShow: true, data: { me: { id: 'buyer' }, partner: { id: 'seller', nickname: '伴侣' } } }) }))
 vi.mock('../src/app/page', () => ({ Page: ({ children }: { children: React.ReactNode }) => children }))
 vi.mock('../src/core/query', () => ({ keys: { giftPreview: ['gift-preview'], gifts: ['gifts'] } }))
 vi.mock('../src/features/notifications/use-reminder-action', () => ({ useReminderAction: () => ({ busy: false, run: vi.fn() }) }))

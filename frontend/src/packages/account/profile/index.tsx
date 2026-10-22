@@ -22,7 +22,7 @@ export default function ProfilePage() {
   const fallback = state?.stage === 'binding' ? '/packages/account/binding/index' : state?.stage === 'rules' ? '/packages/account/rules/index' : '/pages/me/index'
   return <Page title='我的资料' onBack={() => void back(fallback)}>
     <ErrorState error={context.error} retry={() => void context.refetch()}/>
-    {!visible || !state || state.me.id !== session()?.user.id ? <Loading/> : <ProfileForm key={state.me.id} user={state.me} partnerId={state.partner?.id || '~'}/>}
+    {!state || state.me.id !== session()?.user.id ? <Loading/> : <ProfileForm key={state.me.id} user={state.me} partnerId={state.partner?.id || '~'}/>}
   </Page>
 }
 

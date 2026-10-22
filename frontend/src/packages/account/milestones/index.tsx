@@ -12,7 +12,7 @@ import { ConnectedPair, Icon, InlineInfo } from '../../../ui/visual'
 export default function MilestonesPage(){
  const { checkinPanel: panel } = useArtwork()
  const gate=useGate(),query=useQuery({queryKey:keys.home,queryFn:getHome,enabled:gate.allowed,refetchInterval:gate.allowed?15000:false})
- const data=gate.allowed?query.data:undefined,days=data?.context.couple?.doubleDays??0
+ const data=gate.canShow?query.data:undefined,days=data?.context.couple?.doubleDays??0
  return <Page title='累计双人签到'><ErrorState error={gate.error||query.error} retry={()=>{void gate.refetch();void query.refetch()}}/>{!data&&!query.error&&!gate.error&&<Loading/>}{data&&<>
   <View className='milestone-hero'><Image className='fabric' src={panel} mode='scaleToFill' ariaHidden/><ConnectedPair me={data.context.me} partner={data.context.partner!}/><Text className='muted'>我们已经一起签到</Text><Text><Text className='milestone-days'>{days}</Text> 天</Text><Text className='muted'>我{data.checkin.me?'已':'未'}签到 · {data.context.partner!.nickname}{data.checkin.partner?'已':'未'}签到</Text></View>
   <InlineInfo>双方在同一天签到，累计天数就 +1。漏签不会清零，每个里程碑奖励只发放一次，全部进入共同积分池。</InlineInfo>

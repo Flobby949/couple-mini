@@ -4,7 +4,7 @@ const fixture = vi.hoisted(() => ({ navigate: vi.fn(), add: vi.fn(), product: { 
 vi.mock('@tarojs/components', () => ({ View: 'view', Text: 'text', Button: 'button' }))
 vi.mock('@tarojs/taro', () => ({ useDidHide: () => {} }))
 vi.mock('@tanstack/react-query', () => ({ useQuery: ({ queryKey }: { queryKey: string[] }) => ({ data: queryKey[0] === 'catalog' ? { products: [fixture.product], balance: 0 } : { items: [] } }) }))
-vi.mock('../src/app/hooks', () => ({ useGate: () => ({ allowed: true, data: { me: { id: 'buyer' }, partner: { id: 'seller', nickname: '伴侣' } } }) }))
+vi.mock('../src/app/hooks', () => ({ useGate: () => ({ allowed: true, canShow: true, data: { me: { id: 'buyer' }, partner: { id: 'seller', nickname: '伴侣' } } }) }))
 vi.mock('../src/app/page', () => ({ Page: ({ children }: { children: React.ReactNode }) => children }))
 vi.mock('../src/core/query', () => ({ keys: { catalog: () => ['catalog'], cart: ['cart'] } }))
 vi.mock('../src/core/use-action', () => ({ useAction: () => ({ busy: false, run: (fn: () => unknown) => fn() }) }))

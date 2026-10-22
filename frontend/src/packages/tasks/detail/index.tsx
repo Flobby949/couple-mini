@@ -23,7 +23,7 @@ export default function TaskDetailPage(){
  const gate=useGate(),id=useRouter().params.id||'',action=useReminderAction(gate.allowed)
  const [confirm,setConfirm]=useState<Exclude<TaskAction,'edit'>>(),[date,setDate]=useState(''),[time,setTime]=useState(''),[receipt,setReceipt]=useState<TaskReceipt>(),[requestId,setRequestId]=useState<string>(),[historyOpen,setHistoryOpen]=useState(false)
  const query=useQuery({queryKey:keys.task(id),queryFn:()=>getTask(id),enabled:gate.allowed&&!!id,staleTime:0,refetchInterval:gate.allowed?30000:false})
- const data=gate.allowed?query.data:undefined,task=data?.task,me=gate.data?.me.id||''
+ const data=gate.canShow?query.data:undefined,task=data?.task,me=gate.data?.me.id||''
  const correction=beijingDeadline(date,time),needsDate=confirm==='reject_completion'&&task?.kind==='partner'
  const terminal=data?.history.slice().reverse().find(e=>['confirm','approve_cancel','reject_accept','expired','timed_out'].includes(e.action))?.result
  const people=gate.data?.partner?[gate.data.me,gate.data.partner]:[]

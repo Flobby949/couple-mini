@@ -3,10 +3,11 @@ import { act, create, type ReactTestRenderer } from 'react-test-renderer'
 const fixture = vi.hoisted(() => ({
   context: { stage: 'binding', me: { id: 'alice', nickname: '微信用户', avatarId: '' }, partner: null },
   upload: vi.fn(), save: vi.fn(),
+  visible: true,
 }))
 vi.mock('@tarojs/components', () => ({ View: 'view', Text: 'text', Input: 'input', Form: 'form', Button: 'button', Image: 'image' }))
 vi.mock('@tanstack/react-query', () => ({ useQuery: () => ({ data: fixture.context, error: null, refetch: vi.fn() }) }))
-vi.mock('../src/app/hooks', () => ({ useVisible: () => true }))
+vi.mock('../src/app/hooks', () => ({ useVisible: () => fixture.visible }))
 vi.mock('../src/app/page', () => ({ Page: ({ children }: { children: React.ReactNode }) => children }))
 vi.mock('../src/core/api', () => ({ session: () => ({ user: { id: 'alice' } }) }))
 vi.mock('../src/core/query', () => ({ keys: { context: ['context'] }, refresh: () => Promise.resolve() }))
@@ -19,6 +20,7 @@ import Profile from '../src/packages/account/profile'
 let tree: ReactTestRenderer | undefined
 beforeEach(() => {
   vi.stubEnv('TARO_ENV', 'weapp'); vi.clearAllMocks()
+  fixture.visible = true
   fixture.context = { stage: 'binding', me: { id: 'alice', nickname: '微信用户', avatarId: '' }, partner: null }
   fixture.upload.mockResolvedValue('durable-file')
   fixture.save.mockResolvedValue({ id: 'alice', nickname: '微信昵称', avatarId: 'durable-file' })
@@ -60,6 +62,16 @@ it('can restore the default avatar and leave the nickname unset', async () => {
   act(() => { button('使用默认头像').props.onClick() })
   await act(async () => { submit('') })
   expect(fixture.save).toHaveBeenCalledWith({ nickname: '', avatarId: '' })
+})
+it('preserves the profile form and unsaved nickname while a native picker hides the page', () => {
+  mount()
+  act(() => tree!.root.findByType('input').props.onInput({ detail: { value: '未保存的昵称' } }))
+  fixture.visible = false
+  act(() => tree!.update(<Profile/>))
+  expect(tree!.root.findAllByType('form')).toHaveLength(1)
+  fixture.visible = true
+  act(() => tree!.update(<Profile/>))
+  expect(tree!.root.findByType('input').props.value).toBe('未保存的昵称')
 })
 it('supports mouse clicks in the H5 preview without requiring a native touch submit', async () => {
   vi.stubEnv('TARO_ENV', 'h5')

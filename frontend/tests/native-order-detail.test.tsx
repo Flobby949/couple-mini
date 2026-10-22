@@ -5,7 +5,7 @@ const fixture = vi.hoisted(() => ({ actor: 'seller', detail: undefined as unknow
 vi.mock('@tarojs/components', () => ({ View: 'view', Text: 'text', Button: 'button' }))
 vi.mock('@tarojs/taro', () => ({ useRouter: () => ({ params: { id: 'order' } }) }))
 vi.mock('@tanstack/react-query', () => ({ useQuery: () => ({ data: fixture.detail, refetch: vi.fn() }) }))
-vi.mock('../src/app/hooks', () => ({ useGate: () => ({ allowed: true, data: { me: { id: fixture.actor, nickname: '我' }, partner: { id: fixture.actor === 'seller' ? 'buyer' : 'seller', nickname: '伴侣' } } }) }))
+vi.mock('../src/app/hooks', () => ({ useGate: () => ({ allowed: true, canShow: true, data: { me: { id: fixture.actor, nickname: '我' }, partner: { id: fixture.actor === 'seller' ? 'buyer' : 'seller', nickname: '伴侣' } } }) }))
 vi.mock('../src/app/page', () => ({ Page: ({ children }: { children: React.ReactNode }) => children }))
 vi.mock('../src/features/notifications/use-reminder-action', () => ({ useReminderAction: () => ({ busy: false, error: null, run: vi.fn() }) }))
 vi.mock('../src/core/query', () => ({ keys: { order: (id: string) => ['order', id] } }))

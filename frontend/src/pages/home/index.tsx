@@ -5,13 +5,14 @@ import { useArtwork } from '../../ui/use-artwork'
  * FIRST VIEWPORT: 问候、成对签到、主要签到按钮、积分池。
  * FORM: 采用用户已确认的 A「双人签到台」结构与 v2 图稿。
  */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Button, Image, Text, View } from '@tarojs/components'
 import { getHome } from '../../features/home/api'
 import { checkIn } from '../../features/checkin/api'
 import { useGate } from '../../app/hooks'
-import { keys } from '../../core/query'
+import { keys, queries } from '../../core/query'
+import { getCatalog } from '../../features/catalog/api'
 import type { CheckinResult } from '../../contracts/api'
 import { navigate } from '../../platform'
 import { useTheme } from '../../app/theme'
@@ -25,7 +26,10 @@ export default function HomePage() {
   const gate = useGate(), action = useReminderAction(gate.allowed), {scheme,appearance} = useTheme()
   const [receipt, setReceipt] = useState<CheckinResult>()
   const query = useQuery({ queryKey: keys.home, queryFn: getHome, enabled: gate.allowed, refetchInterval: gate.allowed ? 15000 : false })
-  const data = gate.allowed ? query.data : undefined
+  const data = gate.canShow ? query.data : undefined
+  useEffect(() => {
+    if (gate.allowed && query.isSuccess) void queries.prefetchQuery({ queryKey: keys.catalog('partner'), queryFn: () => getCatalog('partner') })
+  }, [gate.allowed, query.isSuccess])
   const next = data?.milestones.find(m => m.days > data.context.couple!.doubleDays)
   return <Page messageEntry title='今天，也一起' subtitle='平凡的日子，因为有你而特别。'>
     <ErrorState error={gate.error || query.error || action.error} retry={() => { void gate.refetch(); void query.refetch() }} />

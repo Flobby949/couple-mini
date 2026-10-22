@@ -12,7 +12,7 @@ import { PersonRow } from '../../../ui/visual'
 export default function StorePage(){
  const { emptyStore: empty } = useArtwork()
  const gate=useGate(),query=useQuery({queryKey:keys.catalog('mine'),queryFn:()=>getCatalog('mine'),enabled:gate.allowed,refetchInterval:gate.allowed?30000:false,staleTime:0})
- return <Page title='我的小店'><ErrorState error={gate.error||query.error} retry={()=>{void gate.refetch();void query.refetch()}}/>{(!gate.allowed||!query.data)&&!query.error?<Loading/>:gate.allowed&&query.data&&<>
+ return <Page title='我的小店'><ErrorState error={gate.error||query.error} retry={()=>{void gate.refetch();void query.refetch()}}/>{(!gate.canShow||!query.data)&&!query.error?<Loading/>:gate.canShow&&query.data&&<>
   <Text className='page-title store-title'>{gate.data!.me.nickname}的小店</Text><Text className='muted store-subtitle'>用喜欢的方式，把日常过得更温柔。</Text>
   <View className='surface'><PersonRow user={gate.data!.me} partnerId={gate.data!.partner!.id} title={`${gate.data!.me.nickname}的小店`} description='把想为你做的小事，放在这里。'/></View>
   {query.data.products.length===0&&<Empty image={empty} title='你的第一份心意，还没上架' description='添加一张封面，写下你愿意兑现的小事'/>}

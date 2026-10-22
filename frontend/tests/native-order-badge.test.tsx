@@ -3,7 +3,7 @@ import { act, create, type ReactTestRenderer } from 'react-test-renderer'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const state = vi.hoisted(() => ({
-  gate: { visible: true, allowed: true, data: { me: { id: 'buyer', nickname: '我' }, partner: { id: 'seller', nickname: '伴侣' } } },
+  gate: { visible: true, allowed: true, canShow: true, data: { me: { id: 'buyer', nickname: '我' }, partner: { id: 'seller', nickname: '伴侣' } } },
   counts: vi.fn(), orders: vi.fn(), home: vi.fn(), navigate: vi.fn(), setBadge: vi.fn().mockResolvedValue({}), removeBadge: vi.fn().mockResolvedValue({}),
 }))
 vi.mock('@tarojs/components', () => ({ View: 'view', Text: 'text', Button: 'button', ScrollView: 'scroll-view' }))

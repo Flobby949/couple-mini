@@ -17,7 +17,7 @@ import { ErrorState, Loading, Notice } from '../../../ui'
 export default function ProductPage() {
   const gate = useGate(), id = useRouter().params.id || '', action = useAction(), [added, setAdded] = useState(false)
   const query = useQuery({ queryKey: keys.product(id), queryFn: () => getProduct(id), enabled: gate.allowed && !!id, refetchInterval: gate.allowed ? 30000 : false, staleTime: 0 })
-  const data = gate.allowed ? query.data : undefined
+  const data = gate.canShow ? query.data : undefined
   const own = data?.product.ownerId === gate.data?.me.id
   const blocked = data ? purchaseBlock(data.balance, data.product.stock, data.product.price) : ''
   return <Page title='这份心意，想送给你' subtitle='每次兑换一份，等待对方接受与兑现。'>

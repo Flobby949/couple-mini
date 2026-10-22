@@ -22,7 +22,7 @@ export default function GiftPage() {
   function submit() { if (gate.allowed && valid) void action.run(() => sendGift(amount), async result => { setAmount(''); await navigate(`/packages/account/gift-detail/index?id=${result.id}`) }) }
   return <Page title='送一份小小的鼓励' subtitle='这不是转账，积分由系统新增。'>
     <ErrorState error={gate.error || query.error || history.error || action.error} retry={() => { void gate.refetch(); void query.refetch(); void history.refetch() }} />
-    {!gate.allowed || !preview ? <Loading /> : <>
+    {!gate.canShow || !preview ? <Loading /> : <>
       <View className='surface gift-recipient'><PersonRow user={gate.data!.partner!} partnerId={gate.data!.me.id} title={`送给 ${gate.data!.partner!.nickname}`} description='每一份鼓励，都会被好好记录'/></View><View className='surface form gift-form'><Text className='field-label'>赠送积分</Text><View className='gift-amount'><Input className='input' ariaLabel='申请赠送积分' type='digit' value={amount} placeholder='0' onInput={e => setAmount(e.detail.value)} /><Text>积分</Text></View><Text className='muted'>本次最多 {preview.singleMax} 积分 · 今日还可赠送 {preview.sendsRemaining} 次</Text><Text className='muted'>对方今日剩余额度 {preview.receiverRemaining} 积分</Text>
         {value !== null && value > preview.singleMax && <Text className='warning-text'>申请数额超过单次上限，请降低金额或刷新规则。</Text>}
         {preview.sendsRemaining === 0 && <Notice>今天的 3 次赠送已用完。</Notice>}

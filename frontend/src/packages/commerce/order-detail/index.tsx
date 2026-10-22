@@ -21,7 +21,7 @@ export default function OrderDetailPage() {
   const gate = useGate(), id = useRouter().params.id || '', action = useReminderAction(gate.allowed)
   const [confirm, setConfirm] = useState<OrderAction>(), [receipt, setReceipt] = useState<OrderReceipt>()
   const query = useQuery({ queryKey: keys.order(id), queryFn: () => getOrder(id), enabled: gate.allowed && !!id, refetchInterval: gate.allowed ? 30000 : false, staleTime: 0 })
-  const data = gate.allowed ? query.data : undefined, order = data?.order
+  const data = gate.canShow ? query.data : undefined, order = data?.order
   const me = gate.data?.me.id || ''
   const preview = order && data ? cancellationPreview(order, me, data.balance) : undefined
   const sellerCancel = confirm === 'cancel' && order?.sellerId === me && order.status !== 'pending'

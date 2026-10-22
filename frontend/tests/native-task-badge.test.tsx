@@ -5,7 +5,7 @@ import type { Home } from '../src/contracts/api'
 import type { Task } from '../src/contracts/tasks'
 
 const state = vi.hoisted(() => ({
-  gate: { visible: true, allowed: true },
+  gate: { visible: true, allowed: true, canShow: true },
   home: vi.fn(), tasks: vi.fn(), openTasks: vi.fn(), setBadge: vi.fn().mockResolvedValue({}), removeBadge: vi.fn().mockResolvedValue({}),
 }))
 vi.mock('@tarojs/components', () => ({ View: 'view', Text: 'text', Button: 'button', Image: 'image' }))
@@ -34,7 +34,7 @@ async function render(children: React.ReactNode) {
 }
 beforeEach(() => {
   vi.clearAllMocks()
-  state.gate = { visible: true, allowed: true }
+  state.gate = { visible: true, allowed: true, canShow: true }
   client = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: Infinity } } })
   state.home.mockResolvedValue(home(todos(2, 1)))
   state.openTasks.mockResolvedValue(todos(2, 1))
@@ -72,19 +72,19 @@ it('caps the bottom tab at 99+ and prevents hidden pages from overwriting it', a
   client.setQueryData(openKey, todos(80, 21))
   await render(<TaskTabBadge/>)
   expect(state.setBadge).toHaveBeenLastCalledWith({ index: 1, text: '99+' })
-  state.gate = { visible: false, allowed: false }
+  state.gate = { visible: false, allowed: false, canShow: true }
   state.setBadge.mockClear(); state.removeBadge.mockClear()
   act(() => tree!.update(<QueryClientProvider client={client}><TaskTabBadge/></QueryClientProvider>))
   act(() => { client.setQueryData(openKey, []) })
   expect(state.setBadge).not.toHaveBeenCalled()
   expect(state.removeBadge).not.toHaveBeenCalled()
-  state.gate = { visible: true, allowed: true }
+  state.gate = { visible: true, allowed: true, canShow: true }
   await act(async () => { tree!.update(<QueryClientProvider client={client}><TaskTabBadge/></QueryClientProvider>); await new Promise(resolve => setTimeout(resolve, 10)) })
   expect(state.removeBadge).toHaveBeenLastCalledWith({ index: 1 })
 })
 
 it('does not fetch tasks before the gate allows access and clears any previous badge', async () => {
-  state.gate = { visible: true, allowed: false }
+  state.gate = { visible: true, allowed: false, canShow: false }
   await render(<TaskTabBadge/>)
   expect(state.openTasks).not.toHaveBeenCalled()
   expect(state.removeBadge).toHaveBeenCalledWith({ index: 1 })
