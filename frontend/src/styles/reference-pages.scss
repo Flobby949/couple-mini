@@ -550,6 +550,8 @@
 .ui-v2 {
  .messages-tabs {width:100%;gap:12px;background:transparent;padding:0;}
  .messages-tabs>.segment-option {background:var(--tint);border-radius:24px;}
+ .messages-tabs>.segment-option:not(.selected) {color:var(--primary);}
+ .messages-tabs>.segment-option.selected {background:var(--primary);color:var(--on-primary);}
  .messages-list {padding:0;background:transparent;}
  .message-row {padding:17px 13px;background:var(--surface);border:0;border-radius:14px;margin-bottom:12px;min-height:98px;}
  .preference-intro {display:flex;align-items:center;gap:15px;padding:20px 16px;margin-bottom:20px;}

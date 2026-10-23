@@ -9,11 +9,11 @@
   .mood-checkin-panel {padding-bottom:5px;}
   .mood-checkin-panel .fabric {top:-15px;height:calc(100% + 45px);}
   .mood-checkin-panel .pair {padding-top:18px;}
-  .mood-checkin-panel .checkin-button {position:relative;display:flex;align-items:center;justify-content:center;gap:7px;width:238px;max-width:100%;min-height:46px;margin:6px auto 2px;padding:11px 16px;border:1px solid var(--line);border-radius:12px;background:var(--checkin-caption-surface);color:var(--primary);font-size:15px;font-weight:600;line-height:1.5;}
+  .mood-checkin-panel .checkin-button {position:relative;display:flex;align-items:center;justify-content:center;gap:7px;width:238px;max-width:100%;min-height:48px;margin:6px auto 2px;padding:11px 16px;border:1px solid transparent;border-radius:12px;background:var(--primary);color:var(--on-primary);font-size:15px;font-weight:600;line-height:1.5;}
   .mood-checkin-panel .checkin-button::after {content:'';position:absolute;inset:4px;width:auto;height:auto;border:1px dashed currentColor;border-radius:8px;transform:none;opacity:.45;pointer-events:none;}
   .mood-checkin-panel .checkin-button:focus-visible {outline:2px solid var(--primary);outline-offset:3px;}
-  .mood-checkin-panel .checkin-button:active:not([disabled]), .mood-checkin-panel .checkin-button:active[disabled='false'] {background:var(--tint);}
-  .mood-checkin-panel .checkin-button[disabled]:not([disabled='false']):not(.checkin-completed) {color:var(--muted);}
+  .mood-checkin-panel .checkin-button:active:not([disabled]), .mood-checkin-panel .checkin-button:active[disabled='false'] {transform:translateY(1px);}
+  .mood-checkin-panel .checkin-button[disabled]:not([disabled='false']):not(.checkin-completed) {background:var(--disabled-bg);color:var(--disabled-ink);}
   .mood-checkin-panel .checkin-button.checkin-completed {border-color:transparent;background:transparent;color:var(--primary);}
   .mood-checkin-panel .checkin-button.checkin-completed::after {opacity:.25;}
   .checkin-footer {display:flex;align-items:center;justify-content:flex-end;min-height:40px;}
@@ -73,8 +73,6 @@
   .calendar-complete {display:flex;align-items:center;justify-content:center;gap:7px;min-height:42px;margin-top:12px;border-radius:12px;background:var(--tint);color:var(--primary);font-size:13px;font-weight:600;}
 }
 .ui-v2.theme-light .mood-checkin-panel .fabric {opacity:.92;}
-.ui-v2.theme-light .mood-checkin-panel {--checkin-caption-surface:rgba(252,248,240,.92);}
-.ui-v2.theme-dark .mood-checkin-panel {--checkin-caption-surface:rgba(51,49,43,.92);}
 .ui-v2.theme-dark .mood-checkin-panel .fabric {opacity:.85;filter:invert(.82) hue-rotate(180deg) saturate(.8);}
 .ui-v2 .calendar-milestone {color:var(--ink);}
 @keyframes mood-arrive {from {transform:scale(.94);} to {transform:scale(1);}}
