@@ -2,7 +2,14 @@
 
 目标为 `https://www.flobby.top/couple-mini/api/v1`。复用已有 Nginx 和 HTTPS，代理至 `127.0.0.1:18081`。MySQL、Redis 不发布宿主机端口，三个持久卷独立于服务器已有项目。
 
-最新小程序体验版 `0.2.4` 已于 2026-10-23 20:50（北京时间）确认上传成功，并覆盖原体验版。代码提交 [`3d87539`](https://github.com/Flobby949/couple-mini/commit/3d8753927c387e99e347c253511f439acac87671) 已推送至 `main`。
+最新发布：2026-10-24（北京时间），商品上下架功能已完成前后端发布。代码提交 [`53c43af`](https://github.com/Flobby949/couple-mini/commit/53c43af3eaecfd45f15a1ce647d0a4bb056a62e2) 已推送至 `main`，后端标签 `v0.2.5`，小程序体验版 `0.2.5`。
+
+- 后端于 00:20 经 [Actions run 39983577934](https://github.com/Flobby949/couple-mini/actions/runs/39983577934) 部署成功，镜像为 `ghcr.io/flobby949/couple-mini-backend@sha256:7a35d21dce41750a1fa7c8d3f806b003e51700336c4b466a9e8dd1ba1670ea34`。发布前数据库、图片和旧镜像引用已保存到 `/opt/couple-mini/backups/20261023T162001Z/`。API、MySQL、Redis 均健康，公网 readiness 返回 200；只读核对确认 `009_product_availability.sql` 已登记，`products.on_sale` 默认值为 1。
+- 小程序于 00:21 确认“代码上传成功”，按现有流程覆盖体验版。使用生产 HTTPS API，无本地测试地址和开发登录入口；主包 1,488,940 字节，总包 1,874,036 字节。凭证为本地 `frontend/tmp/weapp-0.2.5-upload-success.png` 和同名 `.txt`。本次更新体验版，未提交微信审核或正式发布。
+- 我的店铺可上架、下架；伴侣列表隐藏下架商品，购物车确认页与下单事务重新检查状态，已有订单继续兑现、取消和退库存。现有商品默认上架，编辑或退库存不会改变上下架状态。商品缓存键升级至 v2，避免旧缓存缺少状态字段。
+- 本地隔离 MySQL/Redis 的集成及并发测试、Go race/vet、279 项前端测试、类型检查、小程序/H5 构建和包体检查通过。H5 实测上架、下架及旧购物车候选下单拦截，检查 390px/320px 布局。发布流水线使用独立 CI 数据库；线上仅执行发布及只读健康/表结构检查，没有以真实商品或订单运行测试。保留此前已确认的离线图片策略，上传质量报告仍有图片和音频总量建议，不影响上传成功。
+
+上一小程序体验版 `0.2.4` 已于 2026-10-23 20:50（北京时间）确认上传成功，并覆盖原体验版。代码提交 [`3d87539`](https://github.com/Flobby949/couple-mini/commit/3d8753927c387e99e347c253511f439acac87671) 已推送至 `main`。
 
 本版启用 `lazyCodeLoading: 'requiredComponents'`，并在构建检查中校验按需注入配置。275 项前端测试、类型检查、小程序生产构建及包体检查通过，开发者工具中首页和消息中心分包正常加载。本地主包 1,488,675 字节，总包 1,873,024 字节。最终上传报告中组件按需注入、主包体积、代码压缩、未使用文件及 AppSecret 检查均已通过；仅剩“图片和音频资源大小应不超过 200 K”建议。2026-10-23 用户明确选择保留图片离线即显，接受该体积建议，因此不迁移装饰插画到网络，也不降低画质。包内图片合计 1,180,899 字节，最大单张 60,453 字节；该建议不阻止上传。本地重新扫描曾出现主包体积提示，最终上传报告已确认通过。使用生产 HTTPS API，无后端部署、微信审核或正式发布。凭证为本地 `frontend/tmp/weapp-0.2.4-upload-success.png`、`frontend/tmp/weapp-0.2.4-quality.png` 及同名 `.txt` 报告。
 
@@ -20,7 +27,7 @@
 
 历史发布前记录：`0.2.0`（2026-10-23）：心情签到、双人月历和16张亮暗素材已完成本地联调。245项前端测试、类型检查、真实MySQL/Redis集成race、vet、小程序/H5生产构建通过；主包1,485,214字节。浏览器独立人工对照95.65/100，微信开发者工具390/320、亮暗、双人签到与设备缓存联调通过。commit/push、后端v0.2.0部署及小程序0.2.0上传尚未完成，不能据此视为已发布；完整凭证及门槛见 [验收记录](ui/mood-checkin-acceptance.md)。后端需执行007/008追加迁移，保留旧无心情记录；新版本会公开带内容版本的 `/couple-mini/assets/moods/` PNG，先部署后端再上传前端。
 
-最新发布：2026-10-22 11:26（北京时间），后端 `v0.1.1` 已由 [Actions run 39715111101](https://github.com/Flobby949/couple-mini/actions/runs/39715111101) 部署，代码提交 `88ce23d`。当前镜像为 `ghcr.io/flobby949/couple-mini-backend@sha256:b97074541824588fb6e378f4bf5c5d919548a70e12ab97f9f55b712ef0b3e422`。发布前已保存 `backups/20261022T032613Z`（数据库、图片及旧镜像引用），`006_user_profile.sql` 已执行，API/MySQL/Redis 均健康。公网 readiness 返回 200，资料保存及头像上传接口在未登录时返回 JSON 401。镜像仓库下载较慢，部署耗时约 12 分钟。
+历史发布：2026-10-22 11:26（北京时间），后端 `v0.1.1` 已由 [Actions run 39715111101](https://github.com/Flobby949/couple-mini/actions/runs/39715111101) 部署，代码提交 `88ce23d`。当前镜像为 `ghcr.io/flobby949/couple-mini-backend@sha256:b97074541824588fb6e378f4bf5c5d919548a70e12ab97f9f55b712ef0b3e422`。发布前已保存 `backups/20261022T032613Z`（数据库、图片及旧镜像引用），`006_user_profile.sql` 已执行，API/MySQL/Redis 均健康。公网 readiness 返回 200，资料保存及头像上传接口在未登录时返回 JSON 401。镜像仓库下载较慢，部署耗时约 12 分钟。
 
 小程序开发版 `0.1.16` 已于 2026-10-22 23:35（北京时间）上传成功，上传前确认覆盖原体验版，工具显示“代码上传成功”。购物车改为当前设备本地保存，按 API 环境与账号隔离；按用户选择从空列表开始，不迁移旧联网候选。加入、移除和打开不请求购物车接口、不触发全量刷新，列表与数量同步更新；确认下单仍读取并校验最新商品价格、库存及余额，成功或恢复核查确认成功后清理对应本地候选。代码提交 `049ed5e`，217 项前端测试、类型检查、小程序/H5 构建及包体检查通过；模拟器实测增删与打开时 `/cart` 请求为 0。本地主包 1,499,440 字节，使用生产 HTTPS API，无后端更新、审核或正式发布。凭证为本地 `frontend/tmp/weapp-0.1.16-upload-success.png`。
 
@@ -102,7 +109,7 @@ git push origin v0.1.0
 curl --fail https://www.flobby.top/couple-mini/health/ready
 ```
 
-小程序已使用 `TARO_APP_API_BASE=https://www.flobby.top/couple-mini/api/v1` 构建并上传，当前体验版为 `0.2.4`。微信后台的 request/uploadFile/downloadFile 合法域名都需包含 `https://www.flobby.top`。后端始终关闭开发登录。
+小程序已使用 `TARO_APP_API_BASE=https://www.flobby.top/couple-mini/api/v1` 构建并上传，当前体验版为 `0.2.5`。微信后台的 request/uploadFile/downloadFile 合法域名都需包含 `https://www.flobby.top`。后端始终关闭开发登录。
 
 2026-10-22 13:32（北京时间），线上 `/opt/couple-mini/.env` 的 `WECHAT_MINIPROGRAM_STATE` 已由 `developer` 切换为 `trial`，Compose 默认值同步更新。沿用现有镜像重建 API 后，容器环境确认 `trial`，容器及公网 readiness 均正常；原配置备份在 `backups/notification-trial-20261022T053242Z/`。新生成的微信通知跳转当前体验版，并保留对应业务详情页路径；已生成的投递载荷及已发消息保留原跳转环境。体验版消息的手机点击回跳仍待真机验证，后续正式发布时再改为 `formal`。
 
