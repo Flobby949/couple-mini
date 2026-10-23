@@ -6,6 +6,7 @@ export default defineAppConfig({
     { root: 'packages/tasks', pages: ['edit/index', 'detail/index'] },
   ],
   darkmode: true,
+  lazyCodeLoading: 'requiredComponents',
   usingComponents: {},
   themeLocation: 'theme.json',
   window: {
