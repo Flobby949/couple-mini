@@ -39,7 +39,6 @@ export default function HomePage() {
   useEffect(() => {
     if (gate.allowed && query.isSuccess) void queries.prefetchQuery({ queryKey: keys.catalog('partner'), queryFn: () => getCatalog('partner') })
   }, [gate.allowed, query.isSuccess])
-  const next = data?.milestones.find(m => m.days > data.context.couple!.doubleDays)
   return <Page messageEntry title='今天，也一起' subtitle='平凡的日子，因为有你而特别。'>
     <ErrorState error={gate.error || query.error || (!picker ? action.error : null)} retry={() => { void gate.refetch(); void query.refetch() }} />
     {!data && !query.error && <Loading />}
@@ -60,7 +59,6 @@ export default function HomePage() {
           {data.taskTodos.map(t => <Button className='todo-row' key={t.id} onClick={() => void navigate(`/packages/tasks/detail/index?id=${t.id}`)}><View className='todo-thumb'><Icon name='task' tone='primary'/></View><View className='todo-copy'><Text className='section-title'>{t.name}</Text><Text className='todo-type'>任务</Text></View><Text className='tag warning'>{t.status==='pending'?'待我接受':t.status==='awaiting'?'待我确认':'待我处理'}</Text><Icon name='chevron' size={15} tone='muted'/></Button>)}
         </View>}
       </Section>
-      <Button className='home-milestone' onClick={()=>void navigate('/packages/account/milestones/index')}><Icon name='gift' tone='primary' size={27}/><View><Text>{next ? `下一站 ${next.days} 天 · +${next.reward} 入池` : '所有签到里程碑已达成'}</Text><View className='progress'><View style={{width:`${next?Math.min(100,data.context.couple!.doubleDays/next.days*100):100}%`}}/></View></View><Text className='primary-text'>{data.context.couple!.doubleDays} / {next?.days || 365}</Text></Button>
     </>}
   </Page>
 }

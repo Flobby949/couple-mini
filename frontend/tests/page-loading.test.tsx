@@ -84,6 +84,20 @@ async function lifecycle(events: Set<() => void>) { await act(async () => { for 
 const loading = () => tree!.root.findAllByProps({ className: 'loading' }).length
 const content = () => JSON.stringify(tree!.toJSON(), (key, value) => key === 'disabled' ? undefined : value)
 
+it('loads product details when the sheet mounts after the shop has already been shown', async () => {
+  queries.removeQueries({ queryKey: keys.product('product') })
+  state.route = 'shop'; mount(Shop); await lifecycle(state.show)
+  expect(state.product).not.toHaveBeenCalled()
+  await act(async () => {
+    tree!.root.findByProps({ ariaLabel: '查看测试商品详情' }).props.onClick({ stopPropagation: vi.fn() })
+    await vi.advanceTimersByTimeAsync(10)
+  })
+  expect(tree!.root.findAllByProps({ ariaLabel: '商品详情', role: 'dialog' })).toHaveLength(1)
+  expect(state.product).toHaveBeenCalledExactlyOnceWith('product')
+  expect(loading()).toBe(0)
+  expect(content()).toContain('兑现说明')
+})
+
 it.each([['home', HomePage], ['tasks', Tasks], ['shop', Shop], ['me', Me], ['store', Store], ['product', ProductPage], ['orders', OrdersPage], ['messages', MessagesPage], ['partner', PartnerPage]] as const)('%s retains loaded content when hidden and does not poll until shown again', async (route, Component) => {
   state.route = route; mount(Component); await lifecycle(state.show)
   expect(loading()).toBe(0)

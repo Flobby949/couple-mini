@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { act, create, type ReactTestRenderer } from 'react-test-renderer'
-const fixture = vi.hoisted(() => ({ navigate: vi.fn(), add: vi.fn(), refresh: vi.fn(), catalogReady: true, error: null as Error | null, measure: vi.fn(), hide: new Set<() => void>(), product: { id: 'product', name: '零积分心意', price: 0, stock: 1, coverId: 'cover' } }))
-vi.mock('@tarojs/components', () => ({ View: 'view', Text: 'text', Button: 'button' }))
+const fixture = vi.hoisted(() => ({ navigate: vi.fn(), add: vi.fn(), refresh: vi.fn(), hideBar: vi.fn(), showBar: vi.fn(), rememberPrice: vi.fn(), catalogReady: true, detailReady: true, detailError: null as Error | null, balance: 0, error: null as Error | null, measure: vi.fn(), hide: new Set<() => void>(), product: { id: 'product', name: '零积分心意', description: '给你一个拥抱', price: 0, stock: 1, coverId: 'cover' } }))
+vi.mock('@tarojs/components', () => ({ View: 'view', Text: 'text', Button: 'button', ScrollView: 'scroll-view' }))
 vi.mock('@tarojs/taro', async () => {
   const { useEffect } = await import('react')
   return { useDidHide: (callback: () => void) => useEffect(() => { fixture.hide.add(callback); return () => { fixture.hide.delete(callback) } }, [callback]),
@@ -10,14 +10,16 @@ vi.mock('@tarojs/taro', async () => {
       return query
     } } }
 })
-vi.mock('@tanstack/react-query', () => ({ useQuery: () => ({ data: fixture.catalogReady ? { products: [fixture.product], balance: 0 } : undefined }) }))
+vi.mock('@tanstack/react-query', () => ({ useQuery: ({ queryKey }: { queryKey: string[] }) => queryKey[0] === 'product' ? { data: fixture.detailReady ? { product: fixture.product, balance: fixture.balance } : undefined, error: fixture.detailError } : { data: fixture.catalogReady ? { products: [fixture.product], balance: 0 } : undefined } }))
 vi.mock('../src/app/hooks', () => ({ useGate: () => ({ allowed: true, canShow: true, data: { me: { id: 'buyer' }, partner: { id: 'seller', nickname: '伴侣' } } }) }))
 vi.mock('../src/app/page', () => ({ Page: ({ children }: { children: React.ReactNode }) => children }))
-vi.mock('../src/core/query', () => ({ keys: { catalog: () => ['catalog'] }, refresh: fixture.refresh }))
+vi.mock('../src/core/query', () => ({ keys: { catalog: () => ['catalog'], product: (id: string) => ['product', id] }, refresh: fixture.refresh }))
 vi.mock('../src/platform', () => ({ navigate: fixture.navigate }))
-vi.mock('../src/features/catalog/api', () => ({ getCatalog: vi.fn() }))
+vi.mock('../src/platform/tab-bar', () => ({ hideTabBar: fixture.hideBar, showTabBar: fixture.showBar }))
+vi.mock('../src/features/orders/checkout-intent', () => ({ rememberCheckoutPrice: fixture.rememberPrice }))
+vi.mock('../src/features/catalog/api', () => ({ getCatalog: vi.fn(), getProduct: vi.fn() }))
 vi.mock('../src/features/catalog/cart', () => ({ useCart: () => ({ items: [], error: fixture.error, add: fixture.add, retry: vi.fn() }) }))
-vi.mock('../src/features/catalog/components', () => ({ Cover: () => null }))
+vi.mock('../src/features/catalog/components', () => ({ Cover: () => null, ProductSummary: () => null }))
 vi.mock('../src/ui/visual', () => ({ Avatar: () => null, Icon: () => null }))
 vi.mock('../src/ui/use-artwork', () => ({ useArtwork: () => ({ emptyStore: '/empty.png' }) }))
 vi.mock('../src/pages/shop/cart', () => ({ CartSheet: () => null }))
@@ -26,6 +28,8 @@ let tree: ReactTestRenderer | undefined
 beforeEach(() => {
   vi.useFakeTimers(); vi.resetAllMocks()
   fixture.add.mockReturnValue(true); fixture.refresh.mockResolvedValue(undefined); fixture.error = null; fixture.catalogReady = true
+  fixture.detailReady = true; fixture.detailError = null; fixture.balance = 0; fixture.product.stock = 1
+  fixture.hideBar.mockResolvedValue(undefined); fixture.showBar.mockResolvedValue(undefined)
   fixture.measure.mockImplementation(callback => callback([{ left: 160, top: 320, width: 38, height: 38 }, { left: 12, top: 660, width: 27, height: 27 }]))
 })
 afterEach(() => { act(() => tree?.unmount()); tree = undefined; fixture.hide.clear(); vi.useRealTimers() })
@@ -34,7 +38,7 @@ const addButton = () => tree!.root.findByProps({ ariaLabel: '将零积分心意�
 const flights = () => tree!.root.findAllByProps({ className: 'cart-flight' })
 const target = () => tree!.root.findByProps({ id: 'shop-cart-target' })
 const tap = () => addButton().props.onClick({ stopPropagation: vi.fn(), changedTouches: [{ clientX: 185, clientY: 338 }] })
-it('exposes product details as a native button while retaining the visible product name', () => {
+it('opens product details in place and restores the tab bar when closed', () => {
   act(() => { tree = create(<Shop/>) })
   const link = tree!.root.findByProps({ ariaLabel: '查看零积分心意详情' })
   expect(link.type).toBe('button')
@@ -42,7 +46,72 @@ it('exposes product details as a native button while retaining the visible produ
   const stop = vi.fn()
   act(() => link.props.onClick({ stopPropagation: stop }))
   expect(stop).toHaveBeenCalledOnce()
-  expect(fixture.navigate).toHaveBeenCalledExactlyOnceWith('/packages/commerce/product/index?id=product')
+  expect(fixture.navigate).not.toHaveBeenCalled()
+  expect(tree!.root.findByProps({ role: 'dialog' }).props.ariaLabel).toBe('商品详情')
+  expect(JSON.stringify(tree!.toJSON())).toContain('给你一个拥抱')
+  expect(fixture.hideBar).toHaveBeenCalledOnce()
+  act(() => tree!.root.findByProps({ ariaLabel: '关闭商品详情' }).props.onClick())
+  expect(tree!.root.findAllByProps({ role: 'dialog' })).toHaveLength(0)
+  expect(fixture.showBar).toHaveBeenCalledOnce()
+})
+it('opens from the product tile and closes on the backdrop or when leaving the shop', () => {
+  mount()
+  const open = () => tree!.root.findByProps({ className: 'product-tile' }).props.onClick()
+  act(open)
+  const stop = vi.fn()
+  act(() => tree!.root.findByProps({ role: 'dialog' }).props.onClick({ stopPropagation: stop }))
+  expect(stop).toHaveBeenCalledOnce()
+  expect(tree!.root.findAllByProps({ role: 'dialog' })).toHaveLength(1)
+  act(() => tree!.root.findByProps({ className: 'sheet-backdrop product-backdrop' }).props.onClick())
+  expect(tree!.root.findAllByProps({ role: 'dialog' })).toHaveLength(0)
+  act(open)
+  act(() => { for (const callback of [...fixture.hide]) callback() })
+  expect(tree!.root.findAllByProps({ role: 'dialog' })).toHaveLength(0)
+  expect(fixture.navigate).not.toHaveBeenCalled()
+})
+it('adds inside the sheet and preserves the zero price when continuing to checkout', () => {
+  mount(); act(() => tree!.root.findByProps({ className: 'product-tile' }).props.onClick())
+  const actions = () => tree!.root.findByProps({ className: 'actions product-sheet-actions' }).findAllByType('button')
+  act(() => actions()[0].props.onClick())
+  expect(fixture.add).toHaveBeenCalledExactlyOnceWith(fixture.product)
+  expect(fixture.navigate).not.toHaveBeenCalled()
+  expect(actions()[1].props.disabled).toBe(false)
+  act(() => actions()[1].props.onClick())
+  expect(fixture.rememberPrice).toHaveBeenCalledExactlyOnceWith('product', 0)
+  expect(fixture.navigate).toHaveBeenCalledExactlyOnceWith('/packages/commerce/checkout/index?id=product')
+  expect(tree!.root.findAllByProps({ role: 'dialog' })).toHaveLength(0)
+})
+it('animates successful sheet additions without a banner and replays on repeated clicks', () => {
+  mount(); act(() => tree!.root.findByProps({ className: 'product-tile' }).props.onClick())
+  act(() => tree!.root.findByProps({ ariaLabel: '加入购物车' }).props.onClick())
+  const animation = tree!.root.findByProps({ className: 'product-sheet-cart-feedback is-added' })
+  expect(tree!.root.findAllByProps({ className: 'notice' })).toHaveLength(0)
+  expect(tree!.root.findAllByProps({ role: 'dialog' })).toHaveLength(1)
+  act(() => tree!.root.findByProps({ ariaLabel: '已加入购物车，再次加入' }).props.onClick())
+  expect(fixture.add).toHaveBeenCalledTimes(2)
+  expect(tree!.root.findByProps({ className: 'product-sheet-cart-feedback is-added' })).not.toBe(animation)
+  expect(tree!.root.findAllByProps({ className: 'notice' })).toHaveLength(0)
+})
+it('does not play success feedback when saving from the sheet fails', () => {
+  fixture.add.mockReturnValue(false); fixture.error = new Error('本地购物车保存失败，请重试')
+  mount(); act(() => tree!.root.findByProps({ className: 'product-tile' }).props.onClick())
+  act(() => tree!.root.findByProps({ ariaLabel: '加入购物车' }).props.onClick())
+  expect(tree!.root.findAllByProps({ className: 'product-sheet-cart-feedback is-added' })).toHaveLength(0)
+  expect(tree!.root.findAllByProps({ ariaLabel: '加入购物车' })).toHaveLength(1)
+  expect(JSON.stringify(tree!.toJSON())).toContain('本地购物车保存失败，请重试')
+})
+it.each([{ stock: 0, balance: 0 }, { stock: 1, balance: -1 }])('disables checkout for unavailable stock or negative balance: %j', ({ stock, balance }) => {
+  fixture.product.stock = stock; fixture.balance = balance
+  mount(); act(() => tree!.root.findByProps({ className: 'product-tile' }).props.onClick())
+  expect(tree!.root.findByProps({ className: 'actions product-sheet-actions' }).findAllByType('button')[1].props.disabled).toBe(true)
+})
+it('keeps a failed detail request inside a closable sheet without checkout actions', () => {
+  fixture.detailReady = false; fixture.detailError = new Error('读取商品失败')
+  mount(); act(() => tree!.root.findByProps({ className: 'product-tile' }).props.onClick())
+  expect(JSON.stringify(tree!.toJSON())).toContain('读取商品失败')
+  expect(tree!.root.findAllByProps({ className: 'actions product-sheet-actions' })).toHaveLength(0)
+  act(() => tree!.root.findByProps({ ariaLabel: '关闭商品详情' }).props.onClick())
+  expect(tree!.root.findAllByProps({ role: 'dialog' })).toHaveLength(0)
 })
 it('the cart action does not trigger product navigation', async () => {
   act(() => { tree = create(<Shop/>) })

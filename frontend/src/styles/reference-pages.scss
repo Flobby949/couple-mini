@@ -86,8 +86,8 @@
 .todo-type { color:var(--primary); background:var(--tint); padding:1px 6px; border-radius:4px; font-size:10px; }
 .home-empty { display:flex; align-items:center; gap:10px; min-height:72px; padding:12px; background:var(--surface); border-radius:14px; }
 .home-empty .section-title { font-size:14px; }
-.home-milestone { display:flex; align-items:center; gap:9px; width:100%; margin:8px 0 0; padding:8px 12px; background:var(--surface); border-radius:12px; text-align:left; font-size:11px; }
-.home-milestone > view { flex:1; min-width:0; }
+.calendar-milestone { display:flex; align-items:center; gap:9px; width:100%; margin:8px 0 0; padding:8px 12px; background:var(--surface); border-radius:12px; text-align:left; font-size:11px; }
+.calendar-milestone > view { flex:1; min-width:0; }
 .progress { height:6px; width:100%; background:var(--line); border-radius:5px; overflow:hidden; margin:5px 0; }
 .progress > view { height:100%; background:var(--primary); border-radius:5px; }
 .menu { padding:0 16px; }
@@ -101,13 +101,15 @@
 .profile-row + .profile-row { border-top:1px solid var(--line); }
 .profile-copy { flex:1; min-width:0; }
 .profile-copy .section-title { font-size:17px; }
-.profile-copy .muted { font-size:12px; }
+.profile-row-self { min-height:92px; padding:12px 0; }
+.profile-row-self .section-title { font-size:20px; }
+.profile-row-partner { min-height:74px; }
+.profile-row-partner .section-title { font-size:17px; }
 .order-shortcuts { padding:12px 14px; margin-top:10px; }
 .order-shortcuts .section-title { font-size:15px; }
 .shortcut-grid { display:flex; margin-top:16px; }
 .shortcut-grid > .shortcut-item { display:flex; flex:1; flex-direction:column; gap:6px; align-items:center; font-size:12px; padding:0; margin:0; background:transparent; line-height:1.5; border-radius:0; }
 .shortcut-grid > .shortcut-item + .shortcut-item { border-left:1px solid var(--line); }
-.brand-footer { text-align:center; margin:18px 0; color:var(--muted); font-size:11px; }
 .segmented { display:flex; gap:4px; padding:4px; border-radius:24px; background:var(--tint); margin-bottom:12px; }
 .segmented > .segment-option { display:flex; justify-content:center; align-items:center; flex:1; min-height:36px; margin:0; padding:7px 8px; border-radius:22px; font-size:14px; line-height:1.5; background:transparent; color:var(--muted); }
 .segmented .selected { color:var(--on-primary); background:var(--primary); }
@@ -144,7 +146,6 @@
  .pool-card .pool-jar {width:64px;height:64px;}
  .menu .menu-item {padding:12px 0;}
  .order-shortcuts .segmented .selected {background:var(--surface);color:var(--primary);}
- .brand-footer {display:block;}
 }
 .ui-v2.route-me .page-heading {min-height:44px;justify-content:center;margin-bottom:13px;}
 .ui-v2.theme-light {--ink:#19103f;--muted:#716d96;--line:#e6e4f0;}
@@ -309,6 +310,26 @@
  .product-facts {display:flex;gap:10px;}
  .product-facts > view {display:flex;flex:1;align-items:center;gap:12px;background:var(--tint);border-radius:12px;padding:12px;}
  .product-actions > .button:first-child {order:2;}
+ .product-backdrop {overscroll-behavior:contain;}
+ .product-sheet {height:55vh;max-height:55vh;overflow:hidden;gap:12px;padding-top:16px;}
+ .product-sheet::before {display:none;}
+ .product-sheet-heading {flex-shrink:0;flex-wrap:nowrap;}
+ .product-sheet-heading .icon-button {width:44px;height:44px;}
+ .product-sheet-scroll {flex:1;min-height:0;height:0;overscroll-behavior:contain;}
+ .product-sheet .product-copy .section-title {font-size:18px;}
+ .product-sheet .description {white-space:pre-wrap;overflow-wrap:anywhere;}
+ .product-sheet-facts {margin:12px 0;}
+ .product-sheet .notice {margin:12px 0 0;padding:10px;}
+ .product-sheet .product-sheet-actions {flex-shrink:0;flex-direction:row;margin:0;}
+ .product-sheet-actions .button {flex:1;min-width:0;padding-left:8px;padding-right:8px;}
+ .product-sheet-add {display:flex;align-items:center;justify-content:center;gap:6px;}
+ .product-sheet-cart-feedback {position:relative;display:flex;flex-shrink:0;pointer-events:none;}
+ .product-sheet-cart-icon {display:flex;}
+ .product-sheet-cart-token {position:absolute;top:-10px;left:4px;color:var(--primary);font-size:14px;font-weight:600;line-height:1;opacity:0;}
+ .product-sheet-cart-feedback.is-added .product-sheet-cart-token {animation:product-cart-drop 240ms ease-in both;}
+ .product-sheet-cart-feedback.is-added .product-sheet-cart-icon {animation:cart-receive 240ms ease-out 160ms;}
+ @keyframes product-cart-drop {from {transform:translateY(-12px) scale(.8);opacity:0;} 30% {opacity:1;} to {transform:translateY(14px) scale(.4);opacity:0;}}
+ @media (prefers-reduced-motion:reduce) {.product-sheet-cart-feedback.is-added .product-sheet-cart-icon {animation:none;} .product-sheet-cart-token {display:none;}}
  .store-title {display:block;font-size:23px;margin:0 10px 5px;}
  .store-subtitle {margin:0 10px 20px;}
  .store-products {margin-top:16px;}
@@ -515,7 +536,7 @@
  .milestone-copy .section-title {font-size:14px;}
  .milestone-copy .muted {font-size:10px;}
  .milestone-reward {font-size:21px;color:var(--primary);font-weight:600;text-align:center;}
- .home-milestone {width:100%;text-align:left;background:var(--tint);line-height:1.5;}
+ .calendar-milestone {width:100%;text-align:left;background:var(--tint);line-height:1.5;}
  .appearance-options {display:flex;gap:8px;}
  .appearance-choice {padding:14px 8px;text-align:center;flex:1;min-width:0;}
  .appearance-choice .section-title {font-size:14px;}
@@ -562,7 +583,7 @@
 .ui-v2 .cart-backdrop-h5 {bottom:0;}
 .ui-v2 {
  .group-heading,.channel-option,.reservation-row {color:var(--ink);}
- .group-heading::after,.channel-option::after,.reservation-row::after,.message-row::after,.home-milestone::after,.product-cart::after {border:0;}
+ .group-heading::after,.channel-option::after,.reservation-row::after,.message-row::after,.calendar-milestone::after,.product-cart::after {border:0;}
  .radio-mark {display:flex;align-items:center;justify-content:center;width:24px;height:24px;flex:0 0 24px;border:1.5px solid var(--muted);border-radius:50%;color:var(--on-primary);font-size:14px;}
  .radio-mark.selected {border-color:var(--primary);background:var(--primary);box-shadow:inset 0 0 0 3px var(--surface);font-size:11px;}
  .channel-option>.radio-mark+view {min-width:0;flex:1;}

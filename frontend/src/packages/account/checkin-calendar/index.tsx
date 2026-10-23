@@ -14,6 +14,8 @@ import { beijingTime } from '../../../core/values'
 import { ErrorState, Loading } from '../../../ui'
 import { Avatar, Icon } from '../../../ui/visual'
 import { getCheckinCalendar } from '../../../features/checkin/api'
+import { getHome } from '../../../features/home/api'
+import { navigate } from '../../../platform'
 import { calendarCells, dayLabel, monthLabel, shiftMonth, weekdays } from '../../../features/checkin/calendar'
 import { MoodImage } from '../../../features/checkin/mood-image'
 import { moodOption } from '../../../features/checkin/moods'
@@ -32,6 +34,10 @@ export default function CheckinCalendarPage() {
   const actor = context?.me.id || '', couple = context?.couple?.id || ''
   const [month, setMonth] = useState(''), [selected, setSelected] = useState('')
   const previousDay = useRef(''), previousRevision = useRef<string>()
+  const milestoneQuery = useQuery({ queryKey: keys.home, queryFn: getHome, enabled: gate.allowed, refetchInterval: gate.allowed ? 15000 : false })
+  const milestones = gate.canShow && milestoneQuery.data?.context.me.id === actor && milestoneQuery.data.context.couple?.id === couple ? milestoneQuery.data.milestones : undefined
+  const doubleDays = context?.couple?.doubleDays || 0
+  const next = milestones?.find(m => m.days > doubleDays)
   useCheckinDay(context, gate.visible)
   useEffect(() => {
     if (!date) return
@@ -51,10 +57,15 @@ export default function CheckinCalendarPage() {
   const days = new Map(data?.days.map(day => [day.date, day]))
   function changeMonth(next: string) { setMonth(next); setSelected(next === date.slice(0, 7) ? date : `${next}-01`) }
   return <Page title='心情日历'>
-    <Text className='calendar-subtitle'>每一枚小表情，都是我们的一天</Text>
     <ErrorState error={gate.error || query.error} retry={() => { void gate.refetch(); void query.refetch() }}/>
     {!data && !query.error && <Loading/>}
     {data && context?.partner && <>
+      <ErrorState error={milestoneQuery.error} retry={() => { void milestoneQuery.refetch() }}/>
+      {milestones && <Button className='calendar-milestone' onClick={() => void navigate('/packages/account/milestones/index')}>
+        <Icon name='gift' tone='primary' size={27}/>
+        <View><Text>累计双人签到 {doubleDays} 天</Text><Text className='muted'>{next ? `下一站 ${next.days} 天 · +${next.reward} 入池` : '所有签到里程碑已达成'}</Text><View className='progress' ariaLabel={next ? `里程碑进度 ${doubleDays} / ${next.days} 天` : '签到里程碑全部完成'}><View style={{width:`${next ? Math.min(100, doubleDays / next.days * 100) : 100}%`}}/></View></View>
+        <Icon name='chevron' tone='primary' size={17}/>
+      </Button>}
       <View className='calendar-month-bar'>
         <Button className='icon-button' disabled={month <= data.firstMonth} ariaLabel='上个月' onClick={() => changeMonth(shiftMonth(month, -1))}><Icon name='back' tone={month <= data.firstMonth ? 'muted' : 'primary'} size={18}/></Button>
         <Text className='calendar-month-title'>{monthLabel(month)}</Text>

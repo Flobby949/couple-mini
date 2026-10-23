@@ -4,7 +4,7 @@ import type { CheckinCalendar } from '../src/contracts/checkin'
 import type { Context } from '../src/contracts/api'
 
 const state = vi.hoisted(() => ({
-  hide: vi.fn(), show: vi.fn(), invalidate: vi.fn(),
+  hide: vi.fn(), show: vi.fn(), invalidate: vi.fn(), navigate: vi.fn(),
   allowed: true, context: undefined as unknown, lastQuery: undefined as unknown,
   months: {} as Record<string, unknown>,
 }))
@@ -14,12 +14,17 @@ vi.mock('../src/app/theme', () => ({ useTheme: () => ({ scheme: 'light', appeara
 vi.mock('../src/platform/tab-bar', () => ({ hideTabBar: state.hide, showTabBar: state.show }))
 vi.mock('../src/features/checkin/use-checkin-day', () => ({ useCheckinDay: () => {} }))
 vi.mock('../src/features/checkin/api', () => ({ getCheckinCalendar: vi.fn() }))
+vi.mock('../src/features/home/api', () => ({ getHome: vi.fn() }))
+vi.mock('../src/platform', () => ({ navigate: state.navigate }))
 vi.mock('../src/features/checkin/mood-image', () => ({ MoodImage: ({ mood, size }: { mood: string; size: number }) => <span data-mood={mood} data-size={size}/> }))
 vi.mock('../src/ui/visual', () => ({ Avatar: ({ user, checked }: { user: { id: string }; checked?: boolean }) => <span data-avatar={user.id} data-checked={checked}/>, Icon: ({ name }: { name: string }) => <span data-icon={name}/> }))
 vi.mock('../src/app/page', () => ({ Page: ({ children }: { children: React.ReactNode }) => <>{children}</> }))
 vi.mock('../src/app/hooks', () => ({ useGate: () => ({ data: state.context, allowed: state.allowed, visible: state.allowed, canShow: true, error: null, refetch: vi.fn() }) }))
-vi.mock('../src/core/query', () => ({ keys: { checkinMonth: (actor: string, couple: string, month: string) => ['checkins', 'month', actor, couple, month] }, queries: { invalidateQueries: state.invalidate } }))
-vi.mock('@tanstack/react-query', () => ({ useQuery: (options: { queryKey: string[] }) => { state.lastQuery = options; return { data: state.months[options.queryKey[4]], error: null, refetch: vi.fn() } } }))
+vi.mock('../src/core/query', () => ({ keys: { home: ['home'], checkinMonth: (actor: string, couple: string, month: string) => ['checkins', 'month', actor, couple, month] }, queries: { invalidateQueries: state.invalidate } }))
+vi.mock('@tanstack/react-query', () => ({ useQuery: (options: { queryKey: string[] }) => {
+  if (options.queryKey[0] === 'home') return { data: { context: state.context, milestones: [{ days: 7, reward: 30 }, { days: 365, reward: 1000 }] }, error: null, refetch: vi.fn() }
+  state.lastQuery = options; return { data: state.months[options.queryKey[4]], error: null, refetch: vi.fn() }
+} }))
 
 import { MoodPicker } from '../src/features/checkin/mood-picker'
 import { CheckinPortrait } from '../src/features/checkin/checkin-portrait'
@@ -102,4 +107,20 @@ it('refreshes this relationship’s current month when the polled revision chang
   state.context = { ...context, couple: { ...context.couple!, checkinRevision: 3 } }
   act(() => tree!.update(<CheckinCalendarPage/>))
   expect(state.invalidate).toHaveBeenCalledWith({ queryKey: ['checkins', 'month', 'alice', 'couple', '2026-10'], exact: true })
+})
+it('shows cumulative milestones in the calendar and keeps their details accessible', () => {
+  act(() => { tree = create(<CheckinCalendarPage/>) })
+  const milestone = tree!.root.findByProps({ className: 'calendar-milestone' })
+  expect(JSON.stringify(tree!.toJSON())).toContain('下一站 7 天 · +30 入池')
+  const sections = tree!.root.findAll(node => node.type === 'button' && node.props.className === 'calendar-milestone' || node.type === 'view' && node.props.className === 'calendar-month-bar')
+  expect(sections.map(node => node.props.className)).toEqual(['calendar-milestone', 'calendar-month-bar'])
+  expect(milestone.findByProps({ className: 'progress' }).findAllByType('view')[1].props.style.width).toBe(`${1 / 7 * 100}%`)
+  act(() => milestone.props.onClick())
+  expect(state.navigate).toHaveBeenCalledWith('/packages/account/milestones/index')
+  act(() => tree!.root.findByProps({ ariaLabel: '上个月' }).props.onClick())
+  expect(JSON.stringify(tree!.toJSON())).toContain('下一站 7 天 · +30 入池')
+  state.context = { ...context, couple: { ...context.couple!, doubleDays: 365 } }
+  act(() => tree!.update(<CheckinCalendarPage/>))
+  expect(JSON.stringify(tree!.toJSON())).toContain('所有签到里程碑已达成')
+  expect(tree!.root.findByProps({ className: 'progress' }).findAllByType('view')[1].props.style.width).toBe('100%')
 })
