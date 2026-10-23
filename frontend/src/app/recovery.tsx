@@ -4,7 +4,7 @@ import { useDidShow } from '@tarojs/taro'
 import { pending, recover } from '../core/operations'
 import { useAction } from '../core/use-action'
 import { ErrorState } from '../ui'
-import { navigate, replace } from '../platform'
+import { replace } from '../platform'
 import { session } from '../core/api'
 import { removeCart } from '../features/catalog/cart'
 
@@ -28,7 +28,7 @@ export function Recovery() {
       if (result.status === 'succeeded' && original?.path === '/orders') {
         const productId = (original.body as { productId?: string })?.productId
         if (productId && session()?.user.id === original.actor) removeCart(productId)
-        if (receipt?.orderId && /^[a-f0-9]{32}$/.test(receipt.orderId)) await navigate(`/packages/commerce/order-detail/index?id=${receipt.orderId}`)
+        if (receipt?.orderId && /^[a-f0-9]{32}$/.test(receipt.orderId)) await replace(`/packages/commerce/order-detail/index?id=${receipt.orderId}`)
       }
       if (result.status === 'succeeded' && /^\/tasks(?:\/[a-f0-9]{32})?$/.test(original?.path || '') && receipt?.taskId && /^[a-f0-9]{32}$/.test(receipt.taskId)) await replace(`/packages/tasks/detail/index?id=${receipt.taskId}`)
       if (result.status === 'succeeded' && original?.path === '/gifts' && receipt?.id && /^[a-f0-9]{32}$/.test(receipt.id)) await replace(`/packages/account/gift-detail/index?id=${receipt.id}`)

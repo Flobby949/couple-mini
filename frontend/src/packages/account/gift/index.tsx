@@ -8,7 +8,7 @@ import { keys } from '../../../core/query'
 import { useReminderAction } from '../../../features/notifications/use-reminder-action'
 import { parsePoints, beijingTime } from '../../../core/values'
 import { pending } from '../../../core/operations'
-import { navigate } from '../../../platform'
+import { navigate, replace } from '../../../platform'
 import { Empty, ErrorState, Loading, Notice } from '../../../ui'
 import { PersonRow, InlineInfo, Icon } from '../../../ui/visual'
 
@@ -19,7 +19,7 @@ export default function GiftPage() {
   const value = parsePoints(amount), preview = query.data
   const valid = value !== null && !!preview && value <= preview.singleMax && preview.sendsRemaining > 0
   const actual = valid ? Math.min(value,preview.receiverRemaining) : undefined
-  function submit() { if (gate.allowed && valid) void action.run(() => sendGift(amount), async result => { setAmount(''); await navigate(`/packages/account/gift-detail/index?id=${result.id}`) }) }
+  function submit() { if (gate.allowed && valid) void action.run(() => sendGift(amount), async result => { setAmount(''); await replace(`/packages/account/gift-detail/index?id=${result.id}`) }) }
   return <Page title='送一份小小的鼓励' subtitle='这不是转账，积分由系统新增。'>
     <ErrorState error={gate.error || query.error || history.error || action.error} retry={() => { void gate.refetch(); void query.refetch(); void history.refetch() }} />
     {!gate.canShow || !preview ? <Loading /> : <>

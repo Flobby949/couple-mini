@@ -12,7 +12,7 @@ import { checkoutPrice, clearCheckoutPrice } from '../../../features/orders/chec
 import { keys } from '../../../core/query'
 import { useReminderAction } from '../../../features/notifications/use-reminder-action'
 import { pending } from '../../../core/operations'
-import { back, navigate } from '../../../platform'
+import { back, replace } from '../../../platform'
 import { Avatar, Icon, InlineInfo } from '../../../ui/visual'
 import { ErrorState, Loading, Notice } from '../../../ui'
 
@@ -25,7 +25,7 @@ export default function Checkout() {
   useEffect(() => () => clearCheckoutPrice(id), [id])
   const changed = data && originalPrice !== undefined && data.product.price !== originalPrice
   const blocked = data ? data.product.ownerId === gate.data?.me.id ? '只能在伴侣的小店下单' : purchaseBlock(data.balance, data.product.stock, data.product.price) : ''
-  function submit() { if (data) void action.run(() => placeOrder(id, data.product.price), async result => { await navigate(`/packages/commerce/order-detail/index?id=${result.orderId}`) }) }
+  function submit() { if (data) void action.run(() => placeOrder(id, data.product.price), async result => { await replace(`/packages/commerce/order-detail/index?id=${result.orderId}`) }) }
   return <Page title='确认这一份心意' subtitle='一次一个商品，固定兑换一份。'>
     <ErrorState error={gate.error || query.error || action.error} retry={() => { void gate.refetch(); void query.refetch() }} />
     {!id ? <Notice>下单入口缺少标识，请返回后重新打开。</Notice> : !data && !query.error && !gate.error ? <Loading /> : data && <>

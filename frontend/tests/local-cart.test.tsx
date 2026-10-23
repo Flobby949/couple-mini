@@ -5,13 +5,13 @@ import type { Pending } from '../src/contracts/api'
 
 const device = vi.hoisted(() => ({
   actor: 'buyer' as string | undefined, files: new Map<string, unknown>(), read: vi.fn(), write: vi.fn(),
-  request: vi.fn(), mutate: vi.fn(), navigate: vi.fn(), recover: vi.fn(), pending: undefined as Pending | undefined,
+  request: vi.fn(), mutate: vi.fn(), navigate: vi.fn(), replace: vi.fn(), recover: vi.fn(), pending: undefined as Pending | undefined,
   show: new Set<() => void>(),
 }))
 vi.mock('../src/core/api', () => ({ session: () => device.actor ? { user: { id: device.actor } } : undefined, request: device.request, ApiError: Error }))
 vi.mock('../src/core/operations', () => ({ mutate: device.mutate, pending: () => device.pending, recover: device.recover }))
 vi.mock('../src/core/query', () => ({ refresh: () => Promise.resolve() }))
-vi.mock('../src/platform', () => ({ storage: { read: device.read, write: device.write }, navigate: device.navigate, replace: vi.fn() }))
+vi.mock('../src/platform', () => ({ storage: { read: device.read, write: device.write }, navigate: device.navigate, replace: device.replace }))
 vi.mock('../src/platform/tab-bar', () => ({ hideTabBar: () => Promise.resolve(), showTabBar: () => Promise.resolve() }))
 vi.mock('@tarojs/taro', async () => {
   const { useEffect } = await import('react')
@@ -136,5 +136,6 @@ it('cleans up the local candidate when an interrupted order is recovered as succ
   act(() => tree!.update(<><Probe/><Recovery/></>))
   await act(async () => { for (const callback of [...device.show]) callback() })
   expect(cart.items).toEqual([])
-  expect(device.navigate).toHaveBeenCalledWith(`/packages/commerce/order-detail/index?id=${'a'.repeat(32)}`)
+  expect(device.replace).toHaveBeenCalledWith(`/packages/commerce/order-detail/index?id=${'a'.repeat(32)}`)
+  expect(device.navigate).not.toHaveBeenCalled()
 })
