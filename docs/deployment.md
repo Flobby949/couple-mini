@@ -2,7 +2,11 @@
 
 目标为 `https://www.flobby.top/couple-mini/api/v1`。复用已有 Nginx 和 HTTPS，代理至 `127.0.0.1:18081`。MySQL、Redis 不发布宿主机端口，三个持久卷独立于服务器已有项目。
 
-最新小程序体验版 `0.2.2` 已于 2026-10-23 20:21（北京时间）确认上传成功。微信开发者工具提示本次上传会覆盖当前体验版，确认后以版本号 `0.2.2` 上传，最终显示“代码上传成功”。代码提交 [`e3b47ec`](https://github.com/Flobby949/couple-mini/commit/e3b47ec9f3dd7afdf6a68cd41edd117360ecffbf) 已推送至 `main`。
+最新小程序体验版 `0.2.3` 已于 2026-10-23 20:42（北京时间）确认上传成功。微信开发者工具提示本次上传会覆盖当前体验版，确认后以版本号 `0.2.3` 上传，最终显示“代码上传成功”。代码提交 [`cc643f2`](https://github.com/Flobby949/couple-mini/commit/cc643f2048ae6e0c2febfffbd13904cbae6e6b25) 已推送至 `main`。
+
+本版修复消息中心 Tab 在明暗模式及三种主题色下的文字与背景对比，选中和未选中均使用成对语义色；签到按钮文案简化为“心情签到”，未签到改为实心主题色织标按钮，保留虚线缝边、已签到轻量状态及禁用反馈。六种主题和 320px 小屏已做样式核对，275 项前端测试、类型检查、小程序/H5 生产构建及包体检查通过；主包 1,488,595 字节，总包 1,872,944 字节。产物已核对生产 HTTPS API、无本地 API 及开发登录入口。本次仅更新前端体验版，无后端部署、微信审核或正式发布；真机效果待体验版验收。上传凭证为本地 `frontend/tmp/weapp-0.2.3-upload-success.png`。
+
+上一小程序体验版 `0.2.2` 已于 2026-10-23 20:21（北京时间）确认上传成功。微信开发者工具提示本次上传会覆盖当前体验版，确认后以版本号 `0.2.2` 上传，最终显示“代码上传成功”。代码提交 [`e3b47ec`](https://github.com/Flobby949/couple-mini/commit/e3b47ec9f3dd7afdf6a68cd41edd117360ecffbf) 已推送至 `main`。
 
 本版修复下单、赠送积分及订单结果核查成功后返回旧表单的问题：成功时以详情页替换表单页，失败保留输入，浏览历史记录仍可正常返回。包含此前已提交的商品详情、心情日历里程碑和资料菜单优化。275 项前端测试、类型检查、小程序/H5 生产构建及包体检查通过；主包 1,488,588 字节，总包 1,872,937 字节。产物已核对生产 HTTPS API、无本地 API 及开发登录入口。本次仅更新前端体验版，无后端部署、微信审核或正式发布；手机返回流程待体验版验收。上传凭证为本地 `frontend/tmp/weapp-0.2.2-upload-success.png`。
 
@@ -94,7 +98,7 @@ git push origin v0.1.0
 curl --fail https://www.flobby.top/couple-mini/health/ready
 ```
 
-小程序已使用 `TARO_APP_API_BASE=https://www.flobby.top/couple-mini/api/v1` 构建并上传，当前体验版为 `0.2.2`。微信后台的 request/uploadFile/downloadFile 合法域名都需包含 `https://www.flobby.top`。后端始终关闭开发登录。
+小程序已使用 `TARO_APP_API_BASE=https://www.flobby.top/couple-mini/api/v1` 构建并上传，当前体验版为 `0.2.3`。微信后台的 request/uploadFile/downloadFile 合法域名都需包含 `https://www.flobby.top`。后端始终关闭开发登录。
 
 2026-10-22 13:32（北京时间），线上 `/opt/couple-mini/.env` 的 `WECHAT_MINIPROGRAM_STATE` 已由 `developer` 切换为 `trial`，Compose 默认值同步更新。沿用现有镜像重建 API 后，容器环境确认 `trial`，容器及公网 readiness 均正常；原配置备份在 `backups/notification-trial-20261022T053242Z/`。新生成的微信通知跳转当前体验版，并保留对应业务详情页路径；已生成的投递载荷及已发消息保留原跳转环境。体验版消息的手机点击回跳仍待真机验证，后续正式发布时再改为 `formal`。
 
