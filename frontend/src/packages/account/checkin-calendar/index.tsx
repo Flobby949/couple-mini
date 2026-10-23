@@ -1,7 +1,7 @@
 /* THESIS: 同一天的两枚心情上下相伴，月历一次看见两个人。
- * OWN-WORLD: 复用既有亮暗语义色与小团子，七列日期网格、双人顺序图例。
+ * OWN-WORLD: 复用既有亮暗语义色与小团子，七列日期网格、双人记录。
  * STORY: 切换月份、选择日期，读取双方真实签到；无单人筛选或补签。
- * FIRST VIEWPORT: 返回、说明、双方顺序、月份、月历、当天两行详情。
+ * FIRST VIEWPORT: 返回、说明、月份、月历、当天两行详情。
  * FORM: 用户确认的双人心情日历，沿用 checkin-mood-dual-calendar 图稿。
  */
 import { useEffect, useRef, useState } from 'react'
@@ -53,9 +53,6 @@ export default function CheckinCalendarPage() {
   return <Page title='心情日历'>
     <Text className='calendar-subtitle'>每一枚小表情，都是我们的一天</Text>
     <ErrorState error={gate.error || query.error} retry={() => { void gate.refetch(); void query.refetch() }}/>
-    {context?.partner && <View className='calendar-people'>
-      {[{ user: context.me, order: '上排', partner: context.partner.id }, { user: context.partner, order: '下排', partner: context.me.id }].map(person => <View className='calendar-person' key={person.user.id}><Avatar user={person.user} partnerId={person.partner} size={24}/><Text>{person.order}</Text><Text className='calendar-person-name'>{person.user.nickname}</Text></View>)}
-    </View>}
     {!data && !query.error && <Loading/>}
     {data && context?.partner && <>
       <View className='calendar-month-bar'>

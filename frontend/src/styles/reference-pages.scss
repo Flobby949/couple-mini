@@ -1,6 +1,9 @@
 /* Approved board 01, 390px: home and personal center pilot. */
 .ui-v2 {
 .page { position:relative; width:100%; max-width:520px; min-height:100vh; margin:0 auto; padding:0 16px calc(24px + env(safe-area-inset-bottom)); }
+.native-top-bar {position:fixed;top:0;left:0;right:0;z-index:900;background:var(--page);}
+.native-top-title {position:absolute;bottom:0;left:16px;display:flex;align-items:center;color:var(--ink);font-size:17px;font-weight:600;line-height:1.4;}
+.native-top-title > text {overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
 
 .page-heading { position:relative; display:flex; flex-direction:column; gap:3px; min-height:54px; margin:0 0 14px; padding-right:42px; }
 .page-title { font-size:24px; line-height:1.35; font-weight:700; letter-spacing:-.4px; }
@@ -143,7 +146,7 @@
  .order-shortcuts .segmented .selected {background:var(--surface);color:var(--primary);}
  .brand-footer {display:block;}
 }
-.ui-v2.route-me .page-heading {min-height:32px;margin-bottom:13px;}
+.ui-v2.route-me .page-heading {min-height:44px;justify-content:center;margin-bottom:13px;}
 .ui-v2.theme-light {--ink:#19103f;--muted:#716d96;--line:#e6e4f0;}
 .ui-v2.theme-light.accent-iris {--tint:#f1edfc;}
 .ui-v2.theme-dark .home-eyebrow {color:#f0a39c;}

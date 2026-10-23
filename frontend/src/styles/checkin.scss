@@ -9,10 +9,14 @@
   .mood-checkin-panel {padding-bottom:5px;}
   .mood-checkin-panel .fabric {top:-15px;height:calc(100% + 45px);}
   .mood-checkin-panel .pair {padding-top:18px;}
-  .mood-checkin-panel .checkin-button {min-height:44px;padding:9px 12px;}
-  .mood-checkin-panel .checkin-button.checkin-completed {background:var(--tint);color:var(--primary);}
-  .checkin-footer {display:flex;align-items:center;gap:5px;min-height:40px;}
-  .checkin-footer .checkin-help {flex:1;min-width:0;padding:0;font-size:10px;line-height:1.5;text-align:left;color:var(--muted);border-radius:4px;background:var(--checkin-caption-surface);box-shadow:0 0 4px 3px var(--checkin-caption-surface);}
+  .mood-checkin-panel .checkin-button {position:relative;display:flex;align-items:center;justify-content:center;gap:7px;width:238px;max-width:100%;min-height:46px;margin:6px auto 2px;padding:11px 16px;border:1px solid var(--line);border-radius:12px;background:var(--checkin-caption-surface);color:var(--primary);font-size:15px;font-weight:600;line-height:1.5;}
+  .mood-checkin-panel .checkin-button::after {content:'';position:absolute;inset:4px;width:auto;height:auto;border:1px dashed currentColor;border-radius:8px;transform:none;opacity:.45;pointer-events:none;}
+  .mood-checkin-panel .checkin-button:focus-visible {outline:2px solid var(--primary);outline-offset:3px;}
+  .mood-checkin-panel .checkin-button:active:not([disabled]), .mood-checkin-panel .checkin-button:active[disabled='false'] {background:var(--tint);}
+  .mood-checkin-panel .checkin-button[disabled]:not([disabled='false']):not(.checkin-completed) {color:var(--muted);}
+  .mood-checkin-panel .checkin-button.checkin-completed {border-color:transparent;background:transparent;color:var(--primary);}
+  .mood-checkin-panel .checkin-button.checkin-completed::after {opacity:.25;}
+  .checkin-footer {display:flex;align-items:center;justify-content:flex-end;min-height:40px;}
   .checkin-calendar-link {display:flex;flex:0 0 100px;align-items:center;justify-content:flex-end;gap:4px;width:100px;min-height:44px;padding:0;margin:0;background:transparent;color:var(--primary);font-size:12px;line-height:1.5;}
   .checkin-calendar-link::after {border:0;}
   .checkin-calendar-link:focus-visible {outline:2px solid var(--primary);outline-offset:2px;}
@@ -42,11 +46,6 @@
 
   &.route-checkin-calendar .page-nav {height:44px;margin-bottom:4px;}
   .calendar-subtitle {display:block;margin:0 0 12px;text-align:center;font-size:12px;color:var(--muted);}
-  .calendar-people {display:flex;align-items:center;gap:12px;padding:8px 12px;background:var(--tint);border-radius:12px;}
-  .calendar-person {display:flex;flex:1;align-items:center;justify-content:center;gap:6px;min-width:0;font-size:12px;}
-  .calendar-person + .calendar-person {border-left:1px solid var(--line);padding-left:12px;}
-  .calendar-person-name {overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
-  .calendar-person > text:first-of-type {flex-shrink:0;}
   .calendar-month-bar {display:flex;align-items:center;gap:3px;margin:8px 0 0;}
   .calendar-month-title {flex:1;min-width:0;text-align:center;font-size:18px;font-weight:600;}
   .calendar-today {min-width:42px;min-height:44px;font-size:14px;}
@@ -91,12 +90,8 @@
 @media(max-width:350px) {
   .ui-v2 .mood-checkin-panel {padding-left:15px;padding-right:15px;}
   .ui-v2 .mood-checkin-panel .checkin-button {font-size:14px;}
-  .ui-v2 .checkin-footer .checkin-help {font-size:10px;}
   .ui-v2 .checkin-calendar-link {flex-basis:90px;width:90px;font-size:11px;gap:2px;}
   .ui-v2 .mood-sheet {padding-left:14px;padding-right:14px;}
   .ui-v2 .mood-sheet-title {font-size:20px;}
   .ui-v2 .mood-option {height:88px;}
-  .ui-v2 .calendar-person {gap:4px;font-size:11px;}
-  .ui-v2 .calendar-people {padding-left:8px;padding-right:8px;gap:8px;}
-  .ui-v2 .calendar-person + .calendar-person {padding-left:8px;}
 }

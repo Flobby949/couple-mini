@@ -19,7 +19,6 @@ import { keys, queries } from '../../core/query'
 import { session } from '../../core/api'
 import { pending } from '../../core/operations'
 import { getCatalog } from '../../features/catalog/api'
-import type { CheckinResult } from '../../contracts/api'
 import { navigate } from '../../platform'
 import { useTheme } from '../../app/theme'
 import { Page } from '../../app/page'
@@ -30,14 +29,12 @@ import { BalanceTiles, Icon, PoolCard, Section } from '../../ui/visual'
 export default function HomePage() {
  const { checkinPanel: panel } = useArtwork()
   const gate = useGate(), action = useReminderAction(gate.allowed), {scheme,appearance} = useTheme()
-  const [receipt, setReceipt] = useState<CheckinResult>()
   const [picker, setPicker] = useState(false)
   const query = useQuery({ queryKey: keys.home, queryFn: getHome, enabled: gate.allowed, refetchInterval: gate.allowed ? 15000 : false })
   const data = gate.canShow && query.data?.context.businessDate === gate.data?.businessDate ? query.data : undefined
   const businessDate = gate.data?.businessDate
   useCheckinDay(gate.data, gate.visible)
-  useEffect(() => { setPicker(false); setReceipt(undefined) }, [businessDate, gate.data?.me.id])
-  useEffect(() => { if (!receipt) return; const timer = setTimeout(() => setReceipt(undefined), 4000); return () => clearTimeout(timer) }, [receipt])
+  useEffect(() => { setPicker(false) }, [businessDate, gate.data?.me.id])
   useEffect(() => { if (data?.checkin.me) setPicker(false) }, [data?.checkin.me])
   useEffect(() => {
     if (gate.allowed && query.isSuccess) void queries.prefetchQuery({ queryKey: keys.catalog('partner'), queryFn: () => getCatalog('partner') })
@@ -50,10 +47,10 @@ export default function HomePage() {
       <View className='checkin-panel mood-checkin-panel'><Image className='fabric' src={panel} mode='scaleToFill' ariaHidden /><View className='pair'>
         {[{user:data.context.me,checked:data.checkin.me,entry:data.checkin.meEntry,me:true},{user:data.context.partner!,checked:data.checkin.partner,entry:data.checkin.partnerEntry,me:false}].map(item => <View className='person' key={item.user.id}><CheckinPortrait user={item.user} partnerId={item.me ? data.context.partner!.id : data.context.me.id} checked={item.checked} entry={item.entry}/><View className='person-caption'><Text className='person-name'>{item.user.nickname}</Text><Text className={`checkin-state ${item.checked ? 'checked' : ''}`}>· {item.checked ? moodOption(item.entry?.mood)?.label || '已签到' : '待签到'}</Text></View></View>)}
         <Image className='pair-connection' src={`/assets/ui-icons/checkin-connection-${appearance.accent}-${scheme}.png`} mode='aspectFit' ariaHidden />
-      </View><Button className={`button checkin-button ${data.checkin.me ? 'checkin-completed' : ''}`} loading={action.busy && !data.checkin.me} disabled={action.busy || !!pending() || data.checkin.me || data.context.businessDate !== businessDate} onClick={() => { action.clearError(); setPicker(true) }}>{data.checkin.me && <Icon name='check' tone='primary' size={20}/>}<Text>{data.checkin.me ? '今日已签到' : '选心情签到 · +10 入池'}</Text></Button>
-        <View className='checkin-footer'><Text className='checkin-help'>{receipt ? `本次共 ${receipt.total} 积分入池${receipt.milestoneBonus > 0 ? `，含里程碑 ${receipt.milestoneBonus} 分` : ''}` : data.checkin.me && data.checkin.partner ? '双人签到完成 · 基础共 30 分入池' : '两人都签到，再入池 10 积分'}</Text><Button className='checkin-calendar-link' onClick={() => void navigate('/packages/account/checkin-calendar/index')}><Icon name='calendar' tone='primary' size={17}/><Text>心情日历</Text><Icon name='chevron' tone='primary' size={12}/></Button></View>
+      </View><Button className={`checkin-button ${data.checkin.me ? 'checkin-completed' : ''}`} loading={action.busy && !data.checkin.me} disabled={action.busy || !!pending() || data.checkin.me || data.context.businessDate !== businessDate} onClick={() => { action.clearError(); setPicker(true) }}>{data.checkin.me && <Icon name='check' tone='primary' size={20}/>}<Text>{data.checkin.me ? '今日已签到' : '选心情签到 · +10 入池'}</Text></Button>
+        <View className='checkin-footer'><Button className='checkin-calendar-link' onClick={() => void navigate('/packages/account/checkin-calendar/index')}><Icon name='calendar' tone='primary' size={17}/><Text>心情日历</Text><Icon name='chevron' tone='primary' size={12}/></Button></View>
       </View>
-      {picker && gate.visible && !data.checkin.me && <MoodPicker key={businessDate} busy={action.busy} blocked={!!pending()} error={action.error} close={() => setPicker(false)} confirm={mood => { const actor = data.context.me.id; if (businessDate) void action.run(() => checkIn(mood, businessDate), result => { if (session()?.user.id === actor) { setReceipt(result); setPicker(false) } }) }}/>}
+      {picker && gate.visible && !data.checkin.me && <MoodPicker key={businessDate} busy={action.busy} blocked={!!pending()} error={action.error} close={() => setPicker(false)} confirm={mood => { const actor = data.context.me.id; if (businessDate) void action.run(() => checkIn(mood, businessDate), () => { if (session()?.user.id === actor) setPicker(false) }) }}/>}
       <PoolCard total={data.points.total} available={data.points.available} reserved={data.points.reserved} />
       <BalanceTiles balance={data.points.balance} earned={data.points.earned} limit={data.points.dailyLimit} remaining={data.points.remaining} />
       <Section title='今日待办'>

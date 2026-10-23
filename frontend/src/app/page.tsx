@@ -1,6 +1,6 @@
-import { useEffect, type PropsWithChildren } from 'react'
+import { useEffect, useState, type PropsWithChildren } from 'react'
 import { Button, PageMeta, Text, View } from '@tarojs/components'
-import { useDidShow, useRouter } from '@tarojs/taro'
+import { useDidShow, usePageScroll, useRouter } from '@tarojs/taro'
 import { MessageEntry } from '../features/notifications/entry'
 import { TaskTabBadge } from '../features/tasks/tab-badge'
 import { OrderTabBadge } from '../features/orders/tab-badge'
@@ -17,13 +17,17 @@ const titles:Record<string,string>={binding:'邀请伴侣',rules:'共同规则',
 const fallback:Record<string,string>={detail:'/pages/tasks/index',edit:'/pages/tasks/index',product:'/pages/shop/index',checkout:'/pages/shop/index','message-detail':'/packages/account/messages/index','notification-template':'/packages/account/notification-settings/index','checkin-calendar':'/pages/home/index'}
 export function Page({title,subtitle,children,messageEntry=false,navTitle,onBack}:PropsWithChildren<{title:string;subtitle?:string;messageEntry?:boolean;navTitle?:string;onBack?:()=>void}>){
  const {scheme,appearance}=useTheme(),visible=useVisible(),route=useRouter(),key=route.path.split('?')[0].split('/').slice(-2)[0]
+ const nativeTopHeight=messageEntry&&process.env.TARO_ENV==='weapp'?topInset()+44:0
+ const [scrolled,setScrolled]=useState(false)
+ usePageScroll(({scrollTop})=>{if(nativeTopHeight)setScrolled(scrollTop>=64)})
  const pageTitle=navTitle||(messageEntry?(key==='me'?'我的':key==='tasks'?'任务':title):key==='edit'&&route.params.id?'编辑任务':key==='product-edit'&&!route.params.id?'新建商品':titles[key]||title)
  const apply=()=>{applyNativeTheme(scheme,appearance.accent);if(messageEntry)updateTabBar({selected:key});void setPageTitle(pageTitle)}
  useEffect(()=>{if(visible)apply()},[visible,scheme,appearance.accent,pageTitle])
  useDidShow(()=>{if(messageEntry)void showTabBar({animation:false}).catch(()=>{})})
  return <View className={`theme-root theme-${scheme} accent-${appearance.accent} ui-v2 route-${key} ${messageEntry?`main-page ${process.env.TARO_ENV==='weapp'?'custom-tab-page':''}`:'detail-page'}`}>
   {messageEntry&&process.env.TARO_ENV==='weapp'&&<PageMeta pageStyle={`background-color:${nativeColors[scheme].page}`} backgroundColor={nativeColors[scheme].page} backgroundColorTop={nativeColors[scheme].page} backgroundColorBottom={nativeColors[scheme].page}/>}
-  <View className='page' style={messageEntry&&process.env.TARO_ENV==='weapp'?{paddingTop:`${topInset()+44}px`}:undefined}>
+  {nativeTopHeight>0&&<View className='native-top-bar' style={{height:`${nativeTopHeight}px`}} ariaHidden>{scrolled&&<View className='native-top-title' style={{height:'44px',right:'108px'}}><Text>{pageTitle}</Text></View>}</View>}
+  <View className='page' style={nativeTopHeight?{paddingTop:`${nativeTopHeight}px`}:undefined}>
   {messageEntry?<View className='page-heading'>{key==='home'&&<Text className='home-eyebrow'>我们的日常</Text>}<Text className='page-title'>{pageTitle}</Text>{subtitle&&key!=='me'&&key!=='tasks'&&<Text className='page-subtitle'>{subtitle}</Text>}<MessageEntry icon subscription={key==='home'}/></View>:process.env.TARO_ENV==='h5'&&key!=='entry'&&<View className='page-nav'><Button className='icon-button' ariaLabel='返回上一页' onClick={()=>{if(onBack)onBack();else void back(fallback[key])}}><Icon name='back'/></Button><Text>{pageTitle}</Text><View className='nav-spacer'/></View>}
   {messageEntry&&<><TaskTabBadge/><OrderTabBadge/></>}<Recovery/>{children}
  </View></View>

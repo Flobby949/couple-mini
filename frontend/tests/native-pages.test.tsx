@@ -5,6 +5,7 @@ import { nativeColors } from '../src/core/appearance'
 
 const state = vi.hoisted(() => ({
   show: new Set<() => void>(), hide: new Set<() => void>(),
+  scroll: new Set<(event: { scrollTop: number }) => void>(),
   route: 'home',
   theme: { scheme: 'light', appearance: { mode: 'light', accent: 'iris' } },
   native: vi.fn(), title: vi.fn(), showTabBar: vi.fn(), hideTabBar: vi.fn(),
@@ -16,6 +17,7 @@ vi.mock('@tarojs/taro', async () => {
     useRouter: () => ({ path: `/pages/${state.route}/index`, params: {} }),
     useDidShow: (callback: () => void) => hook(state.show, callback),
     useDidHide: (callback: () => void) => hook(state.hide, callback),
+    usePageScroll: (callback: (event: { scrollTop: number }) => void) => useEffect(() => { state.scroll.add(callback); return () => { state.scroll.delete(callback) } }, [callback]),
     default: { pxTransform: (n: number) => `${n * 750 / 390}rpx`, showTabBar: state.showTabBar },
     hideTabBar: state.hideTabBar, showTabBar: state.showTabBar,
   }
@@ -36,13 +38,34 @@ import { Avatar, Icon } from '../src/ui/visual'
 import { tabBarState, updateTabBar } from '../src/platform/tab-bar'
 let tree: ReactTestRenderer | undefined
 beforeEach(() => {
-  vi.stubEnv('TARO_ENV', 'weapp'); vi.clearAllMocks(); state.show.clear(); state.hide.clear()
+  vi.stubEnv('TARO_ENV', 'weapp'); vi.clearAllMocks(); state.show.clear(); state.hide.clear(); state.scroll.clear()
   state.theme = { scheme: 'light', appearance: { mode: 'light', accent: 'iris' } }
   state.route = 'home'
   state.showTabBar.mockResolvedValue({}); state.hideTabBar.mockResolvedValue({})
 })
 afterEach(() => { act(() => tree?.unmount()); tree = undefined; vi.unstubAllEnvs() })
 function lifecycle(events: Set<() => void>) { act(() => { for (const callback of [...events]) callback() }) }
+function scrollTo(scrollTop: number) { act(() => { for (const callback of [...state.scroll]) callback({ scrollTop }) }) }
+it.each([['home', '今天，也一起'], ['tasks', '任务'], ['shop', '购物'], ['me', '我的']])('%s shows its compact title after scrolling and hides it again at the top', (route, title) => {
+  state.route = route
+  act(() => { tree = create(<Page messageEntry title={title}/>) })
+  lifecycle(state.show)
+  expect(tree!.root.findAllByProps({ className: 'native-top-title' })).toHaveLength(0)
+  scrollTo(80)
+  expect(tree!.root.findByProps({ className: 'native-top-title' }).findByType('text').children).toEqual([title])
+  lifecycle(state.hide); lifecycle(state.show)
+  expect(tree!.root.findAllByProps({ className: 'native-top-title' })).toHaveLength(1)
+  scrollTo(0)
+  expect(tree!.root.findAllByProps({ className: 'native-top-title' })).toHaveLength(0)
+})
+it.each(['home', 'tasks', 'shop', 'me'])('%s covers the native status and capsule area above scrolling content', route => {
+  state.route = route
+  act(() => { tree = create(<Page messageEntry title='测试页面'/>) })
+  const cover = tree!.root.findByProps({ className: 'native-top-bar' })
+  expect(cover.props.style.height).toBe(tree!.root.findByProps({ className: 'page' }).props.style.paddingTop)
+  expect(cover.props.style.height).toBe('68px')
+  expect(cover.props.ariaHidden).toBe(true)
+})
 it.each(['home', 'tasks', 'shop', 'me'])('%s paints the native page background in dark mode before onShow and keeps hidden pages in sync', route => {
   state.route = route
   state.theme = { scheme: 'dark', appearance: { mode: 'dark', accent: 'teal' } }
@@ -80,6 +103,12 @@ it('H5 still restores the platform tab bar when returning to a tab page', () => 
   lifecycle(state.show)
   expect(state.showTabBar).toHaveBeenCalledWith({ animation: false })
   expect(tree!.root.findAllByType(PageMeta)).toHaveLength(0)
+  expect(tree!.root.findAllByProps({ className: 'native-top-bar' })).toHaveLength(0)
+})
+it('pages using the system navigation bar do not add a custom top cover', () => {
+  state.route = 'messages'
+  act(() => { tree = create(<Page title='消息中心'/>) })
+  expect(tree!.root.findAllByProps({ className: 'native-top-bar' })).toHaveLength(0)
 })
 it('native portraits and icons use the same responsive units as their surrounding layout', () => {
   act(() => { tree = create(<><Avatar user={{ id: 'alice', nickname: '我' }} partnerId='bob' size={112}/><Icon name='bell' size={24}/></>) })
