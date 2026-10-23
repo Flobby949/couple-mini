@@ -26,6 +26,7 @@ type Product struct {
 	CoverID     string    `json:"coverId"`
 	Price       int64     `json:"price"`
 	Stock       int       `json:"stock"`
+	OnSale      bool      `json:"onSale"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
 }
@@ -37,13 +38,13 @@ type Input struct {
 	Stock       *int   `json:"stock"`
 }
 
-const columns = "id,owner_id,name,description,cover_id,price,stock,created_at,updated_at"
+const columns = "id,owner_id,name,description,cover_id,price,stock,created_at,updated_at,on_sale"
 
 type scanner interface{ Scan(...any) error }
 
 func scan(row scanner) (Product, error) {
 	var p Product
-	err := row.Scan(&p.ID, &p.OwnerID, &p.Name, &p.Description, &p.CoverID, &p.Price, &p.Stock, &p.CreatedAt, &p.UpdatedAt)
+	err := row.Scan(&p.ID, &p.OwnerID, &p.Name, &p.Description, &p.CoverID, &p.Price, &p.Stock, &p.CreatedAt, &p.UpdatedAt, &p.OnSale)
 	return p, err
 }
 func Get(ctx context.Context, tx *sql.Tx, id, couple string) (Product, error) {
@@ -86,7 +87,7 @@ func Save(ctx context.Context, tx *sql.Tx, user, id, couple string, input Input,
 	}
 	if id == "" {
 		id = platform.ID()
-		if _, err := tx.ExecContext(ctx, "INSERT INTO products VALUES (?,?,?,?,?,?,?,?,?)", id, user, name, input.Description, input.CoverID, price, *input.Stock, now, now); err != nil {
+		if _, err := tx.ExecContext(ctx, "INSERT INTO products (id,owner_id,name,description,cover_id,price,stock,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?)", id, user, name, input.Description, input.CoverID, price, *input.Stock, now, now); err != nil {
 			return Product{}, err
 		}
 	} else {
@@ -100,6 +101,19 @@ func Save(ctx context.Context, tx *sql.Tx, user, id, couple string, input Input,
 		if _, err = tx.ExecContext(ctx, "UPDATE products SET name=?,description=?,cover_id=?,price=?,stock=?,updated_at=? WHERE id=?", name, input.Description, input.CoverID, price, *input.Stock, now, id); err != nil {
 			return Product{}, err
 		}
+	}
+	return Get(ctx, tx, id, couple)
+}
+func SetAvailability(ctx context.Context, tx *sql.Tx, user, id, couple string, onSale bool, now time.Time) (Product, error) {
+	p, err := Get(ctx, tx, id, couple)
+	if err != nil {
+		return p, err
+	}
+	if p.OwnerID != user {
+		return p, platform.Fail(403, "FORBIDDEN", "只能上下架自己的商品")
+	}
+	if _, err = tx.ExecContext(ctx, "UPDATE products SET on_sale=?,updated_at=? WHERE id=?", onSale, now, id); err != nil {
+		return p, err
 	}
 	return Get(ctx, tx, id, couple)
 }
@@ -124,6 +138,9 @@ func AddCart(ctx context.Context, tx *sql.Tx, user, couple, id string, now time.
 	}
 	if p.OwnerID == user {
 		return p, platform.Fail(403, "OWN_PRODUCT", "只能将伴侣的商品加入购物车")
+	}
+	if !p.OnSale {
+		return p, platform.Fail(409, "PRODUCT_OFF_SALE", "商品已下架，暂不能加入购物车")
 	}
 	_, err = tx.ExecContext(ctx, "INSERT INTO cart_items VALUES (?,?,?) ON DUPLICATE KEY UPDATE product_id=product_id", user, id, now)
 	return p, err

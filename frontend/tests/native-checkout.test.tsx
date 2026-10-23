@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { act, create, type ReactTestRenderer } from 'react-test-renderer'
 
-const state = vi.hoisted(() => ({ pages: [] as { route: string }[], placeOrder: vi.fn() }))
+const state = vi.hoisted(() => ({ pages: [] as { route: string }[], placeOrder: vi.fn(), onSale: true }))
 vi.mock('@tarojs/components', () => ({ View: 'view', Text: 'text', Button: 'button' }))
 vi.mock('@tarojs/taro', () => ({
   useRouter: () => ({ params: { id: 'product' } }),
@@ -12,7 +12,7 @@ vi.mock('@tarojs/taro', () => ({
     navigateBack: async () => { state.pages.pop() },
   },
 }))
-vi.mock('@tanstack/react-query', () => ({ useQuery: () => ({ data: { product: { id: 'product', ownerId: 'seller', price: 10, stock: 2 }, balance: 100 } }) }))
+vi.mock('@tanstack/react-query', () => ({ useQuery: () => ({ data: { product: { id: 'product', ownerId: 'seller', price: 10, stock: 2, onSale: state.onSale }, balance: 100 } }) }))
 vi.mock('../src/app/hooks', () => ({ useGate: () => ({ allowed: true, canShow: true, data: { me: { id: 'buyer' }, partner: { id: 'seller' } } }) }))
 vi.mock('../src/app/page', () => ({ Page: ({ children }: { children: React.ReactNode }) => children }))
 vi.mock('../src/core/query', () => ({ keys: { product: (id: string) => ['product', id] }, refresh: async () => {} }))
@@ -33,6 +33,7 @@ import { back } from '../src/platform'
 let tree: ReactTestRenderer | undefined
 beforeEach(() => {
   vi.resetAllMocks()
+  state.onSale = true
   state.pages = [{ route: '/pages/shop/index' }, { route: '/packages/commerce/checkout/index?id=product' }]
   state.placeOrder.mockResolvedValue({ orderId: 'order' })
   act(() => { tree = create(<Checkout/>) })
@@ -48,6 +49,14 @@ it('returns to the shop after ordering without revisiting the submitted checkout
   expect(state.pages.at(-1)?.route).toBe('/packages/commerce/order-detail/index?id=order')
   await back()
   expect(state.pages).toEqual([{ route: '/pages/shop/index' }])
+})
+
+it('blocks a cart candidate when the current product has been taken off sale', async () => {
+  state.onSale = false
+  act(() => { tree!.update(<Checkout/>) })
+  expect(tree!.root.findByProps({ className: 'button' }).props.disabled).toBe(true)
+  await submit()
+  expect(state.placeOrder).not.toHaveBeenCalled()
 })
 
 it('keeps checkout available after a rejected order so the user can retry', async () => {

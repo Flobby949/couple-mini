@@ -317,4 +317,116 @@ func testCommerce(f *fixture, buyer, seller, outsider, couple string) {
 		t.Fatal("penalty ledger missing")
 	}
 	t.Log("commerce: bounded media, snapshots, carts, concurrent stock, refund/penalty, cancellation holds and strict auto-confirm verified")
+	testProductAvailability(f, buyer, seller, outsider, cover)
+}
+
+func testProductAvailability(f *fixture, buyer, seller, outsider, cover string) {
+	p := f.must(seller, "POST", "/products", map[string]any{"name": "可上下架的心意", "description": "原约定", "price": "0", "stock": 3, "coverId": cover})
+	id := p["id"].(string)
+	if p["onSale"] != true {
+		f.t.Fatal("new products should be on sale", p)
+	}
+	f.must(buyer, "POST", "/cart/"+id+"/add", map[string]any{})
+	// Warm both catalog views and detail before changing availability.
+	f.must(buyer, "GET", "/catalog", nil)
+	f.must(seller, "GET", "/catalog?view=mine", nil)
+	f.must(buyer, "GET", "/products/"+id, nil)
+	f.error(f.call(buyer, "POST", "/products/"+id+"/availability", platform.ID(), map[string]bool{"onSale": false}), 403, "FORBIDDEN")
+	f.error(f.call(outsider, "POST", "/products/"+id+"/availability", platform.ID(), map[string]bool{"onSale": false}), 403, "BINDING_REQUIRED")
+	f.error(f.call(seller, "POST", "/products/"+id+"/availability", platform.ID(), map[string]any{}), 422, "INVALID_AVAILABILITY")
+	f.must(seller, "POST", "/products/"+id+"/availability", map[string]bool{"onSale": false})
+	detail := f.must(buyer, "GET", "/products/"+id, nil)
+	if detail["product"].(map[string]any)["onSale"] != false {
+		f.t.Fatal("stale availability", detail)
+	}
+	for _, item := range f.must(buyer, "GET", "/catalog", nil)["products"].([]any) {
+		if item.(map[string]any)["id"] == id {
+			f.t.Fatal("off-sale product remains in partner catalog")
+		}
+	}
+	found := false
+	for _, item := range f.must(seller, "GET", "/catalog?view=mine", nil)["products"].([]any) {
+		if product := item.(map[string]any); product["id"] == id && product["onSale"] == false {
+			found = true
+		}
+	}
+	if !found {
+		f.t.Fatal("owner cannot manage off-sale product")
+	}
+	cart := f.must(buyer, "GET", "/cart", nil)
+	if items := cart["items"].([]any); len(items) != 1 || items[0].(map[string]any)["onSale"] != false {
+		f.t.Fatal("cart lost candidate or has stale availability", cart)
+	}
+	f.error(f.call(buyer, "POST", "/cart/"+id+"/add", platform.ID(), map[string]any{}), 409, "PRODUCT_OFF_SALE")
+	f.error(f.call(buyer, "POST", "/orders", platform.ID(), map[string]string{"productId": id, "confirmedPrice": "0"}), 409, "PRODUCT_OFF_SALE")
+	after := f.must(buyer, "GET", "/products/"+id, nil)
+	if after["balance"] != detail["balance"] || after["product"].(map[string]any)["stock"] != float64(3) {
+		f.t.Fatal("rejected checkout consumed balance or stock", after)
+	}
+	// Editing content must not accidentally put an off-sale product back on sale.
+	edited := f.must(seller, "POST", "/products/"+id, map[string]any{"name": "可上下架的心意", "description": "原约定", "price": "0", "stock": 3, "coverId": cover})
+	if edited["onSale"] != false {
+		f.t.Fatal("editing relisted the product", edited)
+	}
+	f.must(seller, "POST", "/products/"+id+"/availability", map[string]bool{"onSale": true})
+	found = false
+	for _, item := range f.must(buyer, "GET", "/catalog", nil)["products"].([]any) {
+		if item.(map[string]any)["id"] == id {
+			found = true
+		}
+	}
+	if !found {
+		f.t.Fatal("relisted product missing from partner catalog")
+	}
+	key := platform.ID()
+	body := map[string]string{"productId": id, "confirmedPrice": "0"}
+	placed := f.call(buyer, "POST", "/orders", key, body)
+	if placed.status != 200 {
+		f.t.Fatal(placed.raw)
+	}
+	orderID := placed.body["orderId"].(string)
+	cancellable := f.must(buyer, "POST", "/orders", body)["orderId"].(string)
+	f.must(seller, "POST", "/products/"+id+"/availability", map[string]bool{"onSale": false})
+	// Replaying a successful request after delisting is still the same order.
+	replay := f.call(buyer, "POST", "/orders", key, body)
+	if replay.status != 200 || replay.body["orderId"] != orderID {
+		f.t.Fatal("delisting changed the order receipt", replay.raw)
+	}
+	f.must(seller, "POST", "/orders/"+orderID+"/actions", map[string]string{"action": "accept"})
+	f.must(seller, "POST", "/orders/"+orderID+"/actions", map[string]string{"action": "fulfill"})
+	f.must(buyer, "POST", "/orders/"+orderID+"/actions", map[string]string{"action": "confirm"})
+	order := f.must(buyer, "GET", "/orders/"+orderID, nil)["order"].(map[string]any)
+	if order["status"] != "completed" || order["snapshot"].(map[string]any)["description"] != "原约定" {
+		f.t.Fatal("delisting affected an existing order", order)
+	}
+	f.must(buyer, "POST", "/orders/"+cancellable+"/actions", map[string]string{"action": "cancel"})
+	after = f.must(buyer, "GET", "/products/"+id, nil)
+	if product := after["product"].(map[string]any); product["stock"] != float64(2) || product["onSale"] != false {
+		f.t.Fatal("cancellation must restore stock without relisting", after)
+	}
+	// Checkout and delisting serialize: either checkout wins, or it is rejected.
+	f.must(seller, "POST", "/products/"+id+"/availability", map[string]bool{"onSale": true})
+	start := make(chan struct{})
+	checkoutResult, delistResult := make(chan result, 1), make(chan result, 1)
+	go func() { <-start; checkoutResult <- f.call(buyer, "POST", "/orders", platform.ID(), body) }()
+	go func() {
+		<-start
+		delistResult <- f.call(seller, "POST", "/products/"+id+"/availability", platform.ID(), map[string]bool{"onSale": false})
+	}()
+	close(start)
+	checkout, delist := <-checkoutResult, <-delistResult
+	if delist.status != 200 {
+		f.t.Fatal(delist.raw)
+	}
+	expectedStock := float64(2)
+	if checkout.status == 200 {
+		expectedStock = 1
+	} else {
+		f.error(checkout, 409, "PRODUCT_OFF_SALE")
+	}
+	after = f.must(buyer, "GET", "/products/"+id, nil)
+	if product := after["product"].(map[string]any); product["onSale"] != false || product["stock"] != expectedStock {
+		f.t.Fatal("concurrent checkout/delisting was inconsistent", after)
+	}
+	f.error(f.call(buyer, "POST", "/orders", platform.ID(), body), 409, "PRODUCT_OFF_SALE")
 }

@@ -141,6 +141,9 @@ func Place(ctx context.Context, tx *sql.Tx, couple, user, productID string, conf
 	if p.OwnerID == user {
 		return r, platform.Fail(403, "OWN_PRODUCT", "只能在伴侣的小店下单")
 	}
+	if !p.OnSale {
+		return r, platform.Fail(409, "PRODUCT_OFF_SALE", "商品已下架，暂不能下单")
+	}
 	if p.Price != confirmedPrice {
 		return r, platform.Fail(409, "PRICE_CHANGED", fmt.Sprintf("价格已从 %d 更新为 %d 积分，请重新确认", confirmedPrice, p.Price))
 	}

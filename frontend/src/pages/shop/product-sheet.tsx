@@ -17,7 +17,7 @@ export function ProductSheet({ id, gate, close }: { id: string; gate: ReturnType
   const cart = useCart(), [added, setAdded] = useState(0)
   const query = useQuery({ queryKey: keys.product(id), queryFn: () => getProduct(id), enabled: gate.allowed, refetchInterval: gate.allowed ? 30000 : false, staleTime: 0 })
   const data = gate.canShow ? query.data : undefined
-  const blocked = data ? purchaseBlock(data.balance, data.product.stock, data.product.price) : ''
+  const blocked = data ? purchaseBlock(data.balance, data.product.stock, data.product.price, data.product.onSale) : ''
   useEffect(() => {
     void hideTabBar({ animation: false }).catch(() => {})
     return () => { void showTabBar({ animation: false }).catch(() => {}) }
@@ -35,7 +35,7 @@ export function ProductSheet({ id, gate, close }: { id: string; gate: ReturnType
         </>}
       </ScrollView>
       {data && <View className='actions product-sheet-actions'>
-        <Button className='button secondary product-sheet-add' ariaLabel={added ? '已加入购物车，再次加入' : '加入购物车'} onClick={() => { if (cart.add(data.product)) setAdded(count => count + 1) }}>
+        <Button className='button secondary product-sheet-add' ariaLabel={added ? '已加入购物车，再次加入' : '加入购物车'} disabled={!data.product.onSale} onClick={() => { if (cart.add(data.product)) setAdded(count => count + 1) }}>
           <View key={added} className={`product-sheet-cart-feedback${added ? ' is-added' : ''}`} ariaHidden>
             <View className='product-sheet-cart-icon'><Icon name='cart' tone='primary' size={20}/></View>
             {!!added && <Text className='product-sheet-cart-token'>＋</Text>}

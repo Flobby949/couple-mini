@@ -30,6 +30,7 @@ func (s *Server) commerceRoutes(a *gin.RouterGroup) {
 	a.GET("/products/:id", s.product)
 	a.POST("/products", s.saveProduct)
 	a.POST("/products/:id", s.saveProduct)
+	a.POST("/products/:id/availability", s.setProductAvailability)
 	a.GET("/cart", s.cart)
 	a.POST("/cart/:id/add", s.cartChange)
 	a.POST("/cart/:id/remove", s.cartChange)
@@ -61,6 +62,15 @@ func (s *Server) listProducts(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
+		if owner != state.Me.ID {
+			visible := make([]catalog.Product, 0, len(products))
+			for _, product := range products {
+				if product.OnSale {
+					visible = append(visible, product)
+				}
+			}
+			products = visible
+		}
 		balance, err := points.Balance(ctx, tx, state.Me.ID)
 		return gin.H{"products": products, "ownerId": owner, "balance": balance}, err
 	})
@@ -91,6 +101,29 @@ func (s *Server) saveProduct(c *gin.Context) {
 			return nil, err
 		}
 		product, err := catalog.Save(ctx, tx, user, c.Param("id"), couple.ID, body, price, now)
+		if err == nil {
+			s.invalidateCatalog(ctx, couple.ID)
+		}
+		return product, err
+	})
+}
+func (s *Server) setProductAvailability(c *gin.Context) {
+	var body struct {
+		OnSale *bool `json:"onSale"`
+	}
+	if err := bodyForWrite(c, &body); err != nil {
+		s.fail(c, err)
+		return
+	}
+	s.write(c, nil, func(ctx context.Context, tx *sql.Tx, user string, now time.Time) (any, error) {
+		couple, err := identity.LockCouple(ctx, tx, user, true)
+		if err != nil {
+			return nil, err
+		}
+		if body.OnSale == nil {
+			return nil, platform.Fail(422, "INVALID_AVAILABILITY", "请选择上架或下架")
+		}
+		product, err := catalog.SetAvailability(ctx, tx, user, c.Param("id"), couple.ID, *body.OnSale, now)
 		if err == nil {
 			s.invalidateCatalog(ctx, couple.ID)
 		}

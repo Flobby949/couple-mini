@@ -1,6 +1,6 @@
 export interface Product {
   id: string; ownerId: string; name: string; description: string; coverId: string
-  price: number; stock: number; createdAt: string; updatedAt: string
+  price: number; stock: number; onSale: boolean; createdAt: string; updatedAt: string
 }
 export interface Catalog { products: Product[]; ownerId: string; balance: number }
 export interface ProductDetail { product: Product; balance: number }

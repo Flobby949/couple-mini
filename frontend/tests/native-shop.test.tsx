@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { act, create, type ReactTestRenderer } from 'react-test-renderer'
-const fixture = vi.hoisted(() => ({ navigate: vi.fn(), add: vi.fn(), refresh: vi.fn(), hideBar: vi.fn(), showBar: vi.fn(), rememberPrice: vi.fn(), catalogReady: true, detailReady: true, detailError: null as Error | null, balance: 0, error: null as Error | null, measure: vi.fn(), hide: new Set<() => void>(), product: { id: 'product', name: '零积分心意', description: '给你一个拥抱', price: 0, stock: 1, coverId: 'cover' } }))
+const fixture = vi.hoisted(() => ({ navigate: vi.fn(), add: vi.fn(), refresh: vi.fn(), hideBar: vi.fn(), showBar: vi.fn(), rememberPrice: vi.fn(), catalogReady: true, detailReady: true, detailError: null as Error | null, balance: 0, error: null as Error | null, measure: vi.fn(), hide: new Set<() => void>(), product: { id: 'product', name: '零积分心意', description: '给你一个拥抱', price: 0, stock: 1, onSale: true, coverId: 'cover' } }))
 vi.mock('@tarojs/components', () => ({ View: 'view', Text: 'text', Button: 'button', ScrollView: 'scroll-view' }))
 vi.mock('@tarojs/taro', async () => {
   const { useEffect } = await import('react')
@@ -29,6 +29,7 @@ beforeEach(() => {
   vi.useFakeTimers(); vi.resetAllMocks()
   fixture.add.mockReturnValue(true); fixture.refresh.mockResolvedValue(undefined); fixture.error = null; fixture.catalogReady = true
   fixture.detailReady = true; fixture.detailError = null; fixture.balance = 0; fixture.product.stock = 1
+  fixture.product.onSale = true
   fixture.hideBar.mockResolvedValue(undefined); fixture.showBar.mockResolvedValue(undefined)
   fixture.measure.mockImplementation(callback => callback([{ left: 160, top: 320, width: 38, height: 38 }, { left: 12, top: 660, width: 27, height: 27 }]))
 })
@@ -104,6 +105,13 @@ it.each([{ stock: 0, balance: 0 }, { stock: 1, balance: -1 }])('disables checkou
   fixture.product.stock = stock; fixture.balance = balance
   mount(); act(() => tree!.root.findByProps({ className: 'product-tile' }).props.onClick())
   expect(tree!.root.findByProps({ className: 'actions product-sheet-actions' }).findAllByType('button')[1].props.disabled).toBe(true)
+})
+it('shows an off-sale notice and disables purchase and cart actions in product details', () => {
+  fixture.product.onSale = false
+  mount(); act(() => tree!.root.findByProps({ className: 'product-tile' }).props.onClick())
+  expect(JSON.stringify(tree!.toJSON())).toContain('商品已下架')
+  const actions = tree!.root.findByProps({ className: 'actions product-sheet-actions' }).findAllByType('button')
+  expect(actions.map(button => button.props.disabled)).toEqual([true, true])
 })
 it('keeps a failed detail request inside a closable sheet without checkout actions', () => {
   fixture.detailReady = false; fixture.detailError = new Error('读取商品失败')

@@ -27,7 +27,7 @@ import { CartSheet } from '../src/pages/shop/cart'
 import { placeOrder } from '../src/features/orders/api'
 import { checkoutPrice } from '../src/features/orders/checkout-intent'
 import { Recovery } from '../src/app/recovery'
-const product = (id: string, price = 21): Product => ({ id, ownerId: 'seller', name: id, price, stock: 1, coverId: id, description: '', createdAt: '', updatedAt: '' })
+const product = (id: string, price = 21): Product => ({ id, ownerId: 'seller', name: id, price, stock: 1, onSale: true, coverId: id, description: '', createdAt: '', updatedAt: '' })
 let cart: ReturnType<typeof useCart>, tree: ReactTestRenderer | undefined, serial = 0
 function Probe() { cart = useCart(); return <span id='count'>{cart.items.length}</span> }
 function mount(sheet = false) { act(() => { tree = create(<><Probe/>{sheet && <CartSheet close={() => {}}/>}</>) }) }

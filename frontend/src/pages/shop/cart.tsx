@@ -24,7 +24,7 @@ export function CartSheet({ close }: { close: () => void }) {
     <Text className='muted'>一次选一个商品，固定兑换一份。</Text>
     <ErrorState error={cart.error} retry={cart.retry} />
     <View className='sheet-scroll'>{cart.items.length === 0 && <Empty title='还没有候选商品' description='先逛逛伴侣的小店，收藏一份想要的心意。' />}{cart.items.map(p => <View className='cart-row' key={p.id}><Radio className='cart-choice' color={accentColors[appearance.accent][scheme].primary} value={p.id} checked={selected === p.id} ariaLabel={`选择${p.name}`} onClick={() => select(p.id)} /><View className='cart-product'><ProductSummary product={p} /><Button className='text-button' onClick={() => { if (cart.remove(p.id)) select(current => current === p.id ? '' : current) }}>移除</Button></View></View>)}</View>
-    <InlineInfo>保存在当前设备，不占积分或库存。价格、库存以下单确认页为准。</InlineInfo>
+    <InlineInfo>保存在当前设备，不占积分或库存。上下架状态、价格和库存以下单确认页为准。</InlineInfo>
     <View className='cart-footer'><Text>本次 <Text className='price'>{product?.price??'…'}</Text> 积分</Text>    <Button className='button' disabled={!product} onClick={() => { if (product) { rememberCheckoutPrice(product.id, product.price); close(); void navigate(`/packages/commerce/checkout/index?id=${product.id}`) } }}>{product?'确认所选商品':'选择一个商品'}</Button></View>
   </View></View>
 }

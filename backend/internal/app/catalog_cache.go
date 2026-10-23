@@ -14,7 +14,7 @@ import (
 const catalogCacheTTL = 72 * time.Hour
 
 func catalogCacheKey(couple string) string {
-	return "couple:catalog:v1:" + couple
+	return "couple:catalog:v2:" + couple
 }
 
 // Call while holding the relationship lock, just like catalog mutations, so a
