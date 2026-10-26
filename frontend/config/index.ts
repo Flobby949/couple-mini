@@ -26,6 +26,7 @@ export default defineConfig<'vite'>({
       ...artworkFiles.flatMap(asset => (asset.endsWith('/milestone-rosette.png') ? ['packages/account', 'packages/tasks'] : [''])
         .map(prefix => ({ from: path.resolve(__dirname, '../src' + asset), to: (prefix + asset).replace(/^\//, '') }))),
       { from: path.resolve(__dirname, '../src/assets/tab-icons'), to: 'assets/tab-icons' },
+      { from: path.resolve(__dirname, '../src/assets/off-sale-stamp-round.png'), to: 'packages/commerce/assets/off-sale-stamp.png' },
       ...readdirSync(path.resolve(__dirname, '../src/assets/ui-icons')).map(file => ({
         from: path.resolve(__dirname, '../src/assets/ui-icons', file),
         to: `assets/ui-icons/${file}`,

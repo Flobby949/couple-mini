@@ -1,0 +1,7 @@
+{
+  "tool": "built-in image_gen",
+  "transparent_background": true,
+  "prompt": "Create a single perfectly CIRCULAR Chinese rubber stamp graphic, a transparent PNG UI overlay for a friendly couples mini-shop. Exact text: “已下架” — three Chinese characters, horizontally centered on ONE line, large, clean, bold rounded Chinese sans-serif lettering, occupying most of the circle width. Use warm vermilion red ink (#B84432), solid clear strokes. A simple circular double outline: one medium outer ring and a very fine inner ring, with generous space around the characters. Understated small stationery stamp, friendly and refined. It must remain instantly readable at 70 pixels diameter. Extremely subtle ink character at the border only; no grunge, no speckles, no shadows, no gradients, no 3D, no background paper, no stickers, no white fill. No stars, no hearts, no extra words or symbols, not an official seal. True alpha transparency inside and outside the red ink. Square canvas, centered circle, only a small transparent margin. Keep it upright; the app will tilt it by 15 degrees over a colorful photo with a pale warm translucent veil.",
+  "runtimeAsset": "frontend/src/assets/off-sale-stamp-round.png",
+  "packaging": "Preserve alpha; trim transparent margins and fit within 240x240px."
+}

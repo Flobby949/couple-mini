@@ -333,7 +333,11 @@
  .store-title {display:block;font-size:23px;margin:0 10px 5px;}
  .store-subtitle {margin:0 10px 20px;}
  .store-products {margin-top:16px;}
- .product-footer {margin-top:10px;}
+ .store-product-cover {position:relative;display:flex;flex-shrink:0;border-radius:10px;overflow:hidden;}
+ .store-cover-mask {position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,249,239,.76);pointer-events:none;}
+ .store-product-actions {display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);}
+ .store-product-actions .button {min-height:44px;white-space:nowrap;}
+ .store-off-sale-stamp {width:88%;height:88%;transform:rotate(-15deg);pointer-events:none;}
  .empty-store-note {text-align:center;margin:18px 0;}
  &.route-shop .page {padding-bottom:calc(88px + env(safe-area-inset-bottom));}
  &.custom-tab-page .page {padding-bottom:calc(74px + env(safe-area-inset-bottom));}
